@@ -9,10 +9,10 @@ class InsertEvalDetails {
 
     //'function to insert user details into database
 
-    Public Function InsertEvalDetails() {
+    Public Function EvalDetailsByInsert(UserDetails4Evaluation $user) {
 //        ByVal user As UserDetails4Evaluation
 
-        $user = new UserDetails4Evaluation();
+//        $user = new UserDetails4Evaluation();
 
        // 'check to see if username and password are correct
 
@@ -48,7 +48,7 @@ class InsertEvalDetails {
         //cntEval = cmdEval.ExecuteNonQuery()
         //cnnEval.Close()
 
-        If (!$cmdEval) {
+        If (pg_affected_rows($cmdEval) != 1) {
             Return False;
         }Else{
             Return True;

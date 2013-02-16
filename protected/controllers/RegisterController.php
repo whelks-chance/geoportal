@@ -90,8 +90,8 @@ class RegisterController extends Controller {
         $UserEvaluationDetails->username = $txtUsername;
 
         $evalDetailsInsert = new InsertEvalDetails();
-        $success = $evalDetailsInsert->InsertEvalDetails($UserEvaluationDetails);
-        If ($success == True) {
+        $success = $evalDetailsInsert->EvalDetailsByInsert($UserEvaluationDetails);
+        If ($success) {
 //                'if true do something i.e. insert has worked
             $msg->success = True;
             $msg->message = "Hooray!";
@@ -103,6 +103,7 @@ class RegisterController extends Controller {
 //            'TODO: what happens to these results?
 
 //            'once the process has been completed return either success or failure
-        Return CJSON::encode($msg);
+        echo json_encode($msg);
+
     }
 }

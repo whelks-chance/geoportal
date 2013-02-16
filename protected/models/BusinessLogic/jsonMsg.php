@@ -1,8 +1,8 @@
 ﻿<?
     class jsonMsg {
 
-        Public $success;
-        Public $message;
+        Public $success = "";
+        Public $message = "";
 
 //        Private successful As Boolean
 //        Private newMessage As String
