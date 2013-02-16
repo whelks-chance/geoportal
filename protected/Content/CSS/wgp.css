@@ -1,0 +1,318 @@
+﻿#loading-mask {
+  position: absolute;
+  left:     0;
+  top:      0;
+  width:    100%;
+  height:   100%;
+  z-index:  20000;
+  background-color: black;
+  background-image: '../../../images/bg.gif';
+  background-repeat: repeat; 
+}
+
+#loading {
+  position: absolute;
+  left:     50%;
+  top:      50%;
+  padding:  2px;
+  z-index:  20001;
+  height:   auto;
+  margin:   -35px 0 0 -30px;
+}
+
+#loading .loading-indicator {
+  background: url(../../../images/loading.gif) no-repeat;
+  color:      #555;
+  font:       bold 13px tahoma,arial,helvetica;
+  padding:    20px;
+  margin:     0px;
+  text-align: center;
+  height:     auto;
+}
+ /** vim: ts=4:sw=4:nu:fdc=4:nospell 
+ *
+ * Ext.ux.grid.RowActions.css 
+ *
+ * Style sheets for Grid RowActions Plugin
+ *
+ * @author   Ing. Jozef SakÃ¡loÅ¡
+ * @date     27. March 2008
+ * @verson   $Id: Ext.ux.grid.RowActions.css 753 2009-10-28 02:17:34Z jozo $
+ *
+ * @license Ext.ux.grid.RowActions.css is licensed under the terms of
+ * the Open Source LGPL 3.0 license.  Commercial use is permitted to the extent
+ * that the code/component(s) do NOT become part of another Open Source or Commercially
+ * licensed development library or toolkit without explicit permission.
+ * 
+ * License details: http://www.gnu.org/licenses/lgpl.html
+ */
+
+/* styles for rows */
+.ux-row-action-cell .x-grid3-cell-inner {
+	padding:1px 0 0 0;
+}
+.ux-row-action-item {
+	float:left;
+	min-width:16px;
+	height:16px;
+	background-repeat:no-repeat;
+	margin: 0 3px 0 2px;
+/*	margin: 1px 5px 0 2px; */
+	cursor:pointer;
+	overflow:hidden;
+}
+.ext-ie .ux-row-action-item {
+	width:16px;
+}
+.ext-ie .ux-row-action-text {
+	width:auto;
+}
+.ux-row-action-item span {
+	vertical-align:middle;
+	padding:0 0 0 20px;
+	line-height:18px;
+}
+.ext-ie .ux-row-action-item span {
+	width:auto;
+}
+
+/* styles for groups */
+.x-grid-group-hd div {
+	position:relative;
+	height:16px;
+}
+.ux-grow-action-item {
+	min-width:16px;
+	height:16px;
+	background-repeat:no-repeat;
+	background-position: 0 50% ! important;
+	margin: 0 0 0 4px;
+	padding: 0 ! important;
+	cursor:pointer;
+	float:left;
+}
+.ext-ie .ux-grow-action-item {
+	width:16px;
+}
+.ux-action-right {
+	float:right;
+	margin: 0 3px 0 2px;
+	padding: 0 ! important;
+}
+.ux-grow-action-text {
+	padding: 0 ! important;
+	margin:0 ! important;
+	background:transparent none ! important;
+	float:left;
+}
+
+/* eof */ 
+
+
+
+/*!
+ * Ext JS Library 3.3.1
+ * Copyright(c) 2006-2010 Sencha Inc.
+ * licensing@sencha.com
+ * http://www.sencha.com/license
+ */
+/*
+ * FileUploadField component styles
+ */
+.x-form-file-wrap {
+	position: relative;
+	height: 22px;
+}
+.x-form-file-wrap .x-form-file {
+	position: absolute;
+	right: 0;
+	-moz-opacity: 0;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+	height: 22px;
+}
+.x-form-file-wrap .x-form-file-btn {
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+.x-form-file-wrap .x-form-file-text {
+	position: absolute;
+	left: 0;
+	z-index: 3;
+	color: #777;
+}
+
+
+.icon-meta {
+	background-image:url(http://localhost/geoportal/images/silk/application_side_list.png);
+}
+.icon-map
+{
+	background-image:url(http://localhost/geoportal/images/silk/map_add.png);
+}
+.icon-question
+{
+	background-image:url(http://localhost/geoportal/images/silk/pencil_add.png);
+}
+
+.x-color-picker, .x-color-picker {
+  height: 195px;
+  position: relative;
+  overflow: hidden;
+}
+.x-color-picker div canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+.x-color-picker-wheel {
+  z-index: 1;
+}
+.x-color-picker-gradient {
+  z-index: 0;
+}
+
+/*!
+ * Ext JS Library 3.3.1
+ * Copyright(c) 2006-2010 Sencha Inc.
+ * licensing@sencha.com
+ * http://www.sencha.com/license
+ */
+#content-anchor-tip ul {
+	float: left;
+	width: 200px;
+	list-style-type: disc;
+	margin-left: 15px;
+} 
+
+.ext-ie #content-anchor-tip ul {
+	margin: 0;
+	padding-left: 15px;
+} 
+
+#content-anchor-tip .thumb {
+	float: right;
+} 
+
+#content-anchor-tip .status-icon {
+	position: absolute;
+	top: 4px;
+	right: 50px;
+	padding: 0;
+	line-height: 0;
+} 
+
+#content-anchor-tip a:link, #content-anchor-tip a:visited {
+	color: #339;
+}
+
+.search-item {
+	font:normal 11px tahoma, arial, helvetica, sans-serif;
+	padding:3px 10px 3px 10px;
+	border:1px solid #fff;
+	border-bottom:1px solid #eeeeee;
+	white-space:normal;
+	color:#555;
+}
+.search-item h3 {
+	display:block;
+	font:inherit;
+	font-weight:bold;
+	color:#222;
+}
+
+.search-item h3 span {
+	float: right;
+	font-weight:normal;
+	margin:0 0 5px 5px;
+	width:100px;
+	display:block;
+	clear:none;
+}
+
+.tocWindow 
+{
+	background-image: url(http://localhost/geoportal/images/silk/layout.png);
+}
+.findTools
+{
+	background-image: url(http://localhost/geoportal/images/silk/find.png)
+}
+
+#tagCloud { width:770px; height: 780px; background-color:black; text-align:center; padding:5px; overflow:auto; font-size:100%; font-family:arial; }
+#tagCloud h2 { color:#ffffff; font-size:2.5em; margin:0 0 10px 0; background:url(images/Logos/wiserd-logo.png) no-repeat 0; padding:15px 0 15px 80px; }
+#tagList { margin:0; padding:0; }
+#tagList li { list-style-type:none; float:left; margin:0 10px; height:35px; }
+#tagList li a { text-decoration:none; font-family: Sans-Serif; cursor: pointer }
+#tagList li a:hover { text-decoration:underline; font-size: 150% }
+
+
+	/*!
+ * Ext JS Library 3.4.0
+ * Copyright(c) 2006-2011 Sencha Inc.
+ * licensing@sencha.com
+ * http://www.sencha.com/license
+ */
+.x-column-tree .x-panel-header {
+	padding: 3px 0px 0px 0px;
+	border-bottom-width: 0px;
+}
+
+.x-column-tree .x-panel-header .x-panel-header-text {
+	margin-left: 3px
+}
+
+.x-column-tree .x-tree-node {
+	zoom:1;
+}
+.x-column-tree .x-tree-node-el {
+	/*border-bottom:1px solid #eee; borders? */
+	zoom:1;
+}
+.x-column-tree .x-tree-selected {
+	background: #d9e8fb;
+}
+.x-column-tree  .x-tree-node a {
+	line-height:18px;
+	vertical-align:middle;
+}
+.x-column-tree  .x-tree-node a span{
+	
+}
+.x-column-tree  .x-tree-node .x-tree-selected a span{
+	background:transparent;
+	color:#000;
+}
+.x-tree-col {
+	float:left;
+	overflow:hidden;
+	padding:0 1px;
+	zoom:1;
+}
+
+.x-tree-col-text, .x-tree-hd-text {
+	color:#000;
+	overflow:hidden;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	padding:3px 3px 3px 5px;
+	white-space: nowrap;
+	font:normal 11px arial, tahoma, helvetica, sans-serif;
+}
+
+.x-tree-headers {
+	margin-top: 3px;
+	background: #f9f9f9 url(images/default/grid/grid3-hrow.gif) repeat-x 0 bottom;
+	cursor:default;
+	zoom:1;
+}
+
+.x-tree-hd {
+	float:left;
+	overflow:hidden;
+	border-left:1px solid #eee;
+	border-right:1px solid #d0d0d0;
+}
