@@ -1,11 +1,10 @@
 ﻿<?
-
 class getResults {
 
-    Public $count;
+//    Public $count;
 
 
-    Public Function getQuestionnaireData() {
+    Public Function getQuestionnaireData($start, $limit, $keywords, $verify, $mappable) {
 
 //ByVal start As Integer, ByVal limit As Integer, ByVal keywords As String, ByVal verify As Boolean, ByVal mappable As Boolean
         $dt = New DataTable();
@@ -49,6 +48,7 @@ class getResults {
 
         }
 
+        Log::toFile($SSearch);
 
         $db = new getDBConnections();
         $cnn = $db->getDBConnection("Survey_Data");
@@ -57,7 +57,9 @@ class getResults {
 //Npgsql.NpgsqlCommand
         $cmd = pg_query($cnn, $SSearch);
 
-        $DA = new DataAdapter();
+        Log::toFile($SSearch);
+
+        $DA = new DataAdapter($cmd);
 
         $id = 1;
 //        $cnn.Open();
@@ -70,7 +72,7 @@ class getResults {
         $results = array();
 
 
-        $qtype = "";
+//        $qtype = "";
 
 //        For Each row As DataRow In dt.Rows
         foreach ($dt->rows as $row) {
@@ -79,7 +81,7 @@ class getResults {
 
             $qtype = Trim($row->Item["Q_type"]);
 
-            If ($qtype = "ROOT Question") {
+            If ($qtype == "ROOT Question") {
                 $rootQ = new rootQuestionDetails();
                 $rootQ->QuestionID = Trim($row->Item["qid"]);
                 $rootQ->QuestionNumber = Trim($row->Item["qNumber"]);
@@ -98,14 +100,14 @@ class getResults {
 
                 $surveycmd = pg_query($cnn, $survey_details);
 
-                $surDRdr = new DataReader();
+                $surDRdr = new DataReader($surveycmd);
 
 //                cnn.Open();
 //                $surDRdr = surveycmd.ExecuteReader;
 
                 If ($surDRdr->Read()) {
                     $rootQ->SurveyID = Trim($surDRdr->Item("surveyid"));
-                    $rootQ->DataSource = getDataSourceType($surDRdr->Item("surveyid"));
+                    $rootQ->DataSource = $this::getDataSourceType($surDRdr->Item("surveyid"));
                     $rootQ->SurveyName = Trim($surDRdr->Item("survey_title"));
                     $rootQ->SurveyCollectionFrequency = Trim($surDRdr->Item("surveyfrequency"));
                     $rootQ->spatial = $surDRdr->Item("spatialdata");
@@ -120,7 +122,7 @@ class getResults {
 
 
                 // 'Exit For
-            } ElseIf ($qtype = "SINGLE Question") {
+            } ElseIf ($qtype == "SINGLE Question") {
 
                 $singleQ = new SingleQuestion();
                 $singleQ->QuestionID = Trim($row->Item["qid"]);
@@ -137,18 +139,18 @@ class getResults {
 
                 $survey_ID = Trim($row->Item["link_from"]);
 
-                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . survey_ID . "');";
+                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
                 $surveycmd = pg_query($cnn, $survey_details);
 
-                $surDRdr = new DataReader();
+                $surDRdr = new DataReader($surveycmd);
 
 //                cnn.Open();
 //                $surDRdr = surveycmd.ExecuteReader;
 
                 If ($surDRdr->Read()) {
                     $singleQ->SurveyID = Trim($surDRdr->Item("surveyid"));
-                    $singleQ->DataSource = getDataSourceType($surDRdr->Item("surveyid"));
+                    $singleQ->DataSource = $this::getDataSourceType($surDRdr->Item("surveyid"));
                     $singleQ->SurveyName = Trim($surDRdr->Item("survey_title"));
                     $singleQ->SurveyCollectionFrequency = Trim($surDRdr->Item("surveyfrequency"));
                     $singleQ->spatial = $surDRdr->Item("spatialdata");
@@ -159,7 +161,7 @@ class getResults {
                     $results[$toFind] = $singleQ;
                 }
 
-            } ElseIf ($qtype = "SUB Question") {
+            } ElseIf ($qtype == "SUB Question") {
 
                 $subQ = new subQuestionDetails();
                 $subQ->QuestionID = Trim($row->Item["qid"]);
@@ -176,18 +178,18 @@ class getResults {
 
                 $survey_ID = Trim($row->Item["link_from"]);
 
-                $survey_details = "Select * from Survey WHERE lower(surveyid) = lower((Select distinct(surveyid) from survey_questions_link WHERE qid = lower('" . survey_ID . "')));";
+                $survey_details = "Select * from Survey WHERE lower(surveyid) = lower((Select distinct(surveyid) from survey_questions_link WHERE qid = lower('" . $survey_ID . "')));";
 
                 $surveycmd = pg_query($cnn, $survey_details);
 
-                $surDRdr = new DataReader();
+                $surDRdr = new DataReader($surveycmd);
 
 //                cnn.Open();
 //                $surDRdr = surveycmd.ExecuteReader;
 
                 If ($surDRdr->Read()) {
                     $subQ->SurveyID = Trim($surDRdr->Item("surveyid"));
-                    $subQ->DataSource = getDataSourceType($surDRdr->Item("surveyid"));
+                    $subQ->DataSource = $this::getDataSourceType($surDRdr->Item("surveyid"));
                     $subQ->SurveyName = Trim($surDRdr->Item("survey_title"));
                     $subQ->SurveyCollectionFrequency = Trim($surDRdr->Item("surveyfrequency"));
                     $subQ->spatial = $surDRdr->Item("spatialdata");
@@ -206,7 +208,7 @@ class getResults {
                 }
 
 
-            } ElseIf ($qtype = "COMPOUND Question") {
+            } ElseIf ($qtype == "COMPOUND Question") {
 
                 $compoundQ = new compoundQuestionDetails();
                 $compoundQ->QuestionID = Trim($row->Item["qid"]);
@@ -222,18 +224,18 @@ class getResults {
 
                 $survey_ID = Trim($row->Item["link_from"]);
 
-                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . survey_ID . "');";
+                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
                 $surveycmd = pg_query($cnn, $survey_details);
 
-                $surDRdr = new DataReader();
+                $surDRdr = new DataReader($surveycmd);
 
 //                cnn.Open();
 //                $surDRdr = surveycmd.ExecuteReader;
 
                 If ($surDRdr->Read()) {
                     $compoundQ->SurveyID = Trim($surDRdr->Item("surveyid"));
-                    $compoundQ->DataSource = getDataSourceType($surDRdr->Item("surveyid"));
+                    $compoundQ->DataSource = $this::getDataSourceType($surDRdr->Item("surveyid"));
                     $compoundQ->SurveyName = Trim($surDRdr->Item("survey_title"));
                     $compoundQ->SurveyCollectionFrequency = Trim($surDRdr->Item("surveyfrequency"));
                     $compoundQ->spatial = $surDRdr->Item("spatialdata");
@@ -247,7 +249,7 @@ class getResults {
                     $results[$toFind] = $compoundQ;
                 }
 
-            } ElseIf ($qtype = "SUB of SUB Question") {
+            } ElseIf ($qtype == "SUB of SUB Question") {
 
                 $subsubQ = new subQuestionDetails();
                 $subsubQ->QuestionID = Trim($row->Item["qid"]);
@@ -263,18 +265,18 @@ class getResults {
 
                 $survey_ID = Trim($row->Item["link_from"]);
 
-                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . survey_ID . "');";
+                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
                 $surveycmd = pg_query($cnn, $survey_details);
 
-                $surDRdr = new DataReader();
+                $surDRdr = new DataReader($surveycmd);
 
 //                cnn.Open();
 //                $surDRdr = surveycmd.ExecuteReader;
 
                 If ($surDRdr->Read()) {
                     $subsubQ->SurveyID = Trim($surDRdr->Item("surveyid"));
-                    $subsubQ->DataSource = getDataSourceType($surDRdr->Item("surveyid"));
+                    $subsubQ->DataSource = $this::getDataSourceType($surDRdr->Item("surveyid"));
                     $subsubQ->SurveyName = Trim($surDRdr->Item("survey_title"));
                     $subsubQ->SurveyCollectionFrequency = Trim($surDRdr->Item("surveyfrequency"));
                     $subsubQ->spatial = $surDRdr->Item("spatialdata");
@@ -299,7 +301,7 @@ class getResults {
 
         $finalResults = array();
 
-        $count = sizeof($results);
+//        $count = sizeof($results);
         If ($mappable = True) {
 //            For Each (result As KeyValuePair(Of String, Object) In results){
             ForEach ($results as $result) {
@@ -333,7 +335,7 @@ class getResults {
         $prefix = $idArray[0];
 
 
-        If ($prefix = "sid") {
+        If ($prefix == "sid") {
             $DataSourceType = "Survey Data";
 
         }
@@ -360,14 +362,14 @@ class getResults {
         ForEach ($DT->rows as $row) { // row As DataRow In DT.Rows
             $qid = $row->Item["qid"];
 
-            If (!$qid = "") {
+            If (!$qid == "") {
                 $DR = new DataReader();
 
-                $selQ = "Select questionnumber, literal_question_text, thematic_groups, thematic_tags FROM questions WHERE qid = '" . Trim(qid) . "';";
+                $selQ = "Select questionnumber, literal_question_text, thematic_groups, thematic_tags FROM questions WHERE qid = '" . Trim($qid) . "';";
 
                 $cmd = pg_query($cnn, $selQ);
 //                        cnn.Open();
-//                        DR = cmd.ExecuteReader;
+                $DR->ExecuteReader($cmd);
 //                        DR.Read();
 
                 $question = new allQuestions();
@@ -398,8 +400,7 @@ class getResults {
 
         $keywordsArray = explode($Keywords, ",");
 
-        $SSearch = "";
-        $SSearch.=("SELECT DISTINCT(id), stats, pages FROM qualdata.transcript_data ");
+        $SSearch = "SELECT DISTINCT(id), stats, pages FROM qualdata.transcript_data ";
 
         If (sizeof($keywordsArray)> 1) {
 

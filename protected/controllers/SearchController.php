@@ -24,6 +24,8 @@ class SearchController extends Controller {
             }
         }
 
+        Log::toFile("starting off..");
+
         $res = New getResults();
         $resultsExsist = $res->getQuestionnaireData(0, 1, $Keywords, True, $Mappable);
         $qualResults = $res->getQualData($Keywords);

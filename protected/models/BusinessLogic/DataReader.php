@@ -19,6 +19,10 @@ class DataReader {
     {
         return "";
     }
+
+    public function ExecuteReader($cmd)
+    {
+    }
 }
 
 ?>
