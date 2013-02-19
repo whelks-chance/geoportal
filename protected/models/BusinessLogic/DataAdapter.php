@@ -9,8 +9,31 @@
 
 class DataAdapter {
 
-    public function Fill(DataTable $dataTable){
 
+
+    public function Fill(DataTable $dataTable)
+    {
+
+    }
+
+    public function Read($queryResult)
+    {
+        $count = pg_num_rows($queryResult);
+        Log::toFile($count . ' results returned');
+
+        $toReturn = array();
+
+        while ($row = pg_fetch_object($queryResult)) {
+            Log::toFile('row : ' . print_r($row, true));
+            Log::toFile('column count : ' . count($row));
+    //        Log::toFile('keys : ' . print_r(array_keys($row), true));
+    //        Log::toFile('values : ' . print_r(array_values($row), true));
+
+            $toReturn[] = $row;
+        }
+
+        Log::toFile('return search object array : ' + print_r($toReturn, true));
+        return $toReturn;
     }
 
 }

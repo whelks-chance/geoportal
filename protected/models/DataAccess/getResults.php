@@ -7,17 +7,18 @@ class getResults {
     Public Function getQuestionnaireData($start, $limit, $keywords, $verify, $mappable) {
 
 //ByVal start As Integer, ByVal limit As Integer, ByVal keywords As String, ByVal verify As Boolean, ByVal mappable As Boolean
-        $dt = New DataTable();
+//        $dt = New DataTable();
 
-        $keywords = "";
         $keywordsArray = explode(",", $keywords);
-
 
         $SSearch = "";
         //'keywords = "wales"
 
+        Log::toFile(var_export($keywordsArray));
+
         If (sizeof($keywordsArray) > 1) {
 
+            Log::toFile("multi-keyword search");
             $multiKeyword = "";
 
 //            For Each keyword As String In keywordsArray
@@ -31,6 +32,8 @@ class getResults {
             $SSearch.=(" FROM questions ");
             $SSearch.=("WHERE qtext_index @@ to_tsquery('english','" . $multiKeyword . "')");
         } Else {
+
+            Log::toFile("single word search");
             $SSearch.=("SELECT qid, questionnumber as qnumber, link_from, thematic_groups, thematic_tags, ts_headline('english',literal_question_text, plainto_tsquery('english','" . $keywords . "')) as original_text, notes as q_notes, subof as subof, type as q_type, link_from as parent_q, ts_rank_cd(to_tsvector(literal_question_text), plainto_tsquery('english','" . $keywords . "'),0) AS rank");
             $SSearch.=(" FROM questions ");
             $SSearch.=("WHERE qtext_index @@ to_tsquery('english','" . $keywords . "')");
@@ -41,7 +44,7 @@ class getResults {
         //'SSearch.Append(" WHERE query @@ to_tsvector(literal_question_text)")
         $SSearch.=("ORDER BY rank DESC");
 
-        If ($verify = True) {
+        If ($verify == True) {
             $SSearch.=(" LIMIT 1 ");
         } Else {
             $SSearch.=(" LIMIT 1000 ");
@@ -57,13 +60,15 @@ class getResults {
 //Npgsql.NpgsqlCommand
         $cmd = pg_query($cnn, $SSearch);
 
-        Log::toFile($SSearch);
+        Log::toFile($cmd);
 
-        $DA = new DataAdapter($cmd);
+        $DA = new DataAdapter();
+
+        $rows = $DA->Read($cmd);
 
         $id = 1;
 //        $cnn.Open();
-        $DA->Fill($dt);
+//        $DA->Fill($dt);
 //        $cnn.Close();
 
 
@@ -75,11 +80,12 @@ class getResults {
 //        $qtype = "";
 
 //        For Each row As DataRow In dt.Rows
-        foreach ($dt->rows as $row) {
+        foreach ($rows as $row) {
 
 //            @var DataRow $row
 
-            $qtype = Trim($row->Item["Q_type"]);
+            $qtype = Trim($row->q_type);
+            Log::toFile("qType : " . $qtype);
 
             If ($qtype == "ROOT Question") {
                 $rootQ = new rootQuestionDetails();
@@ -124,39 +130,43 @@ class getResults {
                 // 'Exit For
             } ElseIf ($qtype == "SINGLE Question") {
 
+
                 $singleQ = new SingleQuestion();
-                $singleQ->QuestionID = Trim($row->Item["qid"]);
-                $singleQ->QuestionNumber = Trim($row->Item["qNumber"]);
-                $singleQ->QuestionText = Trim($row->Item["original_text"]);
-                $singleQ->QuestionNotes = Trim($row->Item["q_notes"]);
-                $singleQ->QuestionThematicGroup = Trim($row->Item["thematic_groups"]);
-                $singleQ->QuestionThematicTag = Trim($row->Item["thematic_tags"]);
+                $singleQ->QuestionID = Trim($row->qid);
+                $singleQ->QuestionNumber = Trim($row->qnumber);
+                $singleQ->QuestionText = Trim($row->original_text);
+                $singleQ->QuestionNotes = Trim($row->q_notes);
+                $singleQ->QuestionThematicGroup = Trim($row->thematic_groups);
+                $singleQ->QuestionThematicTag = Trim($row->thematic_tags);
                 $singleQ->QuestionType = "Single Question";
-                $singleQ->Rank = $row->Item["rank"];
+                $singleQ->Rank = $row->rank;
                 $singleQ->DataSource = "WISERD DB";
                 $singleQ->RecordID = $id;
 
 
-                $survey_ID = Trim($row->Item["link_from"]);
+                $survey_ID = Trim($row->link_from);
 
                 $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
                 $surveycmd = pg_query($cnn, $survey_details);
 
-                $surDRdr = new DataReader($surveycmd);
+                $DA = new DataAdapter();
+                $surveyRows = $DA->Read($surveycmd);
 
 //                cnn.Open();
 //                $surDRdr = surveycmd.ExecuteReader;
 
-                If ($surDRdr->Read()) {
-                    $singleQ->SurveyID = Trim($surDRdr->Item("surveyid"));
-                    $singleQ->DataSource = $this::getDataSourceType($surDRdr->Item("surveyid"));
-                    $singleQ->SurveyName = Trim($surDRdr->Item("survey_title"));
-                    $singleQ->SurveyCollectionFrequency = Trim($surDRdr->Item("surveyfrequency"));
-                    $singleQ->spatial = $surDRdr->Item("spatialdata");
+                If (count($surveyRows) > 0) {
+                    $surDRdr = $surveyRows[0];
+
+                    $singleQ->SurveyID = Trim($surDRdr->surveyid);
+                    $singleQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
+                    $singleQ->SurveyName = Trim($surDRdr->survey_title);
+                    $singleQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
+                    $singleQ->spatial = $surDRdr->spatialdata;
                 }
 //                cnn.Close();
-                $toFind = Trim($row->Item["qid"]);
+                $toFind = Trim($row->qid);
                 If (!array_key_exists($toFind, $results)) {
                     $results[$toFind] = $singleQ;
                 }
@@ -188,11 +198,11 @@ class getResults {
 //                $surDRdr = surveycmd.ExecuteReader;
 
                 If ($surDRdr->Read()) {
-                    $subQ->SurveyID = Trim($surDRdr->Item("surveyid"));
-                    $subQ->DataSource = $this::getDataSourceType($surDRdr->Item("surveyid"));
-                    $subQ->SurveyName = Trim($surDRdr->Item("survey_title"));
-                    $subQ->SurveyCollectionFrequency = Trim($surDRdr->Item("surveyfrequency"));
-                    $subQ->spatial = $surDRdr->Item("spatialdata");
+                    $subQ->SurveyID = Trim($surDRdr->surveyid);
+                    $subQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
+                    $subQ->SurveyName = Trim($surDRdr->survey_title);
+                    $subQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
+                    $subQ->spatial = $surDRdr->spatialdata;
                 } Else {
 
                 }
@@ -302,25 +312,25 @@ class getResults {
         $finalResults = array();
 
 //        $count = sizeof($results);
-        If ($mappable = True) {
+        If ($mappable == True) {
 //            For Each (result As KeyValuePair(Of String, Object) In results){
             ForEach ($results as $result) {
-                If ($result->spatial = True) {
-                    $finalResults[] = $result->Value;
+                If ($result->spatial == 't') {
+                    $finalResults[] = $result;
                 }
             }
 
         } Else {
 //            ForEach (result As KeyValuePair(Of String, Object) In results) {
             ForEach ($results as $result) {
-                $finalResults[] = $result->Value;
+                $finalResults[] = $result;
 
             }
 
         }
 
 
-        Return $finalResults;
+        return $finalResults;
 
 
 
@@ -353,13 +363,15 @@ class getResults {
 
         $cnn = $db->getDBConnection("Survey_Data");
 
-        $DT = new DataTable();
+//        $DT = new DataTable();
+        $queryResult = pg_query($cnn, $selStr);
 
-        $DA = new DataAdapter($cnn, $selStr);
+        $DA = new DataAdapter();
+        $rows = $DA->Read($queryResult);
 
-        $DA->Fill($DT);
+//        $DA->Fill($DT);
 
-        ForEach ($DT->rows as $row) { // row As DataRow In DT.Rows
+        ForEach ($rows as $row) { // row As DataRow In DT.Rows
             $qid = $row->Item["qid"];
 
             If (!$qid == "") {
@@ -427,23 +439,27 @@ class getResults {
         $db = new getDBConnections();
         $cnn = $db->getDBConnection("Qual_Data");
 //        Npgsql.NpgsqlConnection.ClearAllPools();
-        $qDT = new DataTable();
+//        $qDT = new DataTable();
 
 //        Npgsql.NpgsqlDataAdapter
-        $DA = new DataAdapter($cnn, $SSearch);
+//        $DA = new DataAdapter($cnn, $SSearch);
 
-        $DA->Fill($qDT);
+//        $DA->Fill($qDT);
 
+        $queryResult = pg_query($cnn, $SSearch);
+
+        $DA = new DataAdapter();
+        $rows = $DA->Read($queryResult);
 
         $results = array();
 
-        ForEach($qDT->rows as $row) { // row As DataRow In qDT.Rows
+        ForEach($rows as $row) { // row As DataRow In qDT.Rows
 
-            $id = Trim($row->Item["id"]);
+            $id = Trim($row->id);
 
             $DCStr = "SELECT * FROM qualdata.dc_info WHERE identifier = '" . $id . "';";
 
-            $DR = new DataReader();
+//            $DR = new DataReader();
             $cnn = $db->getDBConnection("Qual_Data");
 
 
@@ -456,22 +472,21 @@ class getResults {
 //                            $cnn.Open();
 //                        }
 
-            $DR->ExecuteReader($cmd);
+            If ( pg_num_rows($cmd) > 0) {
 
+            $DR = pg_fetch_object($cmd);
 
-            If ( !$DR->Read()) {
-
-            } Else {
+//            } Else {
 
 
 
                 $qData = new QualData();
                 $qData->id = $id;
-                $qData->creator = $DR->Item("creator");
-                $qData->pages = $row->Item["pages"];
-                $qData->thematicgroup = $DR->Item("thematic_group");
-                $qData->qdate = $DR->Item("date");
-                $qData->title = $DR->Item("title");
+                $qData->creator = $DR->creator;
+                $qData->pages = $row->pages;
+                $qData->thematicgroup = $DR->thematic_group;
+                $qData->qdate = $DR->date;
+                $qData->title = $DR->title;
 
                 $results[] = $qData;
 
