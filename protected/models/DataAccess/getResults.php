@@ -89,39 +89,39 @@ class getResults {
 
             If ($qtype == "ROOT Question") {
                 $rootQ = new rootQuestionDetails();
-                $rootQ->QuestionID = Trim($row->Item["qid"]);
-                $rootQ->QuestionNumber = Trim($row->Item["qNumber"]);
-                $rootQ->QuestionText = Trim($row->Item["original_text"]);
-                $rootQ->QuestionNotes = Trim($row->Item["q_notes"]);
-                $rootQ->QuestionThematicGroup = Trim($row->Item["thematic_groups"]);
-                $rootQ->QuestionThematicTag = Trim($row->Item["thematic_tags"]);
+                $rootQ->QuestionID = Trim($row->qid);
+                $rootQ->QuestionNumber = Trim($row->qnumber);
+                $rootQ->QuestionText = Trim($row->original_text);
+                $rootQ->QuestionNotes = Trim($row->q_notes);
+                $rootQ->QuestionThematicGroup = Trim($row->thematic_groups);
+                $rootQ->QuestionThematicTag = Trim($row->thematic_tags);
                 $rootQ->QuestionType = "ROOT Question";
-                $rootQ->Rank = $row->Item["rank"];
+                $rootQ->Rank = $row->rank;
                 $rootQ->DataSource = "WISERD DB";
                 $rootQ->RecordID = $id;
 
-                $survey_ID = Trim($row->Item["link_from"]);
+                $survey_ID = Trim($row->link_from);
 
                 $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
                 $surveycmd = pg_query($cnn, $survey_details);
 
-                $surDRdr = new DataReader($surveycmd);
+                $DA = new DataAdapter();
+                $surveyResults = $DA->Read($surveycmd);
 
-//                cnn.Open();
-//                $surDRdr = surveycmd.ExecuteReader;
+                If (count($surveyResults) > 0) {
+                    $surDRdr = $surveyResults[0];
 
-                If ($surDRdr->Read()) {
-                    $rootQ->SurveyID = Trim($surDRdr->Item("surveyid"));
-                    $rootQ->DataSource = $this::getDataSourceType($surDRdr->Item("surveyid"));
-                    $rootQ->SurveyName = Trim($surDRdr->Item("survey_title"));
-                    $rootQ->SurveyCollectionFrequency = Trim($surDRdr->Item("surveyfrequency"));
-                    $rootQ->spatial = $surDRdr->Item("spatialdata");
+                    $rootQ->SurveyID = Trim($surDRdr->surveyid);
+                    $rootQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
+                    $rootQ->SurveyName = Trim($surDRdr->survey_title);
+                    $rootQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
+                    $rootQ->spatial = $surDRdr->spatialdata;
                 }
 
 //                cnn.Close();
 
-                $toFind = Trim($row->Item["qid"]);
+                $toFind = Trim($row->qid);
                 If (!array_key_exists($toFind, $results)) {
                     $results[$toFind] = $rootQ;
                 }
@@ -174,30 +174,33 @@ class getResults {
             } ElseIf ($qtype == "SUB Question") {
 
                 $subQ = new subQuestionDetails();
-                $subQ->QuestionID = Trim($row->Item["qid"]);
-                $subQ->QuestionNumber = Trim($row->Item["qNumber"]);
-                $subQ->QuestionText = Trim($row->Item["original_text"]);
-                $subQ->QuestionNotes = Trim($row->Item["q_notes"]);
-                $subQ->QuestionThematicGroup = Trim($row->Item["thematic_groups"]);
-                $subQ->QuestionThematicTag = Trim($row->Item["thematic_tags"]);
+                $subQ->QuestionID = Trim($row->qid);
+                $subQ->QuestionNumber = Trim($row->qnumber);
+                $subQ->QuestionText = Trim($row->original_text);
+                $subQ->QuestionNotes = Trim($row->q_notes);
+                $subQ->QuestionThematicGroup = Trim($row->thematic_groups);
+                $subQ->QuestionThematicTag = Trim($row->thematic_tags);
                 $subQ->QuestionType = "Sub Question Question";
-                $subQ->Rank = $row->Item["rank"];
+                $subQ->Rank = $row->rank;
                 $subQ->DataSource = "WISERD DB";
                 $subQ->RecordID = $id;
-                $subQ->RootQuestion = Trim($row->Item["subof"]);
+                $subQ->RootQuestion = Trim($row->subof);
 
-                $survey_ID = Trim($row->Item["link_from"]);
+                $survey_ID = Trim($row->link_from);
 
                 $survey_details = "Select * from Survey WHERE lower(surveyid) = lower((Select distinct(surveyid) from survey_questions_link WHERE qid = lower('" . $survey_ID . "')));";
 
                 $surveycmd = pg_query($cnn, $survey_details);
 
-                $surDRdr = new DataReader($surveycmd);
+                $DA = new DataAdapter();
+                $surveyResults = $DA->Read($surveycmd);
 
 //                cnn.Open();
 //                $surDRdr = surveycmd.ExecuteReader;
 
-                If ($surDRdr->Read()) {
+                If (count($surveyResults) > 0) {
+                    $surDRdr = $surveyResults[0];
+
                     $subQ->SurveyID = Trim($surDRdr->surveyid);
                     $subQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
                     $subQ->SurveyName = Trim($surDRdr->survey_title);
@@ -209,10 +212,8 @@ class getResults {
 
 
 //                cnn.Close();
-//                If (Not results.ContainsKey(Trim($row->Item["qid"]))) {
-//                    results.Add(Trim($row->Item["qid"]), subQ);
-//                }
-                $toFind = Trim($row->Item["qid"]);
+
+                $toFind = Trim($row->qid);
                 If (!array_key_exists($toFind, $results)) {
                     $results[$toFind] = $subQ;
                 }
@@ -221,40 +222,37 @@ class getResults {
             } ElseIf ($qtype == "COMPOUND Question") {
 
                 $compoundQ = new compoundQuestionDetails();
-                $compoundQ->QuestionID = Trim($row->Item["qid"]);
-                $compoundQ->QuestionNumber = Trim($row->Item["qNumber"]);
-                $compoundQ->QuestionText = Trim($row->Item["original_text"]);
-                $compoundQ->QuestionNotes = Trim($row->Item["q_notes"]);
-                $compoundQ->QuestionThematicGroup = Trim($row->Item["thematic_groups"]);
-                $compoundQ->QuestionThematicTag = Trim($row->Item["thematic_tags"]);
+                $compoundQ->QuestionID = Trim($row->qid);
+                $compoundQ->QuestionNumber = Trim($row->qnumber);
+                $compoundQ->QuestionText = Trim($row->original_text);
+                $compoundQ->QuestionNotes = Trim($row->q_notes);
+                $compoundQ->QuestionThematicGroup = Trim($row->thematic_groups);
+                $compoundQ->QuestionThematicTag = Trim($row->thematic_tags);
                 $compoundQ->QuestionType = "Compound Question";
-                $compoundQ->Rank = $row->Item["rank"];
+                $compoundQ->Rank = $row->rank;
                 $compoundQ->DataSource = "WISERD DB";
                 $compoundQ->RecordID = $id;
 
-                $survey_ID = Trim($row->Item["link_from"]);
+                $survey_ID = Trim($row->link_from);
 
                 $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
                 $surveycmd = pg_query($cnn, $survey_details);
 
-                $surDRdr = new DataReader($surveycmd);
+                $DA = new DataAdapter();
+                $surveyResults = $DA->Read($surveycmd);
 
-//                cnn.Open();
-//                $surDRdr = surveycmd.ExecuteReader;
+                If (count($surveyResults) > 0) {
+                    $surDRdr = $surveyResults[0];
 
-                If ($surDRdr->Read()) {
-                    $compoundQ->SurveyID = Trim($surDRdr->Item("surveyid"));
-                    $compoundQ->DataSource = $this::getDataSourceType($surDRdr->Item("surveyid"));
-                    $compoundQ->SurveyName = Trim($surDRdr->Item("survey_title"));
-                    $compoundQ->SurveyCollectionFrequency = Trim($surDRdr->Item("surveyfrequency"));
-                    $compoundQ->spatial = $surDRdr->Item("spatialdata");
+                    $compoundQ->SurveyID = Trim($surDRdr->surveyid);
+                    $compoundQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
+                    $compoundQ->SurveyName = Trim($surDRdr->survey_title);
+                    $compoundQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
+                    $compoundQ->spatial = $surDRdr->spatialdata;
                 }
-//                cnn.Close()
-//                If (Not results.ContainsKey(Trim($row->Item["qid"]))) {
-//                    results.Add(Trim($row->Item["qid"]), compoundQ);
-//                }
-                $toFind = Trim($row->Item["qid"]);
+
+                $toFind = Trim($row->qid);
                 If (!array_key_exists($toFind, $results)) {
                     $results[$toFind] = $compoundQ;
                 }
@@ -262,40 +260,40 @@ class getResults {
             } ElseIf ($qtype == "SUB of SUB Question") {
 
                 $subsubQ = new subQuestionDetails();
-                $subsubQ->QuestionID = Trim($row->Item["qid"]);
-                $subsubQ->QuestionNumber = Trim($row->Item["qNumber"]);
-                $subsubQ->QuestionText = Trim($row->Item["original_text"]);
-                $subsubQ->QuestionNotes = Trim($row->Item["q_notes"]);
-                $subsubQ->QuestionThematicGroup = Trim($row->Item["thematic_groups"]);
-                $subsubQ->QuestionThematicTag = Trim($row->Item["thematic_tags"]);
+                $subsubQ->QuestionID = Trim($row->qid);
+                $subsubQ->QuestionNumber = Trim($row->qnumber);
+                $subsubQ->QuestionText = Trim($row->original_text);
+                $subsubQ->QuestionNotes = Trim($row->q_notes);
+                $subsubQ->QuestionThematicGroup = Trim($row->thematic_groups);
+                $subsubQ->QuestionThematicTag = Trim($row->thematic_tags);
                 $subsubQ->QuestionType = "Sub of A Sub Question";
-                $subsubQ->Rank = $row->Item["rank"];
+                $subsubQ->Rank = $row->rank;
                 $subsubQ->RecordID = $id;
-                $subsubQ->RootQuestion = Trim($row->Item["subof"]);
+                $subsubQ->RootQuestion = Trim($row->subof);
 
-                $survey_ID = Trim($row->Item["link_from"]);
+                $survey_ID = Trim($row->link_from);
 
                 $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
                 $surveycmd = pg_query($cnn, $survey_details);
 
-                $surDRdr = new DataReader($surveycmd);
+                $DA = new DataAdapter();
+                $surveyResults = $DA->Read($surveycmd);
 
-//                cnn.Open();
-//                $surDRdr = surveycmd.ExecuteReader;
+                If (count($surveyResults) > 0) {
+                    $surDRdr = $surveyResults[0];
 
-                If ($surDRdr->Read()) {
-                    $subsubQ->SurveyID = Trim($surDRdr->Item("surveyid"));
-                    $subsubQ->DataSource = $this::getDataSourceType($surDRdr->Item("surveyid"));
-                    $subsubQ->SurveyName = Trim($surDRdr->Item("survey_title"));
-                    $subsubQ->SurveyCollectionFrequency = Trim($surDRdr->Item("surveyfrequency"));
-                    $subsubQ->spatial = $surDRdr->Item("spatialdata");
+                    $subsubQ->SurveyID = Trim($surDRdr->surveyid);
+                    $subsubQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
+                    $subsubQ->SurveyName = Trim($surDRdr->survey_title);
+                    $subsubQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
+                    $subsubQ->spatial = $surDRdr->spatialdata;
                 }
 //                cnn.Close();
-//                If (Not results.ContainsKey(Trim($row->Item["qid")))) {
-//                    results.Add(Trim($row->Item["qid")), subsubQ);
+//                If (Not results.ContainsKey(Trim($row->qid")))) {
+//                    results.Add(Trim($row->qid")), subsubQ);
 //                }
-                $toFind = Trim($row->Item["qid"]);
+                $toFind = Trim($row->qid);
                 If (!array_key_exists($toFind, $results)) {
                     $results[$toFind] = $subsubQ;
                 }
@@ -410,7 +408,7 @@ class getResults {
 
     Public Function getQualData($Keywords) {
 
-        $keywordsArray = explode($Keywords, ",");
+        $keywordsArray = explode(",", $Keywords);
 
         $SSearch = "SELECT DISTINCT(id), stats, pages FROM qualdata.transcript_data ";
 

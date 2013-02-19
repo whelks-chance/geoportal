@@ -298,7 +298,7 @@ GeoPortal.Panels.TreePanel = Ext.extend(Ext.Panel, {
                     radioGroup: "BoundaryData",
                     draggable: false,
                     //icon: "http://23.21.162.107:8081/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:Aberystwyth Locality"
-                    icon: "http://localhost:5432/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:Aberystwyth Locality"
+                    icon: "http://192.168.56.102:8080/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:Aberystwyth Locality"
                      }
                 }
             })

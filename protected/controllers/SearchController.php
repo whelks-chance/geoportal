@@ -59,24 +59,25 @@ class SearchController extends Controller {
         if(isset($_POST['Mappable'])) {
             $Mappable = $_POST['Mappable'];
         }
-        if(isset($_POST['Keywords'])) {
-            $Keywords = $_POST['Keywords'];
+        if(isset($_POST['keywords'])) {
+            $Keywords = $_POST['keywords'];
         }
 
         $count = 0;
 
-        If ($Keywords = "") {
-            $results = $_SESSION["results"];
-            $count = $_SESSION["resCount"];
+        $results = null;
+        If ($Keywords == "") {
+            $results = Yii::app()->session["results"];
+            $count = Yii::app()->session["resCount"];
 
         }Else{
-            If ($results = null) {
+            If ($results == null) {
                 $res = New getResults();
                 $results = $res->getQuestionnaireData($start, $limit, $Keywords, False, $Mappable);
-                $count = count($res);
+                $count = count($results);
 
-                $_SESSION["results"] = $results;
-                $_SESSION["resCount"] = $count;
+                Yii::app()->session["results"] = $results;
+                Yii::app()->session["resCount"] = $count;
             }
         }
 
@@ -113,8 +114,7 @@ class SearchController extends Controller {
 
         $start = 0;
         $limit = 15;
-        $Mappable = false;
-        $Keywords = "";
+        $keywords = "";
 
         if(isset($_POST['start'])) {
             $start = $_POST['start'];
@@ -122,23 +122,20 @@ class SearchController extends Controller {
         if(isset($_POST['limit'])) {
             $limit = $_POST['limit'];
         }
-        if(isset($_POST['Mappable'])) {
-            $Mappable = $_POST['Mappable'];
-        }
-        if(isset($_POST['Keywords'])) {
-            $keywords = $_POST['Keywords'];
+        if(isset($_POST['keywords'])) {
+            $keywords = $_POST['keywords'];
         }
 
-        If ($keywords = "" ) {
-            $QualResults = Session("QualResults");
-            $qCount = Session("QualresCount");
+        If ($keywords == "" ) {
+            $QualResults = Yii::app()->session["QualResults"];
+            $qCount = Yii::app()->session["QualresCount"];
         }Else{
             $res = New getResults();
             $QualResults = $res->getQualData($keywords);
             $qCount = sizeof($QualResults);
 
-                $_Session["QualResults"] = $QualResults;
-                $_Session["QualresCount"] = $qCount;
+                Yii::app()->session["QualResults"] = $QualResults;
+                Yii::app()->session["QualresCount"] = $qCount;
 
             }
 
@@ -148,20 +145,26 @@ class SearchController extends Controller {
         $resultsset->totalCount = $qCount;
         $resultsset->questions = json_encode($QualResults);
 
+//        Log::toFile(print_r($QualResults, true));
 
         $pageResults = array();
 
         $cnt = $start;
         $cnt_end = $cnt + $limit;
 
+        Log::toFile('Between ' . $cnt . ' & ' . $cnt_end);
+
 //        Do Until $cnt = $cnt_end Or $cnt = $QualResults->Count;
-        while ($cnt == $cnt_end or $cnt == sizeof($QualResults)) {
+        while ($cnt <= $cnt_end || $cnt == sizeof($QualResults)) {
                 $pageResults[] = ($QualResults[$cnt]);
+
+            Log::toFile($cnt . ' of ' . $qCount . ' : ' . print_r($QualResults, true));
+
                 $cnt += 1;
         }
 
 
-            $str = '{"totalCount":"' . $qCount . '", "results":"' . json_encode($pageResults) . "}";
+            $str = '{"totalCount":"' . $qCount . '", "results":"' . json_encode($pageResults) . '"}';
 
             echo $str;
 

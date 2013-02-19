@@ -434,7 +434,7 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
 
 
             //"http://23.21.162.107/geoportal/services/SLDProvider.ashx?json=";
-            var startUrl = "http://localhost/geoportal/services/SLDProvider.ashx?json=";
+            var startUrl = "http://192.168.56.102:8080/geoportal/services/SLDProvider.ashx?json=";
 
             var params = encodeURIComponent('{"fromColour":"' + fromColour + '","toColour":"' + toColour + '","fieldName":"successful","min":' + min + ',"max": ' + max + ',"classes":' + 5 + ',"layer": "' + layerName + '"}');
 
@@ -476,8 +476,8 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
 
             //var icon = encodeURI("http://23.21.162.107:8081/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:SQL&sld=" + fullURL);
             //var LegendURL = encodeURI("http://23.21.162.107:8081/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=WISERD:SQL&sld=" + fullURL);
-            var icon = encodeURI("http://localhost:5432/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:SQL&sld=" + fullURL);
-            var LegendURL = encodeURI("http://localhost:5432/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=WISERD:SQL&sld=" + fullURL);
+            var icon = encodeURI("http://192.168.56.102:8080/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:SQL&sld=" + fullURL);
+            var LegendURL = encodeURI("http://192.168.56.102:8080/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=WISERD:SQL&sld=" + fullURL);
             var mp = Ext.getCmp('mappanel');
 
 
@@ -598,7 +598,7 @@ function addChoropleth(layer, layerName, fromColour, toColour, min, max, unit, S
 								layer: new_layer,
 								lines: true,
 								//icon: 'http://23.21.162.107:8081/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=WISERD:SQL&viewparams=tableName:' + tableName + "&sld_body='" + encodeURIComponent(SLD.conn.responseText) + "'",
-								icon: 'http://localhost:5432/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=WISERD:SQL&viewparams=tableName:' + tableName + "&sld_body='" + encodeURIComponent(SLD.conn.responseText) + "'",
+								icon: 'http://192.168.56.102:8080/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=WISERD:SQL&viewparams=tableName:' + tableName + "&sld_body='" + encodeURIComponent(SLD.conn.responseText) + "'",
 								leaf: true,
 								SID: SID,
 								LayerID: SID
