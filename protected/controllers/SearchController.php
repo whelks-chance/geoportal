@@ -2,7 +2,7 @@
 
 class SearchController extends Controller {
 
-    private $results; // As ArrayList
+    public $results; // As ArrayList
     private $QualResults; // As ArrayList
     private $count; // As Integer
     private $qCount; // As Integer
@@ -32,10 +32,10 @@ class SearchController extends Controller {
         $strVerify = "";
 
         If (sizeof($resultsExsist) == 0 && sizeof($qualResults) == 0) {
-            $strVerify = '{"failure": "true"}';
+            $strVerify = '{"failure": true}';
 
         }Else{
-            $strVerify = '{"success": "true"}';
+            $strVerify = '{"success": true}';
 
         }
 
@@ -73,7 +73,7 @@ class SearchController extends Controller {
             If ($results = null) {
                 $res = New getResults();
                 $results = $res->getQuestionnaireData($start, $limit, $Keywords, False, $Mappable);
-                $count = $res->count;
+                $count = count($res);
 
                 $_SESSION["results"] = $results;
                 $_SESSION["resCount"] = $count;
@@ -92,8 +92,8 @@ class SearchController extends Controller {
         $cnt = $start;
         $cnt_end = $cnt + $limit;
 
-        while( $cnt = $cnt_end Or $cnt = sizeof($results)){
-            $pageResults[] = ($results->Item($cnt));
+        while( $cnt == $cnt_end Or $cnt == sizeof($results)){
+            $pageResults[] = ($results[$cnt]);
             $cnt += 1;
         }
 
@@ -101,7 +101,7 @@ class SearchController extends Controller {
 
         $str = '{"totalCount":"' . $count . '", "results":"' . json_encode($pageResults) . '"}';
 
-        Return $str;
+        echo $str;
 
 
         //' Return Json(res, JsonRequestBehavior.AllowGet)
@@ -126,7 +126,7 @@ class SearchController extends Controller {
             $Mappable = $_POST['Mappable'];
         }
         if(isset($_POST['Keywords'])) {
-            $Keywords = $_POST['Keywords'];
+            $keywords = $_POST['Keywords'];
         }
 
         If ($keywords = "" ) {
@@ -155,8 +155,8 @@ class SearchController extends Controller {
         $cnt_end = $cnt + $limit;
 
 //        Do Until $cnt = $cnt_end Or $cnt = $QualResults->Count;
-        while ($cnt = $cnt_end or $cnt = sizeof($QualResults)) {
-                $pageResults[] = ($QualResults->Item($cnt));
+        while ($cnt == $cnt_end or $cnt == sizeof($QualResults)) {
+                $pageResults[] = ($QualResults[$cnt]);
                 $cnt += 1;
         }
 

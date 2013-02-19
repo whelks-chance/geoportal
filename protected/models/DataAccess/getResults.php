@@ -14,7 +14,7 @@ class getResults {
         $SSearch = "";
         //'keywords = "wales"
 
-        Log::toFile(var_export($keywordsArray));
+    //    Log::toFile(var_export($keywordsArray));
 
         If (sizeof($keywordsArray) > 1) {
 
