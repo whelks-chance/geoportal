@@ -93,14 +93,14 @@ class SearchController extends Controller {
         $cnt = $start;
         $cnt_end = $cnt + $limit;
 
-        while( $cnt == $cnt_end Or $cnt == sizeof($results)){
+        while( $cnt <= $cnt_end || $cnt == sizeof($results)){
             $pageResults[] = ($results[$cnt]);
             $cnt += 1;
         }
 
 
 
-        $str = '{"totalCount":"' . $count . '", "results":"' . json_encode($pageResults) . '"}';
+        $str = '{"totalCount":"' . $count . '", "results":' . json_encode($pageResults) . '}';
 
         echo $str;
 
@@ -158,13 +158,13 @@ class SearchController extends Controller {
         while ($cnt <= $cnt_end || $cnt == sizeof($QualResults)) {
                 $pageResults[] = ($QualResults[$cnt]);
 
-            Log::toFile($cnt . ' of ' . $qCount . ' : ' . print_r($QualResults, true));
+//            Log::toFile($cnt . ' of ' . $qCount . ' : ' . print_r($QualResults, true));
 
                 $cnt += 1;
         }
 
 
-            $str = '{"totalCount":"' . $qCount . '", "results":"' . json_encode($pageResults) . '"}';
+            $str = '{"totalCount":"' . $qCount . '", "results":' . json_encode($pageResults) . '}';
 
             echo $str;
 
