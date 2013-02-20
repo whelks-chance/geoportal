@@ -312,15 +312,16 @@ class getMetaData {
 
         $resultRows = $DA->Read($cmd);
 
+        Log::toFile("Entire Qdc : " . print_r($resultRows, true));
+
         ForEach ($resultRows as $DR) {
             $dcMeta = New DublinCore();
-
 
             $coverage = Trim($DR->coverage);
 
             $placeNames = "";
 
-            $items[] = explode($coverage, ";");
+            $items[] = explode(";", $coverage );
 
             $locDetails = "";
             $word_stats = "";
@@ -328,9 +329,9 @@ class getMetaData {
             ForEach ($items as $place) {
                 If (! $place == "" ) {
 
-                    Log::toFile("wordStats : " . $place);
+//                    Log::toFile("wordStats : " . print_r($place, true));
 
-                    $placeArray = explode($place, "wordStats");
+                    $placeArray = explode("wordStats", $place);
                     $locDetails = $placeArray[0];
                     $word_stats = $placeArray[1];
 

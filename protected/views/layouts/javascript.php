@@ -11,7 +11,7 @@ $javascriptFiles = array(
     "Libraries/Ext/ext-base.js",
     "Libraries/Ext/ext-all.js",
     "GeoTools/processing.js",
-    "Libraries/OpenLayers-2.11/OpenLayers.js",
+    "Libraries/OpenLayers-2.12/OpenLayers.js",
     "Libraries/cloudmade.js",
 
     "Components/Map/Map.js",
