@@ -116,7 +116,7 @@ class getResults {
                     $rootQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
                     $rootQ->SurveyName = Trim($surDRdr->survey_title);
                     $rootQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
-                    $rootQ->spatial = $surDRdr->spatialdata;
+                    $rootQ->spatial = ($surDRdr->spatialdata == 't');
                 }
 
 //                cnn.Close();
@@ -163,7 +163,7 @@ class getResults {
                     $singleQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
                     $singleQ->SurveyName = Trim($surDRdr->survey_title);
                     $singleQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
-                    $singleQ->spatial = $surDRdr->spatialdata;
+                    $singleQ->spatial = ($surDRdr->spatialdata == 't');
                 }
 //                cnn.Close();
                 $toFind = Trim($row->qid);
@@ -205,7 +205,7 @@ class getResults {
                     $subQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
                     $subQ->SurveyName = Trim($surDRdr->survey_title);
                     $subQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
-                    $subQ->spatial = $surDRdr->spatialdata;
+                    $subQ->spatial = ($surDRdr->spatialdata == 't');
                 } Else {
 
                 }
@@ -249,7 +249,7 @@ class getResults {
                     $compoundQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
                     $compoundQ->SurveyName = Trim($surDRdr->survey_title);
                     $compoundQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
-                    $compoundQ->spatial = $surDRdr->spatialdata;
+                    $compoundQ->spatial = ($surDRdr->spatialdata == 't');
                 }
 
                 $toFind = Trim($row->qid);
@@ -287,7 +287,7 @@ class getResults {
                     $subsubQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
                     $subsubQ->SurveyName = Trim($surDRdr->survey_title);
                     $subsubQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
-                    $subsubQ->spatial = $surDRdr->spatialdata;
+                    $subsubQ->spatial = ($surDRdr->spatialdata == 't');
                 }
 //                cnn.Close();
 //                If (Not results.ContainsKey(Trim($row->qid")))) {

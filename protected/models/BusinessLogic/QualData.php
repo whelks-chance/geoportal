@@ -34,16 +34,6 @@
     }
 
 
-    class pageCollection {
-        Public $page = "";
-        Public $place1 = "";
-        Public $place1Count; // As Integer
-        Public $place2 = "";
-        Public $place2Count ; // As Integer
-        Public $place3 = "";
-        Public $place3Count ; // As Integer
-
-    }
 
 
     class qualWords {
