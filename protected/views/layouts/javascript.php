@@ -10,6 +10,9 @@
 $javascriptFiles = array(
     "Libraries/Ext/ext-base.js",
     "Libraries/Ext/ext-all.js",
+//    "Libraries/ext-4.1.1a/ext-all.js",
+//    "Libraries/ext-4.1.1a/ext-base.js",
+
     "GeoTools/processing.js",
     "Libraries/OpenLayers-2.12/OpenLayers.js",
     "Libraries/cloudmade.js",
@@ -17,7 +20,10 @@ $javascriptFiles = array(
     "Components/Map/Map.js",
     "Components/NameSpaces/NameSpaces.js",
     "Libraries/GeoExt/GeoExt.js",
+
     "Libraries/Ext4/builds/ext-all-sandbox-debug.js",
+//    "Libraries/ext-4.1.1a/builds/ext-all-sandbox-debug.js",
+
     "Components/Map/GeoPortal.Map.Styles.js",
     "Components/Panels/GeoPortal.Panels.TreePanel.js",
     "Components/Windows/GeoPortal.Windows.MetaData.js",
@@ -39,9 +45,14 @@ $javascriptFiles = array(
     "Components/Toolbars/GeoPortal.Toolbars.FindTools.js",
     "Components/Windows/GeoPortal.Windows.Buffer.js",
     "GeoTools/GeodesicPolygon.js",
+
     "Libraries/Ext/Ux/RowExpander.js",
     "Libraries/Ext/Ux/RowActions.js",
     "Libraries/Ext/Ux/ColorPicker.js",
+//    "Libraries/ext-4.1.1a/examples/ux/RowExpander.js",
+//    "Libraries/ext-4.1.1a/examples/ux/RowActions.js",
+//    "Libraries/ext-4.1.1a/examples/ux/ColorPicker.js",
+
     "Components/Windows/GeoPortal.Windows.Results.js",
     "Components/Windows/GeoPortal.Windows.Bug.js",
     "Components/Windows/GeoPortal.Windows.AddSpatial.js",
@@ -58,12 +69,21 @@ $javascriptFiles = array(
     "GeoTools/GeoPortal.Printer.js",
     "GeoTools/GeoPortal.Reproject.js",
     "GeoTools/GeoPortal.GeoTools.HeatMap.js",
+
     "Libraries/Ext/Ux/ColorPicker.js",
     "Libraries/Ext/Ux/ColorMenu.js",
     "Libraries/Ext/Ux/ColorPickerField.js",
     "Libraries/Ext/Ux/TreeNodeWGP.js",
     "Libraries/Ext/Ux/ColumnTree.js",
     "Libraries/Ext/Ux/RowActions.js",
+
+//    "Libraries/ext-4.1.1a/examples/ux/ColorPicker.js",
+//    "Libraries/ext-4.1.1a/examples/ux/ColorMenu.js",
+//    "Libraries/ext-4.1.1a/examples/ux/ColorPickerField.js",
+//    "Libraries/ext-4.1.1a/examples/ux/TreeNodeWGP.js",
+//    "Libraries/ext-4.1.1a/examples/ux/ColumnTree.js",
+//    "Libraries/ext-4.1.1a/examples/ux/RowActions.js",
+
     "Components/Windows/GeoPortal.Windows.SpatialSearchResults.js",
     "Components/Windows/GeoPortal.Windows.WMS.js",
     "Components/Forms/GeoPortal.Forms.UsabilityLogin.js"
@@ -78,6 +98,7 @@ $jqueryFiles = array(
 
 $cssFiles = array(
     "Javascript/Libraries/Ext4/resources/css/ext-sandbox.css",
+//    "Javascript/Libraries/ext-4.1.1a/resources/css/ext-all.css",
     "CSS/xtheme-wiserd-grey.css",
     "CSS/style.css",
     "CSS/wgp.css",

@@ -15,7 +15,6 @@ $this->breadcrumbs=array(
 
 
 ?>
-<!--alert("--><?// echo Yii::app()->baseUrl ?><!--");-->
 
 <script type="text/javascript">
 
@@ -177,6 +176,6 @@ $this->breadcrumbs=array(
 <!--    </div>-->
 
     <div id="mapLoader" style="padding: 5px; background-color: white; text-align: justify; font-style:italic; font-family:Sans-Serif; font-variant:small-caps" >
-        <img src="images/loading_small.gif" style="padding-right: 2px; padding-left: 2px" /><a>Loading Map.....</a>
+        <img src=" <? echo Yii::app()->baseUrl?>/images/loading_small.gif" style="padding-right: 2px; padding-left: 2px" /><a>Loading Map.....</a>
     </div>
 </form>

@@ -1,38 +1,6 @@
 ﻿
 Namespace GeoPortal.Models.BusinessLogic
 
-    Public Class AvailableSpatialUnits
-
-        Public spatial_id As String
-        Public Name As String
-        Public long_start As String
-        Public long_finish As String
-        Public short_name As String
-
-
-    End Class
-
-    Public Class ResponseSpatialUnits
-        Public TotalResp As Integer
-        Public ChoroValue As Double
-        Public ChoroField As String
-        Public LabelField As String
-        Public WKT As String
-        Public Name As String
-        Public Colour As String
-
-    End Class
-
-    Public Class quantDataRecord
-        Public surveyName As String
-        Public survey_id As String
-        Public the_geom As New Dictionary(Of String, geom)
-        Public year As String
-        Public unit As String
-
-    End Class
-
-
     Public Class quantDataRecord2
         Public tName As String
         Public sName As String
