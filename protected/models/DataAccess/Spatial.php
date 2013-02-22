@@ -13,24 +13,24 @@
 
             $cmd = pg_query($cnn, $selectStr);
 
-            // cnn->Open();
+            //$cnn->Open();
 
-            $DR As Npgsql->NpgsqlDataReader = cmd->ExecuteReader
+            $DR = $cmd->ExecuteReader;
 
 
-            Do While DR->Read
+            while ( $DR->Read()) {
                 $units = New AvailableSpatialUnits();
-                $units->spatial_id = Trim($DR ->spatial_id);
-                $units->long_start = Trim($DR ->long_start);
-                $units->long_finish = Trim($DR ->long_finish);
-                $units->Name = $this::getFullName($DR ->spatial_id);
+                $units->spatial_id = Trim($DR->spatial_id);
+                $units->long_start = Trim($DR->long_start);
+                $units->long_finish = Trim($DR->long_finish);
+                $units->Name = $this::getFullName($DR->spatial_id);
                 $units->short_name = explode("_", $DR->spatial)[3]->ToLower;
 
                 $results[] = ($units);
-            Loop
+        }
 
 
-            Return results;
+            Return $results;
 
         }
 
@@ -41,27 +41,27 @@
 
             $cnn = $dc->getDBConnection("Survey_Data");
 
-            $selectStr = "Select column_name as name from information_schema->columns where table_name ='" . TableName . "';";
+            $selectStr = "Select column_name as name from information_schema.columns where table_name = '" . $TableName . "';";
 
 
             $results = array();
 
             $cmd = pg_query($cnn, $selectStr);
 
-            // cnn->Open();
+            //$cnn->Open();
 
-            $DR As Npgsql->NpgsqlDataReader = cmd->ExecuteReader
+            $DR = $cmd->ExecuteReader;
 
 
-            Do While DR->Read
-                $label = New SpatialLabels()
-                label->Name = Trim($DR ->Name);
-                results[] = (label);
-            Loop
+            Do While$DR->Read;
+                $label = New SpatialLabels();
+               $label->Name = Trim($DR->Name);
+                $results[] = ($label);
+            Loop;
 
-            cnn->Close();
+           $cnn->Close();
 
-            Return results
+            Return $results;
 
         }
 
@@ -71,30 +71,30 @@
 
             $cnn = $dc->getDBConnection("Survey_Data");
 
-            $selectStr = "Select * from " . TableName . ";";
+            $selectStr = "Select * from " . $TableName . ";";
 
 
             $results = array();
 
             $cmd = pg_query($cnn, $selectStr);
 
-            // cnn->Open();
+            //$cnn->Open();
 
-            $DR As Npgsql->NpgsqlDataReader = cmd->ExecuteReader
+            $DR = $cmd->ExecuteReader;
 
             $spatialSUAll = New SpatialSubUnits();
-            spatialSUAll->Name = "All";
-            results[] = ($spatialSUAll);
+           $spatialSUAll->Name = "All";
+            $results[] = ($spatialSUAll);
 
-            Do While DR->Read
+            Do While$DR->Read;
                 $spatialSU = New SpatialSubUnits();
-                spatialSU->Name = Trim($DR->Item[1]);
-                results[] = (spatialSU);
-            Loop
+               $spatialSU->Name = Trim($DR->Item[1]);
+                $results[] = (spatialSU);
+            Loop;
 
-            cnn->Close();
+           $cnn->Close();
 
-            Return results
+            Return $results;
 
         }
 
@@ -105,32 +105,32 @@
 
             $cnn = $dc->getDBConnection("Survey_Data");
 
-            $selectStr = "Select * from " . TableName . ";";
+            $selectStr = "Select * from " . $TableName . ";";
 
 
             $results = array();
 
             $cmd = pg_query($cnn, $selectStr);
 
-            // cnn->Open();
+            //$cnn->Open();
 
-            $DR As Npgsql->NpgsqlDataReader = cmd->ExecuteReader
+            $DR = $cmd->ExecuteReader;
 
 
             $spatialSUMap = New SpatialSubUnits();
-            spatialSUMap->Name = "Current Map Extent";
-            results[] = (spatialSUMap);
+           $spatialSUMap->Name = "Current Map Extent";
+            $results[] = (spatialSUMap);
 
 
-            Do While DR->Read
+            Do While$DR->Read;
                 $spatialSU = New SpatialSubUnits();
-                spatialSU->Name = Trim($DR->Item[1]);
-                results[] = (spatialSU);
-            Loop
+               $spatialSU->Name = Trim($DR->Item[1]);
+                $results[] = (spatialSU);
+            Loop;
 
-            cnn->Close();
+           $cnn->Close();
 
-            Return results
+            Return $results;
 
         }
 
@@ -139,44 +139,44 @@
             $dc = New getDBConnections();
 
             $cnn = $dc->getDBConnection("Survey_Data");
-            $big_geom
+            $big_geom;
             $suffix = "";
 
            If ( $the_geom = "N/A" ) {
 
-                suffix = getTableName(SID, MajorUnit);
+               $suffix = getTableName(SID, MajorUnit);
 
-                big_geom = "(SELECT the_geom from spatialdata->" . suffix . " WHERE area_name ='" . $S ubUnit . "')";
+               $big_geom = "(SELECT the_geom from spatialdata." . $suffix . " WHERE area_name = '" . $SubUnit . "')";
           } Else {
-                big_geom = the_geom
+               $big_geom = the_geom;
 
             }
 
 
-            $selectStr = "SELECT * FROM public->" . UnitName . " WHERE ST_Intersects('" . big_geom . "', the_geom);";
+            $selectStr = "SELECT * FROM public." . $UnitName . " WHERE ST_Intersects('" . $big_geom . "', the_geom);";
 
 
             $results = array();
 
             $cmd = pg_query($cnn, $selectStr);
 
-            // cnn->Open();
+            //$cnn->Open();
 
-            $DR As Npgsql->NpgsqlDataReader = cmd->ExecuteReader
+            $DR = $cmd->ExecuteReader;
 
             $spatialSUAll = New SpatialSubUnits();
-            spatialSUAll->Name = "All";
-            results[] = (spatialSUAll);
+           $spatialSUAll->Name = "All";
+            $results[] = (spatialSUAll);
 
-            Do While DR->Read
+            Do While$DR->Read;
                 $spatialSU = New SpatialSubUnits();
-                spatialSU->Name = Trim($DR->Item[1]);
-                results[] = (spatialSU);
-            Loop
+               $spatialSU->Name = Trim($DR->Item[1]);
+                $results[] = (spatialSU);
+            Loop;
 
-            cnn->Close();
+           $cnn->Close();
 
-            Return results
+            Return $results;
 
         }
 
@@ -187,32 +187,32 @@
 
             $cnn = $dc->getDBConnection("Survey_Data");
 
-            $selectStr = "Select column_name as name from information_schema->columns where table_name ='" . TableName . "';";
+            $selectStr = "Select column_name as name from$information_schema->columns where table_name = '" . $TableName . "';";
 
 
             $results = array();
 
             $cmd = pg_query($cnn, $selectStr);
 
-            // cnn->Open();
+            //$cnn->Open();
 
-            $DR As Npgsql->NpgsqlDataReader = cmd->ExecuteReader
+            $DR = $cmd->ExecuteReader;
 
-          // 'Advance reader through the first two records as not applicable for choropleth mapping
-            DR->Read();
-            DR->Read();
+          // 'Advance reader through the first two records as not applicable for choropleth mapping;
+           $DR->Read();
+           $DR->Read();
 
 
-            Do While DR->Read
+            Do While$DR->Read;
 
-                $label = New SpatialLabels
-                label->Name = Trim($DR ->Name));
-                results[] = (label);
-            Loop
+                $label = New SpatialLabels;
+               $label->Name = Trim($DR->Name));
+                $results[] = (label);
+            Loop;
 
-            cnn->Close();
+           $cnn->Close();
 
-            Return results;
+            Return $results;
 
         }
 
@@ -251,7 +251,7 @@
 
             $cnn = $db->getDBConnection("Survey_Data");
 
-//            $DT = New DataTable
+//            $DT = New DataTable;
 
             $Link_ID = "";
 
@@ -259,50 +259,50 @@
 
 
            If ( $SubUnit = "All" ) {
-                $queryStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other, response_rate, adjusted_rr, ST_AsEWKT(st_simplifypreservetopology(the_geom, 0->001)) as the_geom FROM " . $Link_ID->ToLower . ";";
+                $queryStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other, response_rate, adjusted_rr, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->001)) as the_geom FROM " . $Link_ID->ToLower . ";";
 
            } Else {
-                $queryStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other, response_rate, adjusted_rr, ST_AsEWKT(st_simplifypreservetopology(the_geom, 0->001)) as the_geom FROM " . $Link_ID->ToLower . " WHERE area_name='" . $SubUnit . "';";
+                $queryStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other, response_rate, adjusted_rr, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->001)) as the_geom FROM " . $Link_ID->ToLower . " WHERE area_name= '" . $SubUnit . "';";
 
             }
 
            $resultRows = pg_query($cnn, $queryStr);
 
 
-            $cnt As Integer = DT->Rows->Count();
+            $cnt = sizeof($DT->Rows);
 
 
            If ( $cnt > 0 ) {
-              // 'calculate choropleth stats
+              // 'calculate choropleth stats;
 
-              // 'If Interval > DT->Rows->Count ) {
-              // '    Interval = DT->Rows->Count
+              // 'If Interval >$DT->Rows->Count ) {
+              // '   $Interval = $DT->Rows->Count;
               // '}
 
 
-                ForEach ( row As DataRow ) //DT->Rows
-                    $total As Integer = row ->total)// 'DT->Compute("Sum(" . ChoroplethField . ")", Nothing);
+                ForEach ( $DT->Rows as $row ) {
+                    $total = $row->total;// 'DT->Compute("Sum(" . $ChoroplethField . ")", Nothing);
 
-                    $colorList As Dictionary(Of Integer, Color) = generateColourRange(fromColour, toColour, generateEqualInterval(total, Interval), Interval);
+                    $colorList = $this::generateColourRange($fromColour, $toColour, $this::generateEqualInterval($total, $Interval), $Interval);
 
-                   If ( $IsDBNull($row ->the_geom)) ) {
+                   If ( $IsDBNull($row->the_geom)) ) {
 
                   } Else {
                         $SU = New ResponseSpatialUnits();
-                        $SU->TotalResp = $row ->total);
-                        $SU->ChoroField = $ChoroplethField
-                        $SU->ChoroValue = $row->Item($ChoroplethField);
-                        $SU->LabelField = $row->Item($Label);
-                        $SU->Name = $row ->area_name);
-                        $SU->WKT = $row ->the_geom)->Split(";")[1]
-                        $SU->Colour = getColour($colorList, $row->Item($ChoroplethField));
+                        $SU->TotalResp = $row->total;
+                        $SU->ChoroField = $ChoroplethField;
+                        $SU->ChoroValue = $row->$ChoroplethField;
+                        $SU->LabelField = $row->$Label;
+                        $SU->Name = $row->area_name;
+                        $SU->WKT = $row->the_geom->Split(";")[1];
+                        $SU->Colour = $this::getColour($colorList, $row->$ChoroplethField);
 
                         $results[] = ($SU);
                     }
                 }
             }
 
-            Return results;
+            Return $results;
 
         }
 
@@ -336,112 +336,109 @@
 
           // ' $
 
-            $intervalRange = Math->Round(Total / intervals, System->MidpointRounding->AwayFromZero);
+            $intervalRange = $Math->Round($Total / $intervals,$System->MidpointRounding->AwayFromZero);
 
 
 
-            Return intervalRange;
+            Return $intervalRange;
         }
 
 
-        Public Function generateColourRange($fromColour, $ToColour, $intervalRange As Integer, $intervalCount As Double) As Dictionary(Of Integer, Color);
+        Public Function generateColourRange($fromColour, $ToColour, $intervalRange , $intervalCount) {
 
 
-            $classInterval As Integer = intervalRange
+            $classInterval = $intervalRange;
 
-            $startColor As Color = ColorTranslator->FromHtml(fromColour);
-            $endColor As Color = ColorTranslator->FromHtml(ToColour);
+            $startColor = ColorTranslator->FromHtml($fromColour);
+            $endColor = ColorTranslator->FromHtml($ToColour);
 
-            $colourList = New Dictionary(Of Integer, Color);
-            $i As Integer = 0
+            $colourList = array();
+            $i = 0;;
 
-
-            $rMax As Integer = endColor->R
-            $rMin As Integer = startColor->R
-            $gMax As Integer = endColor->G
-            $gMin As Integer = startColor->G
-            $bMax As Integer = endColor->B
-            $bMin As Integer = startColor->B
-
+            $rMax = $endColor->R;
+            $rMin = $startColor->R;
+            $gMax = $endColor->G;
+            $gMin = $startColor->G;
+            $bMax = $endColor->B;
+            $bMin = $startColor->B;
 
 
-            Do While i < intervalCount
+            While ($i < $intervalCount) {
 
-                $rAverage As Integer = rMin + CInt((rMax - rMin) * i / intervalCount);
-                $gAverage As Integer = gMin + CInt((gMax - gMin) * i / intervalCount);
-                $bAverage As Integer = bMin + CInt((bMax - bMin) * i / intervalCount);
+                $rAverage = $rMin = $CInt(($rMax - $rMin) * $i / $intervalCount);
+                $gAverage = $gMin = $CInt(($gMax - $gMin) * $i / $intervalCount);
+                $bAverage = $bMin = $CInt(($bMax - $bMin) * $i / $intervalCount);
 
-                colourList[] = (classInterval, Color->FromArgb(rAverage, gAverage, bAverage));
-                classInterval = (classInterval + intervalRange) + 1
-                i += 1
-            Loop
+                $colourList[] = (classInterval,$Color->FromArgb($rAverage, $gAverage, $bAverage));
+               $classInterval = $(classInterval = $intervalRange)$ = $1;
+                $i += 1;
+            }
 
 
 
-            Return colourList
+            Return $colourList;
 
 
         }
 
-        Public Function getColour($Colours As Dictionary(Of Integer, Color), $value As Integer);
+        Public Function getColour($Colours, $value ) {
 
-            ForEach ( item ) //Colours
-               If ( $value->CompareTo(item->Key) < 0 ) {
-                    Return ColorTranslator->ToHtml(item->Value);
+            ForEach ( $Colours as $item ) //Colours;
+               If ( $value->CompareTo($item->Key) < 0 ) {
+                    Return ColorTranslator->ToHtml($item->Value);
                 }
             }
         }
 
 
-        Public Function VerifySpatialSearch($coords, $type, $dist As Integer) As Boolean
+        Public Function VerifySpatialSearch($coords, $type, $dist ){
 
 
             $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
 
             $DB = New getDBConnections();
-            $cnn = $DB-getDBConnection("Survey_Data");
+            $cnn = $DB->getDBConnection("Survey_Data");
 
-            $DA As Npgsql->NpgsqlDataAdapter = New Npgsql->NpgsqlDataAdapter(getTables, cnn);
+            $DA = pg_query($cnn, $getTables);
 
-            $DT = New DataTable
+            $DT = New DataTable;
 
-            DA->Fill(DT);
+           $DA->Fill(DT);
 
 
-            ForEach ( row As DataRow ) //DT->Rows
+            ForEach ( $DT->Rows as $row ) {
 
-                $$tableName = row ->f_table_name");
-                $geom_col = row ->f_geometry_column");
+                $tableName = $row->f_table_name;
+                $geom_col = $row->f_geometry_column;
 
-                $selStr = New StringBuilder
-                selStr->Append("SELECT * from  ");
-                selStr->Append($tableName . " ");
-                selStr->Append("WHERE ST_DWithin(ST_Transform(ST_SetSRID(ST_MakePoint(");
-                selStr->Append(coords);
-                selStr->Append("), 4326), 4326) ,ST_Transform(");
-                selStr->Append($tableName . "->" . geom_col . ",");
-                selStr->Append(" 4326)," . dist . ") LIMIT 1;");
+                $selStr = "";
+               $selStr .= ("SELECT * from  ");
+               $selStr .= ($tableName . " ");
+               $selStr .= ("WHERE ST_DWithin(ST_Transform(ST_SetSRID(ST_MakePoint(");
+               $selStr .= ($coords);
+               $selStr .= ("), 4326), 4326) ,ST_Transform(");
+               $selStr .= ($tableName . "->" . $geom_col . ",");
+               $selStr .= (" 4326)," . $dist . ") LIMIT 1;");
 
-                $DR As Npgsql->NpgsqlDataReader
+ 
+                $cmd = pg_query($cnn, $selStr);
 
-                $cmd = New Npgsql->NpgsqlCommand(selStr, cnn);
-
-                // cnn->Open();
-                DR = cmd->ExecuteReader();
+                //$cnn->Open();
+               $DR = $cmd->ExecuteReader();
 
                If ( $DR->Read ) {
-                    cnn->Close();
-                    Return True
+                   $cnn->Close();
+                    Return True;
                 }
 
-                cnn->Close();
+//               $cnn->Close();
 
 
 
             }
 
 
-            Return False
+            Return False;
 
 
 
@@ -454,95 +451,94 @@
             $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
 
             $DB = New getDBConnections();
-            $cnn = $DB-getDBConnection("Survey_Data");
+            $cnn = $DB->getDBConnection("Survey_Data");
 
-            $DA As Npgsql->NpgsqlDataAdapter = New Npgsql->NpgsqlDataAdapter(getTables, cnn);
+            $DA = pg_query($cnn, $getTables);
 
-            $DT = New DataTable
+            $DT = New DataTable;
 
-            DA->Fill(DT);
-            $SS = New SpatialSearch2
+           $DA->Fill(DT);
+            $SS = New SpatialSearch2;
 
-            $tableMinMax = New Dictionary(Of String, Integer());
+            $tableMinMax = array();
 
-            ForEach ( row As DataRow ) //DT->Rows
-                $selStr = New StringBuilder
-                $$tableName = row ->f_table_name");
-                $geom_col = row ->f_geometry_column");
-
-
-                selStr->Append("SELECT area_name from " . $tableName);
-                selStr->Append(" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . geography . "', 27700), 4326)," . geom_col . ");");
+            ForEach ( $DT->Rows as $row ) {
+                $selStr = "";
+                $tableName = $row->f_table_name);
+                $geom_col = $row->f_geometry_column);
 
 
-                $DataAdapter = New Npgsql->NpgsqlDataAdapter(selStr, cnn);
-                $resultsTable = New DataTable
-                DataAdapter->Fill(resultsTable);
-
-                $surveyDetails As Dictionary(Of String, String) = getSurveyNameYear($tableName);
+               $selStr .= ("SELECT area_name from " . $tableName);
+               $selStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326)," . $geom_col . ");");
 
 
-                ForEach ( datarow As DataRow ) //resultsTable->Rows
-                    $quantsData = New quantDataRecord2
+                $DataAdapter = pg_query($cnn, $selStr);
+                $resultsTable = New DataTable();
+               $DataAdapter->Fill($resultsTable);
 
-                   If ( $surveyDetails->Count = 0 ) {
-                        $quantsData->sName = $tableName
-                        $quantsData->sYear = 9999
+                $surveyDetails = getSurveyNameYear($tableName);
+
+
+                ForEach ( $resultsTable->Rows as $datarow ) {
+                    $quantsData = New quantDataRecord2();
+
+                   If ( sizeof($surveyDetails) = 0 ) {
+                        $quantsData->sName = $tableName;
+                        $quantsData->sYear = 9999;
                   } Else {
-                        $quantsData->sName = surveyDetails ->surveyName");
-                        $quantsData->sYear = surveyDetails ->year");
+                        $quantsData->sName = $surveyDetails->surveyName);
+                        $quantsData->sYear = $surveyDetails->year);
                     }
 
 
-                  // 'Convert text column to integer value and get min and max values
-                    $min = "Select min(cast(successful as int)) from " . $tableName
-                    $max = "Select max(cast(successful as int)) from " . $tableName
+                  // 'Convert text column to integer value and get min and max values;
+                    $min = "Select min(cast(successful as int)) from " . $tableName;
+                    $max = "Select max(cast(successful as int)) from " . $tableName;
 
 
-                    $quantsData->geography = $tableName->Split("_")(3)->ToUpper
-                    $quantsData->tName = $tableName
-                    $quantsData->sID = $tableName->Split("_")[1] . "_" . $tableName->Split("_")[2]
+                    $quantsData->geography = $tableName->Split("_")(3)->ToUpper;
+                    $quantsData->tName = $tableName;
+                    $quantsData->sID = $tableName->Split("_")[1] . "_" . $tableName->Split("_")[2];
 
                    If ( !$tableMinMax->ContainsKey($tableName) ) {
-                        $cmd = New Npgsql->NpgsqlCommand(min, cnn);
-                       If ( $cnn->State = ConnectionState->Closed ) {
-                            // cnn->Open();
+                        $cmd = pg_query($cnn, $min);
+                       If ( $cnn->State = $ConnectionState->Closed ) {
+                            //$cnn->Open();
 
                         }
-                        $minMax[1] As Integer
+                        $minMax[1] ;
 
-                      $quantsData->min = cmd->ExecuteScalar();
+                      $quantsData->min = $cmd->ExecuteScalar();
 
-                        cmd->CommandText = max
+                       $cmd->CommandText = $max;
 
-                      $quantsData->max = cmd->ExecuteScalar();
+                      $quantsData->max = $cmd->ExecuteScalar();
 
-                        cnn->Close();
+//                       $cnn->Close();
 
-                        minMax[0] = quantsData->min
-                        minMax[1] = quantsData->max
+                        $minMax[0] = $quantsData->min;
+                        $minMax[1] = $quantsData->max;
 
-                        tableMinMax[] = ($tableName, minMax);
+                        $tableMinMax[] = ($tableName, $minMax);
 
                   } Else {
 
 
-                      $quantsData->min = tableMinMax->Item($tableName)[0]
-                      $quantsData->max = tableMinMax->Item($tableName)[1]
+                      $quantsData->min = $tableMinMax->Item($tableName)[0];
+                      $quantsData->max = $tableMinMax->Item($tableName)[1];
                     }
 
 
 
-                    $quantsData->gName = datarow ->area_name");
+                    $quantsData->gName = $datarow->area_name;
 
                    If ( $SS->quantData->ContainsKey($tableName) ) {
-                        SS->quantData($tableName)->gName += "; " . $quantsData->gName
+                       $SS->quantData($tableName)->gName .= "; " . $quantsData->gName;
 
                   } Else {
 
-                        SS->quantData[] = ($tableName, quantsData);
-                        SS->quantCount += 1
-                    }
+                       $SS->quantData[$tableName] = $quantsData;
+                       $SS->quantCount .= 1;                    }
 
 
                 }
@@ -553,63 +549,63 @@
 
             $qcnn = $DB-getDBConnection("Qual_Data");
 
-            $QselStr = New StringBuilder
+            $QselStr = "";
 
 
-            QselStr->Append("SELECT * FROM qualdata->dc_info ");
-            QselStr->Append(" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . geography . "', 27700), 4326), qualdata->dc_info->the_geom);");
+           $QselStr .= ("SELECT * FROM qualdata.dc_info ");
+           $QselStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326),$qualdata->dc_info->the_geom);");
 
 
-            $QDataAdapter = New Npgsql->NpgsqlDataAdapter(QselStr, qcnn);
-            $QresultsTable = New DataTable
-            QDataAdapter->Fill(QresultsTable);
+            $QDataAdapter = pg_query($qcnn, $QselStr);
+            $QresultsTable = New DataTable;
+           $QDataAdapter->Fill($QresultsTable);
 
 
-            ForEach ( Qdatarow As DataRow ) //QresultsTable->Rows
+            ForEach ( $QresultsTable->Rows as $Qdatarow ) {
 
-                $coverage = Qdatarow ->coverage");
+                $coverage = $Qdatarow->coverage;
 
-                $items() = coverage->Split(";");
+                $items = $coverage->Split(";");
 
                 $locDetails = "";
                 $word_stats = "";
 
-                ForEach ( place ) //items
+                ForEach ($items as $place ) //items;
                    If ( !$place == "") {
 
 
-                        locDetails = Regex->Split(place, "wordStats")[0]
-                        word_stats = Regex->Split(place, "wordStats")[1]
+                       $locDetails = $Regex->Split(place, "wordStats")[0];
+                       $word_stats = $Regex->Split(place, "wordStats")[1];
 
-                        word_stats = word_stats->Remove(0, word_stats->IndexOf("["));
+                       $word_stats = $word_stats->Remove(0,$word_stats->IndexOf("["));
 
-                        word_stats = word_stats->Remove((word_stats->Length - 3), 3);
+                       $word_stats = $word_stats->Remove(($word_stats->Length - 3), 3);
 
-                        locDetails += "wordsStats"":" . word_stats . "}";
+                        $locDetails .= "wordsStats" . ":" . $word_stats . "}";
 
-                        $places As unlockDetails = Newtonsoft->Json->JsonConvert->DeserializeObject(Of unlockDetails)(locDetails);
+                        $places = json_decode(Of unlockDetails)(locDetails);
 
-                       If ( !$places Is Nothing ) {
+                       If ( !$places = null ) {
 
-                            $qualData = New qualDataRecordGroup
-                            qualData->sName = Trim(Qdatarow ->identifier"));
+                            $qualData = New qualDataRecordGroup;
+                           $qualData->sName = Trim($Qdatarow->identifier));
 
-                            $coord = New qualCoords
-                            coord->lat = places->lat
-                            coord->lon = places->lon
-                            coord->name = places->Name
-                            coord->counts = places->Occurences
-                            qualData->gName[] = (coord);
-                            qualData->name = Trim(Qdatarow ->title"));
-                            qualData->creator = Trim(Qdatarow ->creator"));
-                            qualData->thematic = Trim(Qdatarow ->thematic_group"));
-                            qualData->recorddate = Trim(Qdatarow ->created"));
+                            $coord = New qualCoords;
+                           $coord->lat = $places->lat;
+                           $coord->lon = $places->lon;
+                           $coord->name = $places->Name;
+                           $coord->counts = $places->Occurences;
+                           $qualData->gName[] = (coord);
+                           $qualData->name = Trim($Qdatarow->title);
+                           $qualData->creator = Trim($Qdatarow->creator);
+                           $qualData->thematic = Trim($Qdatarow->thematic_group);
+                           $qualData->recorddate = Trim($Qdatarow->created);
 
-                           If ( $SS->qualData->ContainsKey(Qdatarow ->identifier")) ) {
-                                SS->qualData->Item(Qdatarow ->identifier"))->gName[] = (coord);
+                           If ( $SS->qualData->ContainsKey($Qdatarow->identifier) ) {
+                               $SS->qualData->$Qdatarow->identifier->gName[] = ($coord);
                           } Else {
-                                SS->qualData[] = (Qdatarow ->identifier"), qualData);
-                                SS->qualCount += 1
+                               $SS->qualData[$Qdatarow->identifier] = $qualData;
+                               $SS->qualCount += 1;
                             }
                         }
 
@@ -622,249 +618,68 @@
 
 
 
-            results[] = (SS);
+            $results[] = ($SS);
 
-            Return results
+            Return $results;
 
 
         }
 
 
 
-          // 'Public Function SpatialSearch($shape, $type, $dist As Integer) {
 
-          // '$results = array();
-          // '$getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
+        Private Function getSurveyNameYear($tableName){
 
-          // '$DB = New getDBConnections();
-          // '$cnn = $DB-getDBConnection("Survey_Data");
-
-          // '$DA As Npgsql->NpgsqlDataAdapter = New Npgsql->NpgsqlDataAdapter(getTables, cnn);
-
-          // '$DT = New DataTable
-
-          // 'DA->Fill(DT);
-
-          // 'Survey Data
-
-          // '$SS = New SpatialSearch
-          // '$oneDegree As Double = 110570
-
-          // '$approx_deg_dist As Double = (dist * 1000) / oneDegree
-
-          // 'ForEach ( row As DataRow ) //DT->Rows
-
-          // '    $$tableName = row ->f_table_name");
-          // '    $geom_col = row ->f_geometry_column");
-
-
-
-
-          // '    $selStr = New StringBuilder
-
-          // '    selStr->Append("SELECT area_name, ST_AsEWKT(st_simplifypreservetopology(the_geom, 0->000225)) as the_geom from  ");
-          // '    selStr->Append($tableName . " ");
-          // '    selStr->Append("WHERE ST_Intersects(ST_Buffer(ST_SetSRID(ST_MakePoint(");
-          // '    selStr->Append(coords);
-          // '    selStr->Append("), 4326), 0->045 ");
-          // '    selStr->Append($tableName . "->" . geom_col);
-          // '    selStr->Append("," . approx_deg_dist . ")");
-
-
-          // '    selStr->Append("SELECT area_name, ST_AsEWKT(st_simplifypreservetopology(the_geom, 0->000225)) as the_geom from  ");
-          // '    selStr->Append($tableName . " ");
-          // '    selStr->Append("WHERE ST_DWithin(ST_SetSRID(ST_MakePoint(");
-          // '    selStr->Append(coords);
-          // '    selStr->Append("), 4326),");
-          // '    selStr->Append($tableName . "->" . geom_col);
-          // '    selStr->Append("," . approx_deg_dist . ")");
-
-
-          // '    ###With reprojection of data - more accurate but takes far longer to run->->->->###
-          // '    selStr->Append("SELECT area_name, ST_AsEWKT(st_simplifypreservetopology(the_geom, 0->000225)) as the_geom from  ");
-          // '    selStr->Append($tableName . " ");
-          // '    selStr->Append("WHERE ST_DWithin(ST_Transform(ST_SetSRID(ST_MakePoint(");
-          // '    selStr->Append(coords);
-          // '    selStr->Append("), 4326), 27700), ST_Transform( ");
-          // '    selStr->Append($tableName . "->" . geom_col);
-          // '    selStr->Append(",27700)," . (dist * 1000) . ")");
-
-
-
-          // '    $DataAdapter = New Npgsql->NpgsqlDataAdapter(selStr, cnn);
-          // '    $resultsTable = New DataTable
-          // '    DataAdapter->Fill(resultsTable);
-
-          // '    $surveyDetails As Dictionary(Of String, String) = getSurveyNameYear($tableName);
-
-
-          // '    ForEach ( datarow As DataRow ) //resultsTable->Rows
-          // '        $quantsData = New quantDataRecord
-
-          // '       If ( $surveyDetails->Count = 0 ) {
-          // '            $quantsData->surveyName = $tableName
-          // '            $quantsData->year = 9999
-          // '      } Else {
-          // '            $quantsData->surveyName = surveyDetails ->surveyName");
-          // '            $quantsData->year = surveyDetails ->year");
-          // '        }
-
-          // '        $quantsData->unit = $tableName->Split("_")(3);
-
-          // '        $quantsData->survey_id = $tableName->Split("_")[1] . "_" . $tableName->Split("_")[2]
-          // '        $geom = New geom
-          // '        geom->Name = datarow ->area_name");
-          // '        geom->geom = datarow ->the_geom")->Split(";")[1]
-
-          // '       If ( $SS->quantData->ContainsKey($tableName) ) {
-
-
-          // '            SS->quantData->Item($tableName)->the_geom[] = (datarow ->area_name"), geom);
-
-          // '      } Else {
-
-          // '            $quantsData->the_geom[] = (datarow ->area_name"), geom);
-
-          // '            SS->quantData[] = ($tableName, quantsData);
-          // '            SS->quantCount += 1
-          // '        }
-
-
-          // '    }
-
-
-
-
-          // '}
-          // ''Qual Data
-
-          // '$qcnn = $DB-getDBConnection("Qual_Data");
-
-          // '$QselStr = New StringBuilder
-          // 'QselStr->Append("SELECT * from ");
-          // 'QselStr->Append("qualdata->dc_info ");
-          // 'QselStr->Append("WHERE ST_DWithin(ST_SetSRID(ST_MakePoint(");
-          // 'QselStr->Append(coords);
-          // 'QselStr->Append("), 4326),");
-          // 'QselStr->Append("qualdata->dc_info->the_geom");
-          // 'QselStr->Append("," . approx_deg_dist . ")");
-
-
-          // '$QDataAdapter = New Npgsql->NpgsqlDataAdapter(QselStr, qcnn);
-          // '$QresultsTable = New DataTable
-          // 'QDataAdapter->Fill(QresultsTable);
-
-
-          // 'ForEach ( Qdatarow As DataRow ) //QresultsTable->Rows
-
-          // '    $coverage = Qdatarow ->coverage");
-
-          // '    $items() = coverage->Split(";");
-
-          // '    $locDetails = "";
-          // '    $word_stats = "";
-
-          // '    ForEach ( place ) //items
-          // '       If ( !$place == "") {
-
-
-          // '            locDetails = Regex->Split(place, "wordStats")[0]
-          // '            word_stats = Regex->Split(place, "wordStats")[1]
-
-          // '            word_stats = word_stats->Remove(0, word_stats->IndexOf("["));
-
-          // '            word_stats = word_stats->Remove((word_stats->Length - 3), 3);
-
-          // '            locDetails += "wordsStats"":" . word_stats . "}";
-
-          // '            $places As unlockDetails = Newtonsoft->Json->JsonConvert->DeserializeObject(Of unlockDetails)(locDetails);
-
-          // '           If ( !$places Is Nothing ) {
-
-          // '                $qualData = New qualDataRecordGroup
-          // '                qualData->identifier = Trim(Qdatarow ->identifier"));
-
-          // '                $coord = New qualCoords
-          // '                coord->lat = places->lat
-          // '                coord->lon = places->lon
-          // '                coord->name = places->Name
-          // '                coord->counts = places->Occurences
-          // '                qualData->coords[] = (coord);
-          // '                qualData->title = Trim(Qdatarow ->title"));
-
-
-          // '               If ( $SS->qualData->ContainsKey(Qdatarow ->identifier")) ) {
-          // '                    SS->qualData->Item(Qdatarow ->identifier"))->coords[] = (coord);
-          // '              } Else {
-          // '                    SS->qualData[] = (Qdatarow ->identifier"), qualData);
-          // '                    SS->qualCount += 1
-          // '                }
-          // '            }
-
-          // '        }
-
-          // '    }
-
-
-          // '}
-
-          // 'results[] = (SS);
-
-          // 'Return results
-
-
-        Private Function getSurveyNameYear($$tableName) As Dictionary(Of String, String);
-
-            $details = New Dictionary(Of String, String);
+            $details = array();
 
             $db = New getDBConnections();
             $cnn = $db->getDBConnection("Survey_Data");
 
 
-            $selSurveyStr = "Select surveyid from survey_spatial_link where lower(spatial_id) ='" . Trim($tableName->ToLower) . "'";
-            $DR1 As Npgsql->NpgsqlDataReader
+            $selSurveyStr = "Select surveyid from survey_spatial_link where lower(spatial_id) = '" . Trim($tableName->ToLower) . "'";
+//            $DR1 As$Npgsql->NpgsqlDataReader;
 
-            $cmd1 = New Npgsql->NpgsqlCommand(selSurveyStr, cnn);
+            $cmd1 = pg_query($cnn, $selSurveyStr);
 
-            // cnn->Open();
+            //$cnn->Open();
 
 
-            DR1 = cmd1->ExecuteReader
+           $DR1 = $cmd1->ExecuteReader;
 
 
 
             $SID = "";
            If ( $DR1->Read ) {
-                SID = DR1 ->surveyid");
+               $SID = $DR1->surveyid);
             }
 
-            cnn->Close();
+           $cnn->Close();
 
 
 
 
-            $selstr = "Select short_title, collectionenddate from survey WHERE lower(surveyid) ='" . Trim(SID->ToLower) . "'";
-            $DR As Npgsql->NpgsqlDataReader
+            $selstr = "Select short_title, collectionenddate from survey WHERE lower(surveyid) = '" . Trim($SID->ToLower) . "'";
+            $DR As$Npgsql->NpgsqlDataReader;
 
-            $cmd = New Npgsql->NpgsqlCommand(selstr, cnn);
+            $cmd = pg_query($cnn, $selstr);
 
-            // cnn->Open();
+            //$cnn->Open();
 
-            DR = cmd->ExecuteReader
+           $DR = $cmd->ExecuteReader;
 
            If ( $DR->Read ) {
-                $sName = DR ->short_title");
+                $sName = $DR->short_title;
 
-                $survey_date As Date = DR ->collectionenddate");
+                $survey_date = $DR->collectionenddate;
 
-                $year As Integer = survey_date->Year
-                details[] = ("surveyName", sName);
-                details[] = ("year", year);
-                cnn->Close();
+                $year = $survey_date->Year;
+                $details[] = ("surveyName", $sName);
+                $details[] = ("year", $year);
+//               $cnn->Close();
 
             }
 
-            Return details
+            Return $details;
 
 
 
@@ -877,7 +692,7 @@
 
             $db = New getDBConnections();
 
-            $selStr = "Select coverage from qualdata->dc_info WHERE identifier ='" . ID . "'";
+            $selStr = "Select coverage from$qualdata->dc_info WHERE identifier = '" . $ID . "'";
 
             $cnn = $db->getDBConnection("Qual_Data");
 
@@ -885,49 +700,49 @@
 
 
 
-            $cmd = New Npgsql->NpgsqlCommand(selStr, cnn);
-            // cnn->Open();
+            $cmd = pg_query($cnn, $selStr);
+            //$cnn->Open();
 
-            $DR As Npgsql->NpgsqlDataReader = cmd->ExecuteReader
+            $DR = $cmd->ExecuteReader;
 
            If ( $DR->Read ) {
-                coverage = DR ->coverage");
+               $coverage = $DR->coverage);
 
             }
 
-            cnn->Close();
+           $cnn->Close();
 
-            $items() = coverage->Split(";");
+            $items() = $coverage->Split(";");
 
             $locDetails = "";
             $word_stats = "";
 
-            ForEach ( place ) //items
+            ForEach ($items as $place ) //items;
                If ( !$place == "") {
 
 
-                    locDetails = Regex->Split(place, "wordStats")[0]
-                    word_stats = Regex->Split(place, "wordStats")[1]
+                   $locDetails = $Regex->Split($place, "wordStats")[0];
+                   $word_stats = $Regex->Split($place, "wordStats")[1];
 
-                    word_stats = word_stats->Remove(0, word_stats->IndexOf("["));
+                   $word_stats = $word_stats->Remove(0,$word_stats->IndexOf("["));
 
-                    word_stats = word_stats->Remove((word_stats->Length - 3), 3);
+                   $word_stats = $word_stats->Remove(($word_stats->Length - 3), 3);
 
-                    locDetails += "wordsStats"":" . word_stats . "}";
+                    $locDetails .= "wordsStats" . ":" . $word_stats . "}";
 
-                    $places As unlockDetails = Newtonsoft->Json->JsonConvert->DeserializeObject(Of unlockDetails)(locDetails);
+                    $places = json_decode(Of unlockDetails)(locDetails);
 
-                   If ( !$places Is Nothing ) {
+                   If ( !$places = null ) {
 
-                        $qualData = New qualDataRecord
-                        qualData->identifier = ID
-                        qualData->lat = places->lat
-                        qualData->lon = places->lon
-                        qualData->title = places->Name
-                        qualData->counts = places->Occurences
+                        $qualData = New qualDataRecord;
+                       $qualData->identifier = $ID;
+                       $qualData->lat = $places->lat;
+                       $qualData->lon = $places->lon;
+                       $qualData->title = $places->Name;
+                       $qualData->counts = $places->Occurences;
 
 
-                        results[] = (qualData);
+                        $results[] = ($qualData);
                     }
 
                 }
@@ -937,43 +752,43 @@
 
 
 
-            Return results
+            Return $results;
 
 
         }
 
-        Public Function getChosenLayers($layers As Dictionary(Of String, spatialSearchLayers)) As Dictionary(Of String, spatialSearchLayers);
+        Public Function getChosenLayers($layers) {
 
             $DB = New getDBConnections();
             $cnn = $DB-getDBConnection("Survey_Data");
 
-            ForEach ( layer As KeyValuePair(Of String, spatialSearchLayers) ) //layers
+            ForEach ($layers as $layer) //layers;
 
-                $geographies() = layer->Value->geographies->Split(";");
+                $geographies = $layer->Value->geographies->Split(";");
 
-                $selStr = New StringBuilder
-                selStr->Append("SELECT area_name, ST_AsEWKT(st_simplifypreservetopology(the_geom, 0->000225)) as the_geom from " . layer->Value->id);
-                selStr->Append(" WHERE ");
+                $selStr = "";
+               $selStr .= ("SELECT area_name, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->000225)) as the_geom from " .$layer->Value->id);
+               $selStr .= (" WHERE ");
 
-                ForEach ( geog ) //geographies
+                ForEach ($geographies as $geog ) { //geographies;
 
-                    selStr->Append("area_name = '" . geog . "' OR ");
+                   $selStr .= ("area_name = '" . $geog . "' OR ");
 
 
                 }
 
 
-                selStr->Remove((selStr->Length - 3), 3);
+               $selStr->Remove(($selStr->Length - 3), 3);
 
-                $DataAdapter = New Npgsql->NpgsqlDataAdapter(selStr, cnn);
-                $resultsTable = New DataTable
-                DataAdapter->Fill(resultsTable);
+                $DataAdapter = pg_query($cnn, $selStr);
+                $resultsTable = New DataTable;
+               $DataAdapter->Fill($resultsTable);
 
-                ForEach ( row As DataRow ) //resultsTable->Rows
-                    $the_geom = New geom
+                ForEach ( $resultsTable->Rows as $row ) {
+                    $the_geom = New geom;
 
-                    the_geom->geom = row ->the_geom");
-                    layer->Value->geometry[] = (row ->area_name"), the_geom);
+                   $the_geom->geom = $row->the_geom);
+                   $layer->Value->geometry[] = ($row->area_name), $the_geom);
 
 
                 }
@@ -984,136 +799,134 @@
             }
 
 
-            Return layers
+            Return $layers;
 
 
         }
 
 
-        Public Function getFeatureInfoTable($lat As Double, lon As Double, tables As List(Of IdentifyFeatures)) {
+        Public Function getFeatureInfoTable($lat, $lon, $tables) {
 
             $htmlOutputs = array();
 
-            ForEach ( Table As IdentifyFeatures ) //tables
+            ForEach ( $tables as $Table ) {
 
 
-                $selStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other from " . Table->tableID
-                selStr += " WHERE ST_Within(st_transform(ST_GeomFromText('POINT(" . lon . " " . lat . ")',27700), 4326), " . Table->tableID . "->the_geom);";
+                $selStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other from " .$Table->tableID;
+                $selStr .= " WHERE ST_Within(st_transform(ST_GeomFromText('POINT(" . $lon . " " . $lat . ")',27700), 4326), " .$Table->tableID . "->the_geom);";
 
 
                 $db = New getDBConnections();
                 $cnn = $db->getDBConnection("Survey_Data");
 
 
-                $results = New DataTable
+                $results = New DataTable;
 
-                $DA = New Npgsql->NpgsqlDataAdapter(selStr, cnn);
+                $DA = pg_query($cnn, $selStr);
 
-                DA->Fill(results);
+               $DA->Fill($results);
 
-                $htmlOut = ConvertToHtmlFile(results);
+                $htmlOut = ConvertToHtmlFile($results);
 
-                $identResults = New IdentifyResults
-                identResults->$tableName = Table->$tableName
-                identResults->Html = htmlOut
+                $identResults = New IdentifyResults;
+               $identResults->tableName = $Table->tableName;
+               $identResults->Html = $htmlOut;
 
-                htmlOutputs[] = (identResults);
+                $htmlOutputs[] = ($identResults);
             }
 
-            Return htmlOutputs
+            Return $htmlOutputs;
 
         }
 
 
-      // ''' <summary>
-      // ''' This is a simple way to convert a DataTable to an HTML file->
-      // ''' </summary>
-      // ''' <param name="targetTable">This the table to convert-></param>
-      // ''' <returns>This is the HTML output, which can saved as a file-></returns>
-        Public Shared Function ConvertToHtmlFile(targetTable As DataTable);
+      // ''' <summary>;
+      // ''' This is a simple way to convert a DataTable to an HTML$file->
+      // ''' </summary>;
+      // ''' <param name= "targetTable">This the table to$convert-></param>;
+      // ''' <returns>This is the HTML output, which can saved as a$file-></returns>;
+        Public Function ConvertToHtmlFile($targetTable) {
             $myHtmlFile = "";
 
 
 
-           If ( $targetTable Is Nothing ) {
-                Throw New System->ArgumentNullException("targetTable");
+           If ( $targetTable == null ) {
+                Throw New ArgumentNullException("targetTable");
               // 'Continue->
           } Else {
             }
 
 
 
-          // 'Get a worker object->
-            $myBuilder = New StringBuilder();
+          // 'Get a worker$object->
+            $myBuilder = "";
 
 
 
-          // 'Open tags and write the top portion->
-          // 'myBuilder->Append("<html xmlns='http://www->w3->org/1999/xhtml'>");
-          // 'myBuilder->Append("<head>");
-          // 'myBuilder->Append("<title>");
-          // 'myBuilder->Append("Page-");
-          // 'myBuilder->Append(Guid->NewGuid()());
-          // 'myBuilder->Append("</title>");
-          // 'myBuilder->Append("</head>");
-          // 'myBuilder->Append("<body>");
-            myBuilder->Append("<table border='1px' cellpadding='5' cellspacing='0' ");
-            myBuilder->Append("style='border: solid 1px Silver; font-size: x-small;'>");
+          // 'Open tags and write the top$portion->
+          // 'myBuilder .= ("<html xmlns= 'http://www->w3->org/1999/xhtml'>");
+          // 'myBuilder .= ("<head>");
+          // 'myBuilder .= ("<title>");
+          // 'myBuilder .= ("Page-");
+          // 'myBuilder .= ($Guid->NewGuid()());
+          // 'myBuilder .= ("</title>");
+          // 'myBuilder .= ("</head>");
+          // 'myBuilder .= ("<body>");
+           $myBuilder .= ("<table border= '1px' cellpadding= '5' cellspacing= '0' ");
+           $myBuilder .= ("style= 'border: solid 1px Silver; font-size: x-small;'>");
 
 
 
-          // 'Add the headings row->
+          // 'Add the headings$row->
 
 
 
-            myBuilder->Append("<tr align='left' valign='top'>");
+           $myBuilder .= ("<tr align= 'left' valign= 'top'>");
 
 
 
-            ForEach ( myColumn As DataColumn ) //targetTable->Columns
-                myBuilder->Append("<td align='left' valign='top'>");
-                myBuilder->Append(myColumn->ColumnName);
-                myBuilder->Append("</td>");
+            ForEach ( $targetTable->Columns as $myColumn ) {
+               $myBuilder .= ("<td align= 'left' valign= 'top'>");
+               $myBuilder .= ($myColumn->ColumnName);
+               $myBuilder .= ("</td>");
             }
 
 
 
-            myBuilder->Append("</tr>");
+           $myBuilder .= ("</tr>");
 
 
 
-          // 'Add the data rows->
-            ForEach ( myRow As DataRow ) //targetTable->Rows
-                myBuilder->Append("<tr align='left' valign='top'>");
+          // 'Add the data$rows->
+            ForEach ( $targetTable->Rows as $myRow ) {
+               $myBuilder .= ("<tr align= 'left' valign= 'top'>");
 
 
 
-                ForEach ( myColumn As DataColumn ) //targetTable->Columns
-                    myBuilder->Append("<td align='left' valign='top'>");
-                    myBuilder->Append(myRow(myColumn->ColumnName)());
-                    myBuilder->Append("</td>");
+                ForEach ( $targetTable->Columns as $myColumn ) {
+                   $myBuilder .= ("<td align= 'left' valign= 'top'>");
+                   $myBuilder .= ($myRow($myColumn->ColumnName)());
+                   $myBuilder .= ("</td>");
                 }
 
 
 
-                myBuilder->Append("</tr>");
+               $myBuilder .= ("</tr>");
             }
 
 
 
-          // 'Close tags->
-            myBuilder->Append("</table>");
-          // 'myBuilder->Append("</body>");
-          // 'myBuilder->Append("</html>");
+          // 'Close$tags->
+           $myBuilder .= ("</table>");
+          // 'myBuilder .= ("</body>");
+          // 'myBuilder .= ("</html>");
 
 
 
-          // 'Get the string for return->
-            myHtmlFile = myBuilder();
+          // 'Get the string for$return->
+           Return $myBuilder;
 
 
-
-            Return myHtmlFile
         }
 
 

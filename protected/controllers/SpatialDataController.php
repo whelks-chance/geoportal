@@ -168,16 +168,16 @@
             } Else {
                 $results = null;
                If ( $results == null ) {
-                    $results = $SD->SpatialSearch(geography)
+                    $results = $SD->SpatialSearch(geography);
 
-                    res = $results(0)
+                    res = $results(0);
                     Select Case Type
                         Case "Quant"
                             $count = res.quantCount
-                            Session.Add("quantCount", $count)
+                            Session.Add("quantCount", $count);
                         Case "Qual"
                             $count = res.qualCount
-                            Session.Add("qualCount", $count)
+                            Session.Add("qualCount", $count);
                         Case "Grey"
 
                         Case "Admin"
@@ -186,7 +186,7 @@
 
                     // 'Return "{""quantData"":" . json_encode(res.quantData) . "}";
 
-                    Session.Add("spatialResults", $results)
+                    Session.Add("spatialResults", $results);
 
                 }
             }
@@ -195,7 +195,7 @@
             // '$resultsset = New GeoPortal.Models.BusinessLogic.spatialResults
 
             // 'resultsset.totalCount = $count
-            // 'resultsset.questions = json_encode(results(0).quantData)
+            // 'resultsset.questions = json_encode(results(0).quantData);
 
 
             $pageResults = array();
@@ -295,7 +295,7 @@
             $dBCnn = $db->getDBConnection("Survey_Data");
             $cmd = pg_query($dBCnn, $getMin);
 
-//            dBCnn.Open()
+//            dBCnn.Open();
 
             $min = cmd.ExecuteScalar();
 
@@ -303,7 +303,7 @@
 
             $max = cmd.ExecuteScalar();
 
-//            dBCnn.Close()
+//            dBCnn.Close();
 
 
             $minMax = array();
