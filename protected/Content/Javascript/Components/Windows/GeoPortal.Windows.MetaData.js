@@ -39,6 +39,7 @@
                     {
                         xtype: 'panel',
                         title: 'Question',
+                        autoScroll: true,
                         id: 'tabQuestion',
                         items: [
                             {
@@ -390,7 +391,8 @@
                     {
                         xtype: 'panel',
                         title: 'Response',
-                        autoHeight: true,
+                        autoScroll: true,
+//                        autoHeight: true,
                         id: 'tabResponse',
                         items: [
                             {
@@ -664,6 +666,7 @@
                     {
                         xtype: 'panel',
                         title: 'Statistics',
+                        autoScroll: true,
                         id: 'stats',  
                         autoLoad: true,  
                         items: [{xtype: 'panel',

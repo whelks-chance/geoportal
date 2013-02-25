@@ -260,10 +260,12 @@ class getMetaData {
 
         $resultRows = $DA->Read($cmd);
 
+        Log::toFile(print_r($resultRows, true));
+
         ForEach ($resultRows as $DR) {
 
             $label = new Fields();
-            $label->Name = Trim($DR->Name);
+            $label->Name = Trim($DR->name);
             $results[] = ($label);
         }
 
@@ -495,17 +497,17 @@ class getMetaData {
         }
     }
 
-//    Public Function getPlaces($ID) {
-//
-//        $placeNames = array();
-//
-//        $db = New getDBConnections();
-//
-//        $cnn = $db->getDBConnection("Qual_Data");
-//
-//
-//        $selStr = "Select coverage from qualdata.dc_info WHERE identifier ='" . $ID . "';";
-//
+    Public Function getPlaces($ID) {
+
+        $placeNames = array();
+
+        $db = New getDBConnections();
+
+        $cnn = $db->getDBConnection("Qual_Data");
+
+
+        $selStr = "Select coverage from qualdata.dc_info WHERE identifier ='" . $ID . "';";
+
 //            $DR As NpgsqlDataReader
 //            $cmd = pg_query($cnn, $selStr);
 //
@@ -513,113 +515,127 @@ class getMetaData {
 //            DR = cmd.ExecuteReader
 //
 //            If (DR.Read ) {
+
+        $cmd = pg_query($cnn, $selStr);
+
+        $DA = new DataAdapter();
+
+        $resultRows = $DA->Read($cmd);
+
+        ForEach ($resultRows as $DR) {
+
+                $coverage = Trim($DR->coverage);
+
+                $items = explode(";", $coverage);
+
+                $locDetails = "";
+                $word_stats = "";
+
+                ForEach ($items as $place) { //place As String In items
+                    If (! $place == "" ) {
+
+
+
 //
+//                        $locDetails = Regex.Split(place, "wordStats")(0);
+//                        $word_stats = Regex.Split(place, "wordStats")(1);
 //
-//                $coverage = Trim($DR->coverage);
+//                        word_stats = word_stats.Remove(0, word_stats.IndexOf("[");
 //
-//                $items() = $coverage.Split(";");
-//
-//                $locDetails = ""
-//                $word_stats = ""
-//
-//                For Each place As String In items
-//                    If (! $place = "" ) {
-//
-//
-//
-//
-//                        $locDetails = Regex.Split(place, "wordStats")(0)
-//                        $word_stats = Regex.Split(place, "wordStats")(1)
-//
-//                        word_stats = word_stats.Remove(0, word_stats.IndexOf("[")
-//
-//                        word_stats = word_stats.Remove((word_stats.Length - 3), 3)
-//
-//                        locDetails += "wordsStats"":" . word_stats . "}"
-//
-//                        $places As unlockDetails = Newtonsoft.Json.JsonConvert.DeserializeObject(Of unlockDetails)(locDetails)
-//
-//                        $pl As New place
-//                        pl.place = places.Name
-//                        placeNames.Add(pl)
-//
-//
-//                    }
-//
-//                Next
-//
-//            }
-//
-//            Return placeNames
-//
-//        }
-//
-//    Public Function getCloud($ID) {
-//
-//        $Tags = array();
-//
-//        $db = New getDBConnections();
-//
-//        $cnn = $db->getDBConnection("Qual_Data");
-//
-//
-//            $selStr = "Select calais from qualdata.dc_info WHERE identifier ='" . ID . "';"
-//
-//            $DR As NpgsqlDataReader
-//            $cmd = pg_query($cnn, $selStr);
-//
-//            cnn.Open()
-//            DR = cmd.ExecuteReader
-//
-//
-//
-//            If (DR.Read ) {
-//
-//                $json = $DR->calais;
-//
-//                json = json.TrimEnd("," . vbCrLf . "")
-//
-//
-//                $jsons() = json.Split("},")
-//
-//                $tagsDetails = ""
-//
-//                For Each item As String In jsons
-//
-//                    If (! item = " " ) {
-//                        item = item.TrimStart(",")
-//
-//                        $subItems() = item.Split(",")
-//
-//                        If (subItems.Length = 6 ) {
-//
-//                            $dict As Dictionary(Of String, String) = subItems.ToDictionary(Function(value As String)
-//                                                                                                  Return value.Split(":")(0)
-//                                                                                              },
-//                                                  Function(value As String)
-//                                                      Return value.Split(":")(1)
-//                                                  })
-//
-//                            $word = dict.Item("""Value""").Replace(Char.ConvertFromUtf32(34), String.Empty)
-//                            $cnt = dict.Item("""Count""").Replace(Char.ConvertFromUtf32(34), String.Empty)
-//
-//                            tagsDetails += "{""word"":""" . word . """,""count"":" . CInt(cnt) . "},"
-//                        }
-//                    }
-//Next
-//
-//    // ' $obj As List(Of Calais) = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Calais))(json)
-//
-////                'Newtonsoft.Json.JsonConvert.DeserializeObject($DR->calais)
-//
-//Return '{"tags":[' . $tagsDetails . ']}';
-//
-//}
-//
-//
-//
-//
-//}
+//                        word_stats = word_stats.Remove((word_stats.Length - 3), 3);
+
+                         $placeArray = explode($place, "wordStats");
+                    $locDetails = $placeArray[0];
+                    $word_stats = $placeArray[1];
+
+                    $word_stats = substr($word_stats, 0, strpos($word_stats, '[')); // $word_stats.Remove(0, $word_stats.IndexOf("["));
+
+                    $word_stats = substr($word_stats, (strlen($word_stats) - 3));  //$word_stats.Remove((strlen($word_stats) - 3), 3);
+
+
+                        $locDetails .= '"wordsStats":' . $word_stats . "}";
+
+                        $places = json_decode($locDetails);
+
+                        $pl = New place();
+                        $pl->place = $places->name;
+                        $placeNames[] = ($pl);
+
+
+                    }
+
+                }
+
+            }
+
+            Return $placeNames;
+
+        }
+
+    Public Function getCloud($ID) {
+
+        $Tags = array();
+
+        $db = New getDBConnections();
+
+        $cnn = $db->getDBConnection("Qual_Data");
+
+
+            $selStr = "Select calais from qualdata.dc_info WHERE identifier ='" . $ID . "';";
+
+           $cmd = pg_query($cnn, $selStr);
+
+        $DA = new DataAdapter();
+
+        $resultRows = $DA->Read($cmd);
+
+        ForEach ($resultRows as $DR) {
+
+                $json = $DR->calais;
+
+                $json = $json.TrimEnd("," . vbCrLf . "");
+
+
+                $jsons = explode("},", $json);
+
+                $tagsDetails = "";
+
+                ForEach ($jsons as $item) { //} item As String In jsons
+
+                    If (! $item == " " ) {
+                        $item = $item.TrimStart(",");
+
+                        $subItems = explode(",", $item);
+
+                        If (count($subItems) == 6 ) {
+
+                            $dict As Dictionary(Of String, String) = subItems.ToDictionary(Function(value As String)
+                                                                                                  Return value.Split(":")(0)
+                                                                                              },
+                                                  Function(value As String)
+                                                      Return value.Split(":")(1)
+                                                  })
+
+                            $word = dict.Item("""Value""").Replace(Char.ConvertFromUtf32(34), String.Empty);
+                            $cnt = dict.Item("""Count""").Replace(Char.ConvertFromUtf32(34), String.Empty);
+
+                            $tagsDetails .= "{""word"":""" . $word . """,""count"":" . CInt($cnt) . "},";
+                        }
+                    }
+Next
+
+    // ' $obj As List(Of Calais) = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Calais))(json)
+
+//                'Newtonsoft.Json.JsonConvert.DeserializeObject($DR->calais)
+
+Return '{"tags":[' . $tagsDetails . ']}';
+
+}
+
+
+
+
+}
 
 }
 

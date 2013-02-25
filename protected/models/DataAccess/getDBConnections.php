@@ -24,9 +24,10 @@ class getDBConnections {
 
     Public Function getDBConnection($DBName){ // As Npgsql.NpgsqlConnection
 
+        $debug = variables::debug();
         // Optional ByVal DBName As String = "GeoPortal"
 
-        If ($liveServer = False) {
+        If ($debug == False) {
             //            $connString = "Server=localhost;Port=5433;Database=" . $DBName . ";User Id=postgres;Password=January1981" .
             //          '"Server=localhost;Port=5433;Database=" + DBName + ";User Id=rfry;Password=January1981"';
             $connString = "host=192.168.56.102 port=7007 dbname=" . $DBName . " user=postgres password=postgres";
@@ -35,7 +36,7 @@ class getDBConnections {
             // 'change this string according to whether target build is for Glam server or Amazon server
 //                $connString = "Server=localhost;Port=5433;Database=" . $DBName . ";User Id=postgres;Password=January1981"
             //              'Server=193.63.128.226;Port=5433;Database=" + DBName + ";User Id=rfry;Password=January1981"';
-            $connString = "host=192.168.56.102 port=7007 dbname=" . $DBName . " user=postgres password=postgres";
+            $connString = "host=" . variables::$databaseAddr . " port=". variables::$databasePort . " dbname=" . $DBName . " user=postgres password=postgres";
         }
         $cnn = pg_connect($connString);
 

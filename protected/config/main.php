@@ -18,7 +18,8 @@ return array(
         'application.components.*',
         'application.models.BusinessLogic.*',
         'application.models.DataAccess.*',
-        'application.models.util.*'
+        'application.models.util.*',
+        'application.views.layouts.*'
     ),
 
     'modules'=>array(

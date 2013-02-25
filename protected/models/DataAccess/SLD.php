@@ -1,16 +1,16 @@
 ﻿<?
 
-class SLD
+class SLD {
 
         Public Function DynamicSLD2($type, $fromColour, $toColour, $fieldName, $min, $max, $classes, $layer, $labelName) {
-            $xmlSettings XmlWriterSettings
-            xmlSettings.CloseOutput = False;
-            xmlSettings.Indent = True;
+            $xmlSettings = XmlWriterSettings();
+            $xmlSettings->CloseOutput = False;
+            $xmlSettings->Indent = True;
 
 
             $ns = "http://www.opengis.net/sld";
             $ogc = "http://www.opengis.net/ogc";
-            $colorList Integer, Color) = generateColourRange(fromColour, toColour, generateEqualInterval((max - min), classes), classes - 1, min);
+            $colorList = generateColourRange($fromColour, $toColour, generateEqualInterval(($max - $min), $classes), $classes - 1, $min);
 
 
 
@@ -98,29 +98,29 @@ class SLD
                 $writer->WriteEndElement();
 
 
-                $previous = min;
+                $previous = $min;
 
-                ForEach Colour(Of Integer, Color) In colorList {
+                ForEach ($colorList as $Colour) { // Colour(Of Integer, Color) In colorList {
 
                     // 'write sld rule tag  for polygo$ns
                     $writer->WriteStartElement("sld", "Rule", $ns);
 
                     // 'write sld Rule Title - adds label to Legend
                     $writer->WriteStartElement("sld", "Title", $ns);
-                    $writer->WriteString((previous + 1) & " - " & Colour.Key.ToString);
+                    $writer->WriteString(($previous + 1) & " - " & $Colour->Key);
                     $writer->WriteEndElement();
 
                     $writer->WriteStartElement("$ogc", "Filter", $ogc);
 
-                    $writer->WriteStartElement("$ogc", "PropertyIsBetween", $ogc) // ' "Function name=""categorize""");
+                    $writer->WriteStartElement("$ogc", "PropertyIsBetween", $ogc); // ' "Function name=""categorize""");
                     // 'write property name
                     $writer->WriteStartElement("$ogc", "PropertyName", $ogc);
-                    $writer->WriteString(fieldName);
+                    $writer->WriteString($fieldName);
                     $writer->WriteEndElement();
                     // 'Lower Boundary
                     $writer->WriteStartElement("$ogc", "LowerBoundary", $ogc);
                     $writer->WriteStartElement("$ogc", "Literal", $ogc);
-                    $writer->WriteValue(previous + 1);
+                    $writer->WriteValue($previous + 1);
                     $writer->WriteEndElement();
                     // '} boundary
                     $writer->WriteEndElement();
@@ -131,7 +131,7 @@ class SLD
 
 
                     $writer->WriteStartElement("$ogc", "Literal", $ogc);
-                    $writer->WriteValue(Colour.Key);
+                    $writer->WriteValue($Colour->Key);
                     $writer->WriteEndElement();
 
                     // '} Boundary
@@ -153,7 +153,7 @@ class SLD
                     $writer->WriteAttributeString("name", "fill");
 
                     // 'write fill colour
-                    $writer->WriteString("#" & Hex(Colour.Value.R) & Hex(Colour.Value.G) & Hex(Colour.Value.B));
+                    $writer->WriteString("#" & Hex($Colour->Value.R) & Hex($Colour->Value.G) & Hex($Colour->Value.B));
                     $writer->WriteEndElement();
 
 
@@ -187,7 +187,7 @@ class SLD
                     // 'write } tag
                     $writer->WriteEndElement();
 
-                    $previous = $Colour->Key;
+                    $$previous = $Colour->Key;
 
                 }
 
@@ -355,14 +355,14 @@ class SLD
             }
 
 
-            $output
-            stream.Position = 0
-            $sr StreamReader(stream);
+            $output;
+            stream->Position = 0;
+            $sr = StreamReader(stream);
 
-            $xD XmlDocument();
-            xD.LoadXml(sr.ReadToEnd());
+            $xD = XmlDocument();
+            xD->LoadXml(sr->ReadToEnd());
 
-            Return xD
+            Return $xD;
         }
 
 
@@ -371,36 +371,36 @@ class SLD
 
             $classInterval = $min;
 
-            $startColor = ColorTranslator->FromHtml(fromColour);
-            $endColor = ColorTranslator->FromHtml(ToColour);
+            $startColor = ColorTranslator->FromHtml($fromColour);
+            $endColor = ColorTranslator->FromHtml($ToColour);
 
             $colourList = array();
             $i = 0;
 
 
-            $rMax = endColor->R;
-            $rMin = startColor->R;
-            $gMax = endColor->G;
-            $gMin = startColor->G;
-            $bMax = endColor->B;
-            $bMin = startColor->B;
+            $rMax = $endColor->R;
+            $rMin = $startColor->R;
+            $gMax = $endColor->G;
+            $gMin = $startColor->G;
+            $bMax = $endColor->B;
+            $bMin = $startColor->B;
 
 
 
-            Do While i <= intervalCount
+            While ($i <= $intervalCount) {
 
-                $rAverage = rMin + CInt((rMax - rMin) * i / intervalCount);
-                $gAverage = gMin + CInt((gMax - gMin) * i / intervalCount);
-                $bAverage = bMin + CInt((bMax - bMin) * i / intervalCount);
+                $rAverage = $rMin + CInt(($rMax - $rMin) * $i / $intervalCount);
+                $gAverage = $gMin + CInt(($gMax - $gMin) * $i / $intervalCount);
+                $bAverage = $bMin + CInt(($bMax - $bMin) * $i / $intervalCount);
 
-                colourList.Add(classInterval, Color.FromArgb(rAverage, gAverage, bAverage));
-                classInterval = (classInterval + intervalRange);
-                i += 1
-            Loop
+                $colourList[$classInterval] = Color->FromArgb($rAverage, $gAverage, $bAverage);
+                $classInterval = ($classInterval + $intervalRange);
+                $i += 1;
+            }
 
 
 
-            Return colourList;
+            Return $colourList;
 
 
         }
@@ -410,11 +410,11 @@ class SLD
 
             // ' Dim 
 
-            $intervalRange = Math.Round(Total / intervals, System.MidpointRounding.ToEven);
+            $intervalRange = Math.Round($Total / $intervals, System.MidpointRounding.ToEven);
 
 
 
-            Return intervalRange;
+            Return $intervalRange;
         }
 
     }

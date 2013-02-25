@@ -4,7 +4,12 @@ class SpatialDataController extends Controller {
     // '
     // ' GET: /SpatialData
     // // <CompressFilter()>
-    Function actiongetSpatialUnits($surveyID) {
+    Function actiongetSpatialUnits() {
+
+        $surveyID = "";
+        if(isset($_POST['SurveyID'])) {
+            $surveyID = $_POST['SurveyID'];
+        }
 
         $SD = New SpatialData();
 
@@ -306,11 +311,11 @@ class SpatialDataController extends Controller {
 
 //            dBCnn.Open();
 
-        $min = cmd.ExecuteScalar();
+        $min = $cmd->ExecuteScalar();
 
-        cmd.CommandText = $getMax;
+        $cmd->CommandText = $getMax;
 
-        $max = cmd.ExecuteScalar();
+        $max = $cmd->ExecuteScalar();
 
 //            dBCnn.Close();
 

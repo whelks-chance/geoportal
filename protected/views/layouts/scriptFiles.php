@@ -9,6 +9,7 @@
 
 
 include('javascript.php');
+include('variables.php')
 ?>
 
 <script charset="utf-8" type="text/javascript">
@@ -47,6 +48,7 @@ include('javascript.php');
     var getTagsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getCloud';
     var getSpatialDataSets = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialDataSets';
 
+    var geoserverRoot = '<? echo variables::$geoserverRoot ?>';
 
 </script>
 

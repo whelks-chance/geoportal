@@ -25,7 +25,9 @@ class SpatialData {
             $units->long_start = Trim($DR->long_start);
             $units->long_finish = Trim($DR->long_finish);
             $units->Name = $this::getFullName($DR->spatial_id);
-            $units->short_name = strtolower(explode("_", $DR->spatial)[3]);
+
+            $spatialArray = explode("_", $DR->spatial);
+            $units->short_name = strtolower($spatialArray[3]);
 
             $results[] = ($units);
         }
@@ -49,18 +51,17 @@ class SpatialData {
 
         $cmd = pg_query($cnn, $selectStr);
 
-        //$cnn->Open();
+        $DA = new DataAdapter();
 
-        $DR = $cmd->ExecuteReader;
+        $resultObjects = $DA->Read($cmd);
 
-
-        Do While$DR->Read;
+        ForEach ($resultObjects as $DR ) {
             $label = New SpatialLabels();
-        $label->Name = Trim($DR->Name);
-        $results[] = ($label);
-        Loop;
+            $label->Name = Trim($DR->Name);
+            $results[] = ($label);
+        }
 
-        $cnn->Close();
+//        $cnn->Close();
 
         Return $results;
 
@@ -79,21 +80,21 @@ class SpatialData {
 
         $cmd = pg_query($cnn, $selectStr);
 
-        //$cnn->Open();
-
-        $DR = $cmd->ExecuteReader;
 
         $spatialSUAll = New SpatialSubUnits();
         $spatialSUAll->Name = "All";
         $results[] = ($spatialSUAll);
 
-        Do While$DR->Read;
-            $spatialSU = New SpatialSubUnits();
-        $spatialSU->Name = Trim($DR->Item[1]);
-        $results[] = (spatialSU);
-        Loop;
+        $DA = new DataAdapter();
 
-        $cnn->Close();
+        $resultObjects = $DA->Read($cmd);
+
+        ForEach ($resultObjects as $DR ) {
+            $spatialSU = New SpatialSubUnits();
+
+            $spatialSU->Name = Trim($DR->Item[1]);
+            $results[] = ($spatialSU);
+        }
 
         Return $results;
 
@@ -113,23 +114,21 @@ class SpatialData {
 
         $cmd = pg_query($cnn, $selectStr);
 
-        //$cnn->Open();
-
-        $DR = $cmd->ExecuteReader;
-
-
         $spatialSUMap = New SpatialSubUnits();
         $spatialSUMap->Name = "Current Map Extent";
-        $results[] = (spatialSUMap);
+        $results[] = ($spatialSUMap);
 
 
-        Do While$DR->Read;
+        $DA = new DataAdapter();
+
+        $resultObjects = $DA->Read($cmd);
+
+        ForEach ($resultObjects as $DR ) {
             $spatialSU = New SpatialSubUnits();
-        $spatialSU->Name = Trim($DR->Item[1]);
-        $results[] = (spatialSU);
-        Loop;
 
-        $cnn->Close();
+            $spatialSU->Name = Trim($DR->Item[1]);
+            $results[] = ($spatialSU);
+        }
 
         Return $results;
 
@@ -140,16 +139,16 @@ class SpatialData {
         $dc = New getDBConnections();
 
         $cnn = $dc->getDBConnection("Survey_Data");
-        $big_geom;
+        $big_geom = "";
         $suffix = "";
 
         If ( $the_geom = "N/A" ) {
 
-            $suffix = getTableName(SID, MajorUnit);
+            $suffix = $this::getTableName($SID, $MajorUnit);
 
             $big_geom = "(SELECT the_geom from spatialdata." . $suffix . " WHERE area_name = '" . $SubUnit . "')";
         } Else {
-            $big_geom = the_geom;
+            $big_geom = $the_geom;
 
         }
 
@@ -161,21 +160,20 @@ class SpatialData {
 
         $cmd = pg_query($cnn, $selectStr);
 
-        //$cnn->Open();
-
-        $DR = $cmd->ExecuteReader;
 
         $spatialSUAll = New SpatialSubUnits();
         $spatialSUAll->Name = "All";
-        $results[] = (spatialSUAll);
+        $results[] = ($spatialSUAll);
 
-        Do While$DR->Read;
+        $DA = new DataAdapter();
+
+        $resultObjects = $DA->Read($cmd);
+
+        ForEach ($resultObjects as $DR ) {
             $spatialSU = New SpatialSubUnits();
-        $spatialSU->Name = Trim($DR->Item[1]);
-        $results[] = (spatialSU);
-        Loop;
-
-        $cnn->Close();
+            $spatialSU->Name = Trim($DR->Item[1]);
+            $results[] = ($spatialSU);
+        }
 
         Return $results;
 
@@ -188,40 +186,45 @@ class SpatialData {
 
         $cnn = $dc->getDBConnection("Survey_Data");
 
-        $selectStr = "Select column_name as name from$information_schema->columns where table_name = '" . $TableName . "';";
+        $selectStr = "Select column_name as name from information_schema.columns where table_name = '" . $TableName . "';";
 
 
         $results = array();
 
         $cmd = pg_query($cnn, $selectStr);
 
-        //$cnn->Open();
+//        //$cnn->Open();
+//
+//        $DR = $cmd->ExecuteReader;
+//
+//        // 'Advance reader through the first two records as not applicable for choropleth mapping;
+//        $DR->Read();
+//        $DR->Read();
 
-        $DR = $cmd->ExecuteReader;
 
-        // 'Advance reader through the first two records as not applicable for choropleth mapping;
-        $DR->Read();
-        $DR->Read();
+        $DA = new DataAdapter();
+
+        $resultObjects = $DA->Read($cmd);
 
 
-        Do While$DR->Read;
+        //      unset($resultObjects[0]);
+        //      unset($resultObjects[1]);
 
+        ForEach ($resultObjects as $DR ) {
             $label = New SpatialLabels;
-               $label->Name = Trim($DR->Name));
-                $results[] = (label);
-            Loop;
-
-           $cnn->Close();
-
-            Return $results;
-
+            $label->Name = Trim($DR->Name);
+            $results[] = ($label);
         }
+
+        Return $results;
+
+    }
 
 
     Public Function getFullName($spatial_id) {
         $Name = "";
-
-        $postFix = explode("_", $spatial_id)[3]->ToLower;
+        $spatialArray = explode("_", $spatial_id);
+        $postFix = strtolower($spatialArray[3]);
 
         If ( $postFix == "aefa" ) {
             $Name = "Assembly Economic Fora Area";
@@ -269,8 +272,11 @@ class SpatialData {
 
         $resultRows = pg_query($cnn, $queryStr);
 
+        $DA = new DataAdapter();
 
-        $cnt = sizeof($DT->Rows);
+        $resultObjects = $DA->Read($resultRows);
+
+        $cnt = sizeof($resultObjects);
 
 
         If ( $cnt > 0 ) {
@@ -281,12 +287,12 @@ class SpatialData {
             // '}
 
 
-            ForEach ( $DT->Rows as $row ) {
+            ForEach ( $resultObjects as $row ) {
                 $total = $row->total;// 'DT->Compute("Sum(" . $ChoroplethField . ")", Nothing);
 
                 $colorList = $this::generateColourRange($fromColour, $toColour, $this::generateEqualInterval($total, $Interval), $Interval);
 
-                   If ( $IsDBNull($row->the_geom)) ) {
+                If ( $row->the_geom == null) {
 
                 } Else {
                     $SU = New ResponseSpatialUnits();
@@ -295,12 +301,14 @@ class SpatialData {
                     $SU->ChoroValue = $row->$ChoroplethField;
                     $SU->LabelField = $row->$Label;
                     $SU->Name = $row->area_name;
-                    $SU->WKT = $row->the_geom->Split(";")[1];
+
+                    $geomArray = explode(";",$row->the_geom);
+                    $SU->WKT = $geomArray[1];
                     $SU->Colour = $this::getColour($colorList, $row->$ChoroplethField);
 
                     $results[] = ($SU);
                 }
-                }
+            }
         }
 
         Return $results;
@@ -337,8 +345,7 @@ class SpatialData {
 
         // ' $
 
-        $intervalRange = $Math->Round($Total / $intervals,$System->MidpointRounding->AwayFromZero);
-
+        $intervalRange = ceil($Total / $intervals);
 
 
         Return $intervalRange;
@@ -350,44 +357,45 @@ class SpatialData {
 
         $classInterval = $intervalRange;
 
-            $startColor = ColorTranslator->FromHtml($fromColour);
-            $endColor = ColorTranslator->FromHtml($ToColour);
+        $colorTranslator = new ColorTranslator();
+        $startColor = $colorTranslator->FromHtml($fromColour);
+        $endColor = $colorTranslator->FromHtml($ToColour);
 
-            $colourList = array();
-            $i = 0;;
+        $colourList = array();
+        $i = 0;;
 
-            $rMax = $endColor->R;
-            $rMin = $startColor->R;
-            $gMax = $endColor->G;
-            $gMin = $startColor->G;
-            $bMax = $endColor->B;
-            $bMin = $startColor->B;
-
-
-            While ($i < $intervalCount) {
-
-                $rAverage = $rMin = $CInt(($rMax - $rMin) * $i / $intervalCount);
-                $gAverage = $gMin = $CInt(($gMax - $gMin) * $i / $intervalCount);
-                $bAverage = $bMin = $CInt(($bMax - $bMin) * $i / $intervalCount);
-
-                $colourList[] = (classInterval,$Color->FromArgb($rAverage, $gAverage, $bAverage));
-               $classInterval = $(classInterval = $intervalRange)$ = $1;
-                $i += 1;
-            }
+        $rMax = $endColor->R;
+        $rMin = $startColor->R;
+        $gMax = $endColor->G;
+        $gMin = $startColor->G;
+        $bMax = $endColor->B;
+        $bMin = $startColor->B;
 
 
+        While ($i < $intervalCount) {
 
-            Return $colourList;
+            $rAverage = $rMin + (($rMax - $rMin) * $i / $intervalCount);
+            $gAverage = $gMin + (($gMax - $gMin) * $i / $intervalCount);
+            $bAverage = $bMin + (($bMax - $bMin) * $i / $intervalCount);
 
-
+            $colourList[$classInterval] = Color::FromArgb($rAverage, $gAverage, $bAverage);
+            $classInterval = $classInterval + $intervalRange + 1;
+            $i += 1;
         }
+
+
+
+        Return $colourList;
+
+
+    }
 
     Public Function getColour($Colours, $value ) {
 
         ForEach ( $Colours as $item ) {//Colours;
-            If ( $value->CompareTo($item->Key) < 0 ) {
-                    Return ColorTranslator->ToHtml($item->Value);
-                }
+            If ( $value == ($item->Key) ) {
+                Return ColorTranslator::ToHtml($item->Value);
+            }
 
         }
     }
@@ -405,10 +413,10 @@ class SpatialData {
 
         $DT = New DataTable;
 
-        $DA->Fill(DT);
+        $DA->Fill($DT);
 
 
-        ForEach ( $DT->Rows as $row ) {
+        ForEach ( $DT->rows as $row ) {
 
             $tableName = $row->f_table_name;
             $geom_col = $row->f_geometry_column;
@@ -457,96 +465,96 @@ class SpatialData {
 
         $DA = pg_query($cnn, $getTables);
 
-        $DT = New DataTable;
+        $DT = New DataTable();
 
-        $DA->Fill(DT);
+        $DA->Fill($DT);
         $SS = New SpatialSearch2;
 
         $tableMinMax = array();
 
         ForEach ( $DT->Rows as $row ) {
             $selStr = "";
-                $tableName = $row->f_table_name);
-                $geom_col = $row->f_geometry_column);
+            $tableName = $row->f_table_name;
+            $geom_col = $row->f_geometry_column;
 
 
-               $selStr .= ("SELECT area_name from " . $tableName);
-               $selStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326)," . $geom_col . ");");
+            $selStr .= ("SELECT area_name from " . $tableName);
+            $selStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326)," . $geom_col . ");");
 
 
-                $DataAdapter = pg_query($cnn, $selStr);
-                $resultsTable = New DataTable();
-               $DataAdapter->Fill($resultsTable);
+            $DataAdapter = pg_query($cnn, $selStr);
+            $resultsTable = New DataTable();
+            $DataAdapter->Fill($resultsTable);
 
-                $surveyDetails = getSurveyNameYear($tableName);
-
-
-                ForEach ( $resultsTable->Rows as $datarow ) {
-                    $quantsData = New quantDataRecord2();
-
-                    If ( sizeof($surveyDetails) = 0 ) {
-                        $quantsData->sName = $tableName;
-                        $quantsData->sYear = 9999;
-                    } Else {
-                        $quantsData->sName = $surveyDetails->surveyName);
-                        $quantsData->sYear = $surveyDetails->year);
-                    }
+            $surveyDetails = $this::getSurveyNameYear($tableName);
 
 
-                    // 'Convert text column to integer value and get min and max values;
-                    $min = "Select min(cast(successful as int)) from " . $tableName;
-                    $max = "Select max(cast(successful as int)) from " . $tableName;
+            ForEach ( $resultsTable->rows as $datarow ) {
+                $quantsData = New quantDataRecord2();
 
-
-                    $quantsData->geography = $tableName->Split("_")(3)->ToUpper;
-                    $quantsData->tName = $tableName;
-                    $quantsData->sID = $tableName->Split("_")[1] . "_" . $tableName->Split("_")[2];
-
-                   If ( !$tableMinMax->ContainsKey($tableName) ) {
-                       $cmd = pg_query($cnn, $min);
-                       If ( $cnn->State = $ConnectionState->Closed ) {
-                           //$cnn->Open();
-
-                       }
-                       $minMax[1] ;
-
-                       $quantsData->min = $cmd->ExecuteScalar();
-
-                       $cmd->CommandText = $max;
-
-                       $quantsData->max = $cmd->ExecuteScalar();
-
-//                       $cnn->Close();
-
-                       $minMax[0] = $quantsData->min;
-                       $minMax[1] = $quantsData->max;
-
-                        $tableMinMax[] = ($tableName, $minMax);
-
-                  } Else {
-
-
-                       $quantsData->min = $tableMinMax->Item($tableName)[0];
-                       $quantsData->max = $tableMinMax->Item($tableName)[1];
-                   }
-
-
-
-                    $quantsData->gName = $datarow->area_name;
-
-                   If ( $SS->quantData->ContainsKey($tableName) ) {
-                       $SS->quantData($tableName)->gName .= "; " . $quantsData->gName;
-
-                   } Else {
-
-                       $SS->quantData[$tableName] = $quantsData;
-                       $SS->quantCount .= 1;                    }
-
-
+                If ( sizeof($surveyDetails) == 0 ) {
+                    $quantsData->sName = $tableName;
+                    $quantsData->sYear = 9999;
+                } Else {
+                    $quantsData->sName = $surveyDetails->surveyName;
+                    $quantsData->sYear = $surveyDetails->year;
                 }
 
 
+                // 'Convert text column to integer value and get min and max values;
+                $min = "Select min(cast(successful as int)) from " . $tableName;
+                $max = "Select max(cast(successful as int)) from " . $tableName;
+
+                $tablenameArray = explode("_", $tableName);
+                $quantsData->geography = strtoupper($tablenameArray[3]);
+                $quantsData->tName = $tableName;
+                $quantsData->sID = $tablenameArray[1] . "_" . $tablenameArray[2];
+
+                If ( !$tableMinMax->ContainsKey($tableName) ) {
+                    $cmd = pg_query($cnn, $min);
+//                       If ( $cnn->State = $ConnectionState->Closed ) {
+//                           //$cnn->Open();
+//
+//                       }
+//                       $minMax[1] ;
+
+                    $quantsData->min = $cmd->ExecuteScalar();
+
+                    $cmd->CommandText = $max;
+
+                    $quantsData->max = $cmd->ExecuteScalar();
+
+//                       $cnn->Close();
+
+                    $minMax[0] = $quantsData->min;
+                    $minMax[1] = $quantsData->max;
+
+                    $tableMinMax[$tableName] = $minMax;
+
+                } Else {
+
+
+                    $quantsData->min = $tableMinMax[$tableName][0];
+                    $quantsData->max = $tableMinMax[$tableName][1];
+                }
+
+
+
+                $quantsData->gName = $datarow->area_name;
+
+                If ( $SS->quantData->ContainsKey($tableName) ) {
+                    $SS->quantData($tableName)->gName .= "; " . $quantsData->gName;
+
+                } Else {
+
+                    $SS->quantData[$tableName] = $quantsData;
+                    $SS->quantCount .= 1;                    }
+
+
             }
+
+
+        }
         // ' Qual(Data);
 
         $qcnn = $DB->getDBConnection("Qual_Data");
@@ -559,15 +567,15 @@ class SpatialData {
 
 
         $QDataAdapter = pg_query($qcnn, $QselStr);
-        $QresultsTable = New DataTable;
+        $QresultsTable = New DataTable();
         $QDataAdapter->Fill($QresultsTable);
 
 
-        ForEach ( $QresultsTable->Rows as $Qdatarow ) {
+        ForEach ( $QresultsTable->rows as $Qdatarow ) {
 
             $coverage = $Qdatarow->coverage;
 
-            $items = $coverage->Split(";");
+            $items = explode(";", $coverage);
 
             $locDetails = "";
             $word_stats = "";
@@ -575,43 +583,47 @@ class SpatialData {
             ForEach ($items as $place ) //items;
                 If ( !$place == "") {
 
+                    $wordStatArray = explode("wordStats", $place);
 
-                    $locDetails = $Regex->Split(place, "wordStats")[0];
-                    $word_stats = $Regex->Split(place, "wordStats")[1];
+                    $locDetails = $wordStatArray[0];
+                    $word_stats = $wordStatArray[1];
 
-                    $word_stats = $word_stats->Remove(0,$word_stats->IndexOf("["));
+                    $word_stats = substr($word_stats, strpos($word_stats, "["));
 
-                    $word_stats = $word_stats->Remove(($word_stats->Length - 3), 3);
+                    $word_stats = substr($word_stats, -3);
+
+//                    $word_stats = $word_stats->Remove(0,$word_stats->IndexOf("["));
+//                    $word_stats = $word_stats->Remove(($word_stats->Length - 3), 3);
 
                     $locDetails .= "wordsStats" . ":" . $word_stats . "}";
 
-                        $places = json_decode(Of unlockDetails)(locDetails);
+                    $places = json_decode($locDetails);
 
-                       If ( !$places = null ) {
+                    If ( !$places == null ) {
 
-                           $qualData = New qualDataRecordGroup;
-                           $qualData->sName = Trim($Qdatarow->identifier));
+                        $qualData = New qualDataRecordGroup();
+                        $qualData->sName = Trim($Qdatarow->identifier);
 
-                            $coord = New qualCoords;
-                           $coord->lat = $places->lat;
-                           $coord->lon = $places->lon;
-                           $coord->name = $places->Name;
-                           $coord->counts = $places->Occurences;
-                           $qualData->gName[] = (coord);
-                           $qualData->name = Trim($Qdatarow->title);
-                           $qualData->creator = Trim($Qdatarow->creator);
-                           $qualData->thematic = Trim($Qdatarow->thematic_group);
-                           $qualData->recorddate = Trim($Qdatarow->created);
+                        $coord = New qualCoords();
+                        $coord->lat = $places->lat;
+                        $coord->lon = $places->lon;
+                        $coord->name = $places->Name;
+                        $coord->counts = $places->Occurences;
+                        $qualData->gName[] = ($coord);
+                        $qualData->name = Trim($Qdatarow->title);
+                        $qualData->creator = Trim($Qdatarow->creator);
+                        $qualData->thematic = Trim($Qdatarow->thematic_group);
+                        $qualData->recorddate = Trim($Qdatarow->created);
 
-                           If ( $SS->qualData->ContainsKey($Qdatarow->identifier) ) {
-                               $SS->qualData->$Qdatarow->identifier->gName[] = ($coord);
-                           } Else {
-                               $SS->qualData[$Qdatarow->identifier] = $qualData;
-                               $SS->qualCount += 1;
-                           }
+                        If ( array_key_exists($Qdatarow->identifier, $SS->qualData)) {
+                            $SS->qualData->$Qdatarow->identifier->gName[] = ($coord);
+                        } Else {
+                            $SS->qualData[$Qdatarow->identifier] = $qualData;
+                            $SS->qualCount += 1;
                         }
-
                     }
+
+                }
 
         }
 
@@ -648,40 +660,37 @@ class SpatialData {
 
         $SID = "";
         If ( $DR1->Read ) {
-               $SID = $DR1->surveyid);
-            }
+            $SID = $DR1->surveyid;
+        }
 
-        $cnn->Close();
-
-
+//        $cnn->Close();
 
 
         $selstr = "Select short_title, collectionenddate from survey WHERE lower(surveyid) = '" . Trim($SID->ToLower) . "'";
-            $DR As$Npgsql->NpgsqlDataReader;
 
-            $cmd = pg_query($cnn, $selstr);
+        $cmd = pg_query($cnn, $selstr);
 
-            //$cnn->Open();
+        //$cnn->Open();
 
-           $DR = $cmd->ExecuteReader;
+        $DR = $cmd->ExecuteReader;
 
-           If ( $DR->Read ) {
-               $sName = $DR->short_title;
+        If ( $DR->Read ) {
+            $sName = $DR->short_title;
 
-               $survey_date = $DR->collectionenddate;
+            $survey_date = $DR->collectionenddate;
 
-               $year = $survey_date->Year;
-                $details[] = ("surveyName", $sName);
-                $details[] = ("year", $year);
+            $year = $survey_date->Year;
+            $details["surveyName"] = $sName;
+            $details["year"]= $year;
 //               $cnn->Close();
 
-            }
-
-            Return $details;
-
-
-
         }
+
+        Return $details;
+
+
+
+    }
 
 
     Public Function generateQualSpatialData($colour, $ID) {
@@ -704,13 +713,13 @@ class SpatialData {
         $DR = $cmd->ExecuteReader;
 
         If ( $DR->Read ) {
-               $coverage = $DR->coverage);
+            $coverage = $DR->coverage;
 
-            }
+        }
 
-        $cnn->Close();
+//        $cnn->Close();
 
-        $items() = $coverage->Split(";");
+        $items = explode(";", $coverage);
 
         $locDetails = "";
         $word_stats = "";
@@ -718,32 +727,33 @@ class SpatialData {
         ForEach ($items as $place ) {//items;
             If ( !$place == "") {
 
+                $wordStatArray = explode("wordStats", $place);
 
-                $locDetails = $Regex->Split($place, "wordStats")[0];
-                $word_stats = $Regex->Split($place, "wordStats")[1];
+                $locDetails = $wordStatArray[0];
+                $word_stats = $wordStatArray[1];
 
-                $word_stats = $word_stats->Remove(0,$word_stats->IndexOf("["));
+                $word_stats = substr($word_stats, strpos($word_stats, "["));
 
-                $word_stats = $word_stats->Remove(($word_stats->Length - 3), 3);
+                $word_stats = substr($word_stats, -3);
 
                 $locDetails .= "wordsStats" . ":" . $word_stats . "}";
 
-                    $places = json_decode(Of unlockDetails)(locDetails);
+                $places = json_decode($locDetails);
 
-                   If ( !$places = null ) {
+                If ( !$places == null ) {
 
-                       $qualData = New qualDataRecord;
-                       $qualData->identifier = $ID;
-                       $qualData->lat = $places->lat;
-                       $qualData->lon = $places->lon;
-                       $qualData->title = $places->Name;
-                       $qualData->counts = $places->Occurences;
+                    $qualData = New qualDataRecord;
+                    $qualData->identifier = $ID;
+                    $qualData->lat = $places->lat;
+                    $qualData->lon = $places->lon;
+                    $qualData->title = $places->Name;
+                    $qualData->counts = $places->Occurences;
 
 
-                       $results[] = ($qualData);
-                   }
-
+                    $results[] = ($qualData);
                 }
+
+            }
 
         }
 
@@ -818,7 +828,7 @@ class SpatialData {
 
             $DA->Fill($results);
 
-            $htmlOut = ConvertToHtmlFile($results);
+            $htmlOut = $this::ConvertToHtmlFile($results);
 
             $identResults = New IdentifyResults;
             $identResults->tableName = $Table->tableName;
@@ -897,9 +907,9 @@ class SpatialData {
 
             ForEach ( $targetTable->Columns as $myColumn ) {
                 $myBuilder .= ("<td align= 'left' valign= 'top'>");
-                   $myBuilder .= ($myRow($myColumn->ColumnName)());
-                   $myBuilder .= ("</td>");
-                }
+                $myBuilder .= ($myRow[$myColumn->ColumnName]);
+                $myBuilder .= ("</td>");
+            }
 
 
 
