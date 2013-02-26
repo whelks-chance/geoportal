@@ -302,11 +302,9 @@ class getMetaData {
 
         $cnn = $db->getDBConnection("Qual_Data");
 
-
         $selStr = "Select * from qualdata.dc_info WHERE identifier ='" . $SID . "';";
 
         Log::toFile("DC query : " . $selStr);
-
 
         $cmd = pg_query($cnn, $selStr);
 
@@ -314,38 +312,61 @@ class getMetaData {
 
         $resultRows = $DA->Read($cmd);
 
+
         ForEach ($resultRows as $DR) {
+
+
+
             $dcMeta = New DublinCore();
 
             $coverage = Trim($DR->coverage);
+
+            Log::toFile("QDC item : " . print_r($coverage, true));
 
             $placeNames = "";
 
             $items[] = explode(";", $coverage );
 
+            Log::toFile("coverageItems : " . sizeof($items));
+
             $locDetails = "";
             $word_stats = "";
+
 
             ForEach ($items as $place) {
                 If (! $place == "" ) {
 
-                    Log::toFile("dublin Stats : " . print_r($place, true));
+//                    Log::toFile("QDC : " . print_r($place, true));
 
-                    $placeArray = explode("wordStats", $place);
-                    $locDetails = $placeArray[0];
-                    $word_stats = $placeArray[1];
+                    $pattern = "/\"{name:(.*), data/";
+                    $replacement = '{"name":"$1", "data"';
+                    $subject = $place;
 
-                    $word_stats = substr($word_stats, 0, strpos($word_stats, '['));
+                    $result = preg_replace($pattern, $replacement, $subject);
 
-                    $word_stats = substr($word_stats, (strlen($word_stats) - 3));
+                    $result = substr($result, 0, -2) . "}";
 
-                    $locDetails .= "wordsStats" . ":" . $word_stats . "}";
+                    $placeObject = json_decode($result);
 
-                    $places = json_decode(utf8_encode($locDetails));
+//                    ForEach ($placeObject->wordStats as $wordData){
 
-                    If (! $places == null ) {
-                        $placeNames .= $places->Name . ";";
-                    }
+                    $placeNames .= $placeObject->wordStats->name . ";";
+
+//                    $placeArray = explode("wordStats", $place);
+//                    $locDetails = $placeArray[0];
+//                    $word_stats = $placeArray[1];
+//
+//                    $word_stats = substr($word_stats, 0, strpos($word_stats, '['));
+//
+//                    $word_stats = substr($word_stats, (strlen($word_stats) - 3));
+//
+//                    $locDetails .= "wordsStats" . ":" . $word_stats . "}";
+//
+//                    $places = json_decode(utf8_encode($locDetails));
+//
+//                    If (! $places == null ) {
+//                        $placeNames .= $places->Name . ";";
+//                    }
 
                 }
 
@@ -368,7 +389,7 @@ class getMetaData {
             $dcMeta->dcTitle = Trim($DR->title);
             $dcMeta->dcType = Trim($DR->type);
             $dcMeta->dcWiserdID = Trim($DR->identifier);
-//                cnn.Close()
+
             Return $dcMeta;
 
 
@@ -449,7 +470,6 @@ class getMetaData {
         }
 
 
-
         ForEach ( $wordCol as $placeCollection) {
 
             ForEach ($placeCollection as $wrd) {
@@ -473,8 +493,6 @@ class getMetaData {
                     $page->place1Count = $wrd->count;
                     $page->page = $wrd->page;
                     $pageCol[$wrd->page] = $page;
-
-
 
                 }
 
@@ -504,14 +522,6 @@ class getMetaData {
 
         $selStr = "Select coverage from qualdata.dc_info WHERE identifier ='" . $ID . "';";
 
-//            $DR As NpgsqlDataReader
-//            $cmd = pg_query($cnn, $selStr);
-//
-//            cnn.Open()
-//            DR = cmd.ExecuteReader
-//
-//            If (DR.Read ) {
-
         $cmd = pg_query($cnn, $selStr);
 
         $DA = new DataAdapter();
@@ -527,8 +537,6 @@ class getMetaData {
             $locDetails = "";
             $word_stats = "";
 
-//            Log::toFile("places items : " . print_r($items, true));
-
             ForEach ($items as $place) { //place As String In items
                 If (! $place == "" ) {
 
@@ -540,37 +548,11 @@ class getMetaData {
 
                     $result = substr($result, 0, -2) . "}";
 
-//                    Log::toFile("placeJson : " . $result);
-
                     $placeObject = json_decode($result);
-
-
-//                    Log::toFile("placeObject : " . print_r($placeObject, true));
-
-//                    ForEach ($placeObject->wordStats as $wordData){
 
                     $pl = New place();
                     $pl->place = $placeObject->wordStats->name;
                     $placeNames[] = ($pl);
-
-//                    }
-
-//                    $placeArray = explode("wordStats", $place);
-//                    $locDetails = $placeArray[0];
-//                    $word_stats = $placeArray[1];
-//
-//                    $word_stats = substr($word_stats, 0, strpos($word_stats, '[')); // $word_stats.Remove(0, $word_stats.IndexOf("["));
-//
-//                    $word_stats = substr($word_stats, (strlen($word_stats) - 3));  //$word_stats.Remove((strlen($word_stats) - 3), 3);
-//
-//
-//                    $locDetails .= '"wordsStats":' . $word_stats . "}";
-//
-//                    $places = json_decode($locDetails);
-//
-
-
-
 
                 }
 
@@ -592,7 +574,6 @@ class getMetaData {
 
         $selStr = "Select calais from qualdata.dc_info WHERE identifier ='" . $ID . "';";
 
-//        Log::toFile("tagcloud query : " . $selStr);
 
         $cmd = pg_query($cnn, $selStr);
 
@@ -606,67 +587,18 @@ class getMetaData {
 
             $calais = $DR->calais;
 
-//            Log::toFile("calais : " . $calais);
-
             $calaisTrim = trim($calais);
-
-//            Log::toFile("trim : " . $calaisTrim );
 
             $calaisTrim = utf8_encode( rtrim($calaisTrim, ",") );
 
-//            $createJson = "[" . substr($calaisTrim, 0, -1) . "]";
-
             $createJson = "[" . $calaisTrim . "]";
 
-//            Log::toFile("json : " . $createJson);
-
             $jsonObject = json_decode($createJson);
-
-//            Log::toFile("wild optimism : " . print_r($jsonObject, true));
 
             forEach($jsonObject As $jsonRow) {
                 $tagsDetails .= '{"word":"' . $jsonRow->Value . '","count":' . $jsonRow->Count . "},";
             }
 
-//            Log::toFile("tagstuff : " . $tagsDetails);
-
-//            $json = $DR->calais;
-//
-//            $json = rtrim($json, " \n"); //.TrimEnd("," . vbCrLf . "");
-//
-//
-//            $jsons = explode("},", $json);
-//
-//            Log::toFile("exploded : " . print_r($jsons, true));
-//
-//            ForEach ($jsons as $item) { //} item As String In jsons
-//
-//                If (! $item == " " ) {
-//                    $item = ltrim($item, ","); //.TrimStart(",");
-//
-//                    $subItems = explode(",", $item);
-//
-//
-//
-//                    If (count($subItems) == 6 ) {
-//
-//                        $dict = array();
-//
-//                        forEach ($subItems as $subItem) {
-//                            $ItemArray = explode(":", $subItem);
-//                            $dict[$ItemArray[0]] = $ItemArray[1];
-//
-//                            $tagsDetails .= '{"word":"' . $ItemArray[0] . '","count":' . $ItemArray[1] . "},";
-//
-//                        }
-//
-//                    }
-//                }
-//            }
-
-            // ' $obj As List(Of Calais) = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Calais))(json)
-
-//                'Newtonsoft.Json.JsonConvert.DeserializeObject($DR->calais)
         }
         Return '{"tags":[' . $tagsDetails . ']}';
 

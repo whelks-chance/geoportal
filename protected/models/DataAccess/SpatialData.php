@@ -563,7 +563,7 @@ class SpatialData {
 
 
         $QselStr .= ("SELECT * FROM qualdata.dc_info ");
-        $QselStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326),$qualdata->dc_info->the_geom);");
+        $QselStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326), qualdata.dc_info.the_geom);");
 
 
         $QDataAdapter = pg_query($qcnn, $QselStr);
@@ -708,14 +708,12 @@ class SpatialData {
 
 
         $cmd = pg_query($cnn, $selStr);
-        //$cnn->Open();
+        $DA = new DataAdapter();
 
-        $DR = $cmd->ExecuteReader;
+        $resultRows = $DA->Read($cmd);
 
-        If ( $DR->Read ) {
-            $coverage = $DR->coverage;
 
-        }
+        $coverage = Trim($resultRows[0]->coverage);
 
 //        $cnn->Close();
 
@@ -727,22 +725,32 @@ class SpatialData {
         ForEach ($items as $place ) {//items;
             If ( !$place == "") {
 
-                $wordStatArray = explode("wordStats", $place);
+                $pattern = "/\"{name:(.*), data/";
+                $replacement = '{"name":"$1", "data"';
+                $subject = $place;
 
-                $locDetails = $wordStatArray[0];
-                $word_stats = $wordStatArray[1];
+                $result = preg_replace($pattern, $replacement, $subject);
 
-                $word_stats = substr($word_stats, strpos($word_stats, "["));
+                $result = substr($result, 0, -2) . "}";
 
-                $word_stats = substr($word_stats, -3);
+                $places = json_decode($result);
 
-                $locDetails .= "wordsStats" . ":" . $word_stats . "}";
-
-                $places = json_decode($locDetails);
+//                $wordStatArray = explode("wordStats", $place);
+//
+//                $locDetails = $wordStatArray[0];
+//                $word_stats = $wordStatArray[1];
+//
+//                $word_stats = substr($word_stats, strpos($word_stats, "["));
+//
+//                $word_stats = substr($word_stats, -3);
+//
+//                $locDetails .= "wordsStats" . ":" . $word_stats . "}";
+//
+//                $places = json_decode($locDetails);
 
                 If ( !$places == null ) {
 
-                    $qualData = New qualDataRecord;
+                    $qualData = New qualDataRecord();
                     $qualData->identifier = $ID;
                     $qualData->lat = $places->lat;
                     $qualData->lon = $places->lon;
@@ -757,11 +765,7 @@ class SpatialData {
 
         }
 
-
-
-
         Return $results;
-
 
     }
 

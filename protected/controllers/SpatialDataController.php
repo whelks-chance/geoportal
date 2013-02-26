@@ -143,14 +143,32 @@ class SpatialDataController extends Controller {
 
 
     // <CompressFilter()>
-    Public Function actionSpatialSearch($geography, $start, $limit, $Type) {
+    Public Function actionSpatialSearch() {
 
 //        $count;
+        $geography = "";
+        if(isset($_POST['geography'])) {
+            $geography = $_POST['geography'];
+        }
+        $start = "";
+        if(isset($_POST['start'])) {
+            $start = $_POST['start'];
+        }
+        $limit = "";
+        if(isset($_POST['limit'])) {
+            $limit = $_POST['limit'];
+        }
+        $Type = "";
+        if(isset($_POST['Type'])) {
+            $Type = $_POST['Type'];
+        }
 
         $SD = New SpatialData();
 
 
         $results = array();
+
+        $count = 0;
 
         // 'Return "{""success"": true, ""data"":" . json_encode($results) . "}";
 
@@ -211,7 +229,7 @@ class SpatialDataController extends Controller {
         $pageResults = array();
 
         $cnt = $start;
-        $cnt_end = $cnt + $limit;
+        $cnt_end = intVal($cnt) + intVal($limit);
 
             $Str = "";
 
@@ -245,7 +263,7 @@ class SpatialDataController extends Controller {
                     break;
             }
 
-            Return $Str;
+            echo $Str;
 
         }
 
@@ -272,18 +290,23 @@ class SpatialDataController extends Controller {
     }
 
     // <CompressFilter()>
-    Public Function actionGenerateQualSpatialData($ID) {
+    Public Function actionGenerateQualSpatialData() {
+
+        $ID = "";
+        if(isset($_POST['ID'])) {
+            $ID = $_POST['ID'];
+        }
 
         $SD = New SpatialData();
         $shapes = $SD->generateQualSpatialData("red", $ID);
 
         If ( sizeof($shapes) > 0 ) {
-                Return '({"success": true, "shapes": ' . json_encode($shapes) . "})";
+                echo '({"success": true, "shapes": ' . json_encode($shapes) . "})";
             } Else {
             $msg = New jsonMsg();
             $msg->success = False;
             $msg->message = "No Spatial Data currently available for this record.";
-            Return json_encode($msg);
+            echo json_encode($msg);
         }
 
     }
