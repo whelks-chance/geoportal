@@ -63,12 +63,12 @@
 			// ,hideMode:'display'
 			, keepSelection: true
 			, actions: [{
-			//	iconCls: 'icon-meta'
-				tooltip: 'View MetaData',
-                icon: 'images/silk/application_side_list.png'
+				iconCls: 'icon-meta',
+				tooltip: 'View MetaData'
+//                icon: 'images/silk/application_side_list.png'
 			}, {
-			    //	iconCls: 'icon-map',
-            icon:'images/silk/map_app.png',
+			    	iconCls: 'icon-map',
+//            icon:'images/silk/map_app.png',
 				tooltip: 'Map Data'
 			}]
 			, callbacks: {

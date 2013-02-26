@@ -19,7 +19,7 @@ class DataAdapter {
     public function Read($queryResult)
     {
         $count = pg_num_rows($queryResult);
-        Log::toFile('results returned : ' . $count);
+        Log::toFile('DataAdapter sees x results : ' . $count);
 
         $toReturn = array();
 

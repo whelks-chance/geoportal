@@ -305,6 +305,9 @@ class getMetaData {
 
         $selStr = "Select * from qualdata.dc_info WHERE identifier ='" . $SID . "';";
 
+        Log::toFile("DC query : " . $selStr);
+
+
         $cmd = pg_query($cnn, $selStr);
 
         $DA = new DataAdapter();
@@ -332,13 +335,13 @@ class getMetaData {
                     $locDetails = $placeArray[0];
                     $word_stats = $placeArray[1];
 
-                    $word_stats = $word_stats.Remove(0, strpos("[", $word_stats));
+                    $word_stats = substr($word_stats, 0, strpos($word_stats, '['));
 
-                    $word_stats = $word_stats.Remove((strlen($word_stats) - 3), 3);
+                    $word_stats = substr($word_stats, (strlen($word_stats) - 3));
 
                     $locDetails .= "wordsStats" . ":" . $word_stats . "}";
 
-                    $places = json_decode($locDetails);
+                    $places = json_decode(utf8_encode($locDetails));
 
                     If (! $places == null ) {
                         $placeNames .= $places->Name . ";";
@@ -524,35 +527,49 @@ class getMetaData {
             $locDetails = "";
             $word_stats = "";
 
+//            Log::toFile("places items : " . print_r($items, true));
+
             ForEach ($items as $place) { //place As String In items
                 If (! $place == "" ) {
 
+                    $pattern = "/\"{name:(.*), data/";
+                    $replacement = '{"name":"$1", "data"';
+                    $subject = $place;
+
+                    $result = preg_replace($pattern, $replacement, $subject);
+
+                    $result = substr($result, 0, -2) . "}";
+
+//                    Log::toFile("placeJson : " . $result);
+
+                    $placeObject = json_decode($result);
 
 
-//
-//                        $locDetails = Regex.Split(place, "wordStats")(0);
-//                        $word_stats = Regex.Split(place, "wordStats")(1);
-//
-//                        word_stats = word_stats.Remove(0, word_stats.IndexOf("[");
-//
-//                        word_stats = word_stats.Remove((word_stats.Length - 3), 3);
+//                    Log::toFile("placeObject : " . print_r($placeObject, true));
 
-                    $placeArray = explode($place, "wordStats");
-                    $locDetails = $placeArray[0];
-                    $word_stats = $placeArray[1];
-
-                    $word_stats = substr($word_stats, 0, strpos($word_stats, '[')); // $word_stats.Remove(0, $word_stats.IndexOf("["));
-
-                    $word_stats = substr($word_stats, (strlen($word_stats) - 3));  //$word_stats.Remove((strlen($word_stats) - 3), 3);
-
-
-                    $locDetails .= '"wordsStats":' . $word_stats . "}";
-
-                    $places = json_decode($locDetails);
+//                    ForEach ($placeObject->wordStats as $wordData){
 
                     $pl = New place();
-                    $pl->place = $places->name;
+                    $pl->place = $placeObject->wordStats->name;
                     $placeNames[] = ($pl);
+
+//                    }
+
+//                    $placeArray = explode("wordStats", $place);
+//                    $locDetails = $placeArray[0];
+//                    $word_stats = $placeArray[1];
+//
+//                    $word_stats = substr($word_stats, 0, strpos($word_stats, '[')); // $word_stats.Remove(0, $word_stats.IndexOf("["));
+//
+//                    $word_stats = substr($word_stats, (strlen($word_stats) - 3));  //$word_stats.Remove((strlen($word_stats) - 3), 3);
+//
+//
+//                    $locDetails .= '"wordsStats":' . $word_stats . "}";
+//
+//                    $places = json_decode($locDetails);
+//
+
+
 
 
                 }
@@ -575,7 +592,7 @@ class getMetaData {
 
         $selStr = "Select calais from qualdata.dc_info WHERE identifier ='" . $ID . "';";
 
-        Log::toFile("tagcloud query : " . $selStr);
+//        Log::toFile("tagcloud query : " . $selStr);
 
         $cmd = pg_query($cnn, $selStr);
 
@@ -611,7 +628,7 @@ class getMetaData {
                 $tagsDetails .= '{"word":"' . $jsonRow->Value . '","count":' . $jsonRow->Count . "},";
             }
 
-            Log::toFile("tagstuff : " . $tagsDetails);
+//            Log::toFile("tagstuff : " . $tagsDetails);
 
 //            $json = $DR->calais;
 //

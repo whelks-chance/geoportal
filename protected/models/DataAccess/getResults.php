@@ -77,7 +77,6 @@ class getResults {
 //            @var DataRow $row
 
             $qtype = Trim($row->q_type);
-            Log::toFile("qType : " . $qtype);
 
             If ($qtype == "ROOT Question") {
                 $rootQ = new rootQuestionDetails();
