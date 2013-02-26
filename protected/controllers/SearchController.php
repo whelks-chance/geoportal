@@ -152,8 +152,6 @@ class SearchController extends Controller {
         $cnt = $start;
         $cnt_end = $cnt + $limit;
 
-        Log::toFile('Between ' . $cnt . ' & ' . $cnt_end);
-
 //        Do Until $cnt = $cnt_end Or $cnt = $QualResults->Count;
         while ($cnt <= $cnt_end || $cnt == sizeof($QualResults)) {
                 $pageResults[] = ($QualResults[$cnt]);

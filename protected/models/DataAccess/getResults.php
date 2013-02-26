@@ -18,7 +18,6 @@ class getResults {
 
         If (sizeof($keywordsArray) > 1) {
 
-            Log::toFile("multi-keyword search");
             $multiKeyword = "";
 
 //            For Each keyword As String In keywordsArray
@@ -33,13 +32,10 @@ class getResults {
             $SSearch.=("WHERE qtext_index @@ to_tsquery('english','" . $multiKeyword . "')");
         } Else {
 
-            Log::toFile("single word search");
             $SSearch.=("SELECT qid, questionnumber as qnumber, link_from, thematic_groups, thematic_tags, ts_headline('english',literal_question_text, plainto_tsquery('english','" . $keywords . "')) as original_text, notes as q_notes, subof as subof, type as q_type, link_from as parent_q, ts_rank_cd(to_tsvector(literal_question_text), plainto_tsquery('english','" . $keywords . "'),0) AS rank");
             $SSearch.=(" FROM questions ");
             $SSearch.=("WHERE qtext_index @@ to_tsquery('english','" . $keywords . "')");
         }
-
-
 
         //'SSearch.Append(" WHERE query @@ to_tsvector(literal_question_text)")
         $SSearch.=("ORDER BY rank DESC");
@@ -51,16 +47,12 @@ class getResults {
 
         }
 
-        Log::toFile($SSearch);
-
         $db = new getDBConnections();
         $cnn = $db->getDBConnection("Survey_Data");
 
 
 //Npgsql.NpgsqlCommand
         $cmd = pg_query($cnn, $SSearch);
-
-        Log::toFile($cmd);
 
         $DA = new DataAdapter();
 

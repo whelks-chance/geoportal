@@ -260,8 +260,6 @@ class getMetaData {
 
         $resultRows = $DA->Read($cmd);
 
-        Log::toFile(print_r($resultRows, true));
-
         ForEach ($resultRows as $DR) {
 
             $label = new Fields();
@@ -300,7 +298,6 @@ class getMetaData {
 
     Public Function getQDublinCore( $SID  ) {
 
-
         $db = New getDBConnections();
 
         $cnn = $db->getDBConnection("Qual_Data");
@@ -313,8 +310,6 @@ class getMetaData {
         $DA = new DataAdapter();
 
         $resultRows = $DA->Read($cmd);
-
-        Log::toFile("Entire Qdc : " . print_r($resultRows, true));
 
         ForEach ($resultRows as $DR) {
             $dcMeta = New DublinCore();
@@ -331,7 +326,7 @@ class getMetaData {
             ForEach ($items as $place) {
                 If (! $place == "" ) {
 
-//                    Log::toFile("wordStats : " . print_r($place, true));
+                    Log::toFile("dublin Stats : " . print_r($place, true));
 
                     $placeArray = explode("wordStats", $place);
                     $locDetails = $placeArray[0];
@@ -414,8 +409,6 @@ class getMetaData {
                 If (! $place == "" ) {
 
                     $w = array();
-
-                    Log::toFile(print_r($place, true));
 
                     $placeArray = explode($place, "wordStats");
                     $locDetails = $placeArray[0];
@@ -524,15 +517,15 @@ class getMetaData {
 
         ForEach ($resultRows as $DR) {
 
-                $coverage = Trim($DR->coverage);
+            $coverage = Trim($DR->coverage);
 
-                $items = explode(";", $coverage);
+            $items = explode(";", $coverage);
 
-                $locDetails = "";
-                $word_stats = "";
+            $locDetails = "";
+            $word_stats = "";
 
-                ForEach ($items as $place) { //place As String In items
-                    If (! $place == "" ) {
+            ForEach ($items as $place) { //place As String In items
+                If (! $place == "" ) {
 
 
 
@@ -544,7 +537,7 @@ class getMetaData {
 //
 //                        word_stats = word_stats.Remove((word_stats.Length - 3), 3);
 
-                         $placeArray = explode($place, "wordStats");
+                    $placeArray = explode($place, "wordStats");
                     $locDetails = $placeArray[0];
                     $word_stats = $placeArray[1];
 
@@ -553,24 +546,24 @@ class getMetaData {
                     $word_stats = substr($word_stats, (strlen($word_stats) - 3));  //$word_stats.Remove((strlen($word_stats) - 3), 3);
 
 
-                        $locDetails .= '"wordsStats":' . $word_stats . "}";
+                    $locDetails .= '"wordsStats":' . $word_stats . "}";
 
-                        $places = json_decode($locDetails);
+                    $places = json_decode($locDetails);
 
-                        $pl = New place();
-                        $pl->place = $places->name;
-                        $placeNames[] = ($pl);
+                    $pl = New place();
+                    $pl->place = $places->name;
+                    $placeNames[] = ($pl);
 
-
-                    }
 
                 }
 
             }
 
-            Return $placeNames;
-
         }
+
+        Return $placeNames;
+
+    }
 
     Public Function getCloud($ID) {
 
@@ -580,62 +573,87 @@ class getMetaData {
 
         $cnn = $db->getDBConnection("Qual_Data");
 
+        $selStr = "Select calais from qualdata.dc_info WHERE identifier ='" . $ID . "';";
 
-            $selStr = "Select calais from qualdata.dc_info WHERE identifier ='" . $ID . "';";
+        Log::toFile("tagcloud query : " . $selStr);
 
-           $cmd = pg_query($cnn, $selStr);
+        $cmd = pg_query($cnn, $selStr);
 
         $DA = new DataAdapter();
 
         $resultRows = $DA->Read($cmd);
 
+        $tagsDetails = "";
+
         ForEach ($resultRows as $DR) {
 
-                $json = $DR->calais;
+            $calais = $DR->calais;
 
-                $json = $json.TrimEnd("," . vbCrLf . "");
+//            Log::toFile("calais : " . $calais);
 
+            $calaisTrim = trim($calais);
 
-                $jsons = explode("},", $json);
+//            Log::toFile("trim : " . $calaisTrim );
 
-                $tagsDetails = "";
+            $calaisTrim = utf8_encode( rtrim($calaisTrim, ",") );
 
-                ForEach ($jsons as $item) { //} item As String In jsons
+//            $createJson = "[" . substr($calaisTrim, 0, -1) . "]";
 
-                    If (! $item == " " ) {
-                        $item = $item.TrimStart(",");
+            $createJson = "[" . $calaisTrim . "]";
 
-                        $subItems = explode(",", $item);
+//            Log::toFile("json : " . $createJson);
 
-                        If (count($subItems) == 6 ) {
+            $jsonObject = json_decode($createJson);
 
-                            $dict As Dictionary(Of String, String) = subItems.ToDictionary(Function(value As String)
-                                                                                                  Return value.Split(":")(0)
-                                                                                              },
-                                                  Function(value As String)
-                                                      Return value.Split(":")(1)
-                                                  })
+//            Log::toFile("wild optimism : " . print_r($jsonObject, true));
 
-                            $word = dict.Item("""Value""").Replace(Char.ConvertFromUtf32(34), String.Empty);
-                            $cnt = dict.Item("""Count""").Replace(Char.ConvertFromUtf32(34), String.Empty);
+            forEach($jsonObject As $jsonRow) {
+                $tagsDetails .= '{"word":"' . $jsonRow->Value . '","count":' . $jsonRow->Count . "},";
+            }
 
-                            $tagsDetails .= "{""word"":""" . $word . """,""count"":" . CInt($cnt) . "},";
-                        }
-                    }
-Next
+            Log::toFile("tagstuff : " . $tagsDetails);
 
-    // ' $obj As List(Of Calais) = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Calais))(json)
+//            $json = $DR->calais;
+//
+//            $json = rtrim($json, " \n"); //.TrimEnd("," . vbCrLf . "");
+//
+//
+//            $jsons = explode("},", $json);
+//
+//            Log::toFile("exploded : " . print_r($jsons, true));
+//
+//            ForEach ($jsons as $item) { //} item As String In jsons
+//
+//                If (! $item == " " ) {
+//                    $item = ltrim($item, ","); //.TrimStart(",");
+//
+//                    $subItems = explode(",", $item);
+//
+//
+//
+//                    If (count($subItems) == 6 ) {
+//
+//                        $dict = array();
+//
+//                        forEach ($subItems as $subItem) {
+//                            $ItemArray = explode(":", $subItem);
+//                            $dict[$ItemArray[0]] = $ItemArray[1];
+//
+//                            $tagsDetails .= '{"word":"' . $ItemArray[0] . '","count":' . $ItemArray[1] . "},";
+//
+//                        }
+//
+//                    }
+//                }
+//            }
+
+            // ' $obj As List(Of Calais) = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Calais))(json)
 
 //                'Newtonsoft.Json.JsonConvert.DeserializeObject($DR->calais)
+        }
+        Return '{"tags":[' . $tagsDetails . ']}';
 
-Return '{"tags":[' . $tagsDetails . ']}';
-
-}
-
-
-
-
-}
+    }
 
 }
 
