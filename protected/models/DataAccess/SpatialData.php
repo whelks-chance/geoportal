@@ -458,21 +458,23 @@ class SpatialData {
     Public Function SpatialSearch($geography) {
 
         $results = array();
+        $SS = New SpatialSearch2;
+
         $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
 
         $DB = New getDBConnections();
+
         $cnn = $DB->getDBConnection("Survey_Data");
 
-        $DA = pg_query($cnn, $getTables);
+        $query = pg_query($cnn, $getTables);
 
-        $DT = New DataTable();
+        $DA = New DataAdapter();
 
-        $DA->Fill($DT);
-        $SS = New SpatialSearch2;
+        $DT = $DA->Read($query);
 
         $tableMinMax = array();
 
-        ForEach ( $DT->Rows as $row ) {
+        ForEach ( $DT as $row ) {
             $selStr = "";
             $tableName = $row->f_table_name;
             $geom_col = $row->f_geometry_column;
@@ -482,22 +484,22 @@ class SpatialData {
             $selStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326)," . $geom_col . ");");
 
 
-            $DataAdapter = pg_query($cnn, $selStr);
-            $resultsTable = New DataTable();
-            $DataAdapter->Fill($resultsTable);
+            $queryResult = pg_query($cnn, $selStr);
+            $DA = New DataAdapter();
+            $resultsTable = $DA->Read($queryResult);
 
             $surveyDetails = $this::getSurveyNameYear($tableName);
 
 
-            ForEach ( $resultsTable->rows as $datarow ) {
+            ForEach ( $resultsTable as $datarow ) {
                 $quantsData = New quantDataRecord2();
 
                 If ( sizeof($surveyDetails) == 0 ) {
                     $quantsData->sName = $tableName;
                     $quantsData->sYear = 9999;
                 } Else {
-                    $quantsData->sName = $surveyDetails->surveyName;
-                    $quantsData->sYear = $surveyDetails->year;
+                    $quantsData->sName = $surveyDetails['surveyName'];;
+                    $quantsData->sYear = $surveyDetails['year'];;
                 }
 
 
@@ -510,7 +512,7 @@ class SpatialData {
                 $quantsData->tName = $tableName;
                 $quantsData->sID = $tablenameArray[1] . "_" . $tablenameArray[2];
 
-                If ( !$tableMinMax->ContainsKey($tableName) ) {
+                If ( !array_key_exists($tableName, $tableMinMax) ) {
                     $cmd = pg_query($cnn, $min);
 //                       If ( $cnn->State = $ConnectionState->Closed ) {
 //                           //$cnn->Open();
@@ -646,40 +648,44 @@ class SpatialData {
         $cnn = $db->getDBConnection("Survey_Data");
 
 
-        $selSurveyStr = "Select surveyid from survey_spatial_link where lower(spatial_id) = '" . Trim($tableName->ToLower) . "'";
+        $selSurveyStr = "Select surveyid from survey_spatial_link where lower(spatial_id) = '" . Trim(strtolower($tableName)) . "'";
 //            $DR1 As$Npgsql->NpgsqlDataReader;
 
         $cmd1 = pg_query($cnn, $selSurveyStr);
 
         //$cnn->Open();
 
-
-        $DR1 = $cmd1->ExecuteReader;
-
-
+        $DA = new DataAdapter();
+        $DR = $DA->Read($cmd1);
+        $DT = $DR[0];
 
         $SID = "";
-        If ( $DR1->Read ) {
-            $SID = $DR1->surveyid;
+        If ( $DT ) {
+            $SID = $DT->surveyid;
         }
 
 //        $cnn->Close();
 
 
-        $selstr = "Select short_title, collectionenddate from survey WHERE lower(surveyid) = '" . Trim($SID->ToLower) . "'";
+        $selstr = "Select short_title, collectionenddate from survey WHERE lower(surveyid) = '" . Trim(strtolower($SID)) . "'";
 
         $cmd = pg_query($cnn, $selstr);
 
         //$cnn->Open();
 
-        $DR = $cmd->ExecuteReader;
+        $DA = new DataAdapter();
+        $DR = $DA->Read($cmd);
 
-        If ( $DR->Read ) {
-            $sName = $DR->short_title;
+        $DT = $DR[0];
+        If ( $DT ) {
 
-            $survey_date = $DR->collectionenddate;
+            Log::toFile('surveyYear' . print_r($DT, true));
 
-            $year = $survey_date->Year;
+            $sName = $DT->short_title;
+
+            $survey_date = DateTime::createFromFormat("Y-m-d", $DT->collectionenddate);
+
+            $year = date_format($survey_date, "Y");
             $details["surveyName"] = $sName;
             $details["year"]= $year;
 //               $cnn->Close();
