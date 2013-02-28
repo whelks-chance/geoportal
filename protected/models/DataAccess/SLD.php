@@ -33,7 +33,7 @@ class SLD {
 
                 // 'write sld name
                 $writer->WriteStartElement("sld", "Name", $ns);
-                $writer->WriteString(layer);
+                $writer->WriteString($layer);
                 $writer->WriteEndElement();
 
                 $writer->WriteStartElement("sld", "UserStyle", $ns);
@@ -54,7 +54,7 @@ class SLD {
                 $writer->WriteStartElement("ogc", "PropertyIsEqualTo", $ogc);
                 // 'write property name
                 $writer->WriteStartElement("ogc", "PropertyName", $ogc);
-                $writer->WriteString(fieldName);
+                $writer->WriteString($fieldName);
                 $writer->WriteEndElement();
                 // 'write literal
                 $writer->WriteStartElement("ogc", "Literal", $ogc);
@@ -355,12 +355,12 @@ class SLD {
             }
 
 
-            $output;
-            stream->Position = 0;
-            $sr = StreamReader(stream);
+            $output = "";
+            $stream->Position = 0;
+            $sr = StreamReader($stream);
 
-            $xD = XmlDocument();
-            xD->LoadXml(sr->ReadToEnd());
+            $xD = new XmlDocument();
+            $xD->LoadXml($sr->ReadToEnd());
 
             Return $xD;
         }
@@ -418,4 +418,3 @@ class SLD {
         }
 
     }
-}

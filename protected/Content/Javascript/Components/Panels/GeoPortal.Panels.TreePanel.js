@@ -264,7 +264,7 @@ GeoPortal.Panels.TreePanel = Ext.extend(Ext.Panel, {
 
         var boundaries = new OpenLayers.Layer.WMS(
             //"Boundary Data", "http://23.21.162.107:8081/geoserver/WISERD/wms",
-                    "Boundary Data", "http://192.168.56.102:8080/geoserver/WISERD/wms",
+                    "Boundary Data", "http://131.251.172.95:7000/geoserver/WISERD/wms",
 //            "Boundary Data", geoserverRoot,
             {
                 LAYERS: ['Unitary Authorities', 'Aberystwyth Locality', 'Bangor Locality', 'Heads of the Valleys'  ] ,
@@ -299,7 +299,7 @@ GeoPortal.Panels.TreePanel = Ext.extend(Ext.Panel, {
                     radioGroup: "BoundaryData",
                     draggable: false,
                     //icon: "http://23.21.162.107:8081/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:Aberystwyth Locality"
-                    icon: "http://192.168.56.102:8080/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:Aberystwyth Locality"
+                    icon: "http://131.251.172.95:7000/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:Aberystwyth Locality"
 //                    icon: geoserverRoot + "/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:Aberystwyth Locality"
                 }
             }
