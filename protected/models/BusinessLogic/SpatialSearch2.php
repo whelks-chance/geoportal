@@ -10,11 +10,11 @@
 class SpatialSearch2 {
 
     public $quantData = array(); // As New Dictionary(Of String, quantDataRecord2)
-    public $quantCount = ""; // As Integer
+    public $quantCount = 0; // As Integer
     public $qualData = array(); // As New Dictionary(Of String, qualDataRecordGroup)
-    public $qualCount = ""; // As Integer
+    public $qualCount = 0; // As Integer
     public $adminData = array(); // As New Dictionary(Of String, adminDataRecord)
-    public $adminCount = ""; // As Integer
+    public $adminCount = 0; // As Integer
 
 }
 

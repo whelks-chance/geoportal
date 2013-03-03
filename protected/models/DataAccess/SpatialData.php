@@ -454,11 +454,10 @@ class SpatialData {
 
     }
 
-
     Public Function SpatialSearch($geography) {
 
         $results = array();
-        $SS = New SpatialSearch2;
+        $SS = New SpatialSearch2();
 
         $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
 
@@ -485,7 +484,7 @@ class SpatialData {
 
 
             $queryResult = pg_query($cnn, $selStr);
-            $DA = New DataAdapter();
+//            $DA = New DataAdapter();
             $resultsTable = $DA->Read($queryResult);
 
             $surveyDetails = $this::getSurveyNameYear($tableName);
@@ -513,23 +512,27 @@ class SpatialData {
                 $quantsData->sID = $tablenameArray[1] . "_" . $tablenameArray[2];
 
                 If ( !array_key_exists($tableName, $tableMinMax) ) {
-                    $cmd = pg_query($cnn, $min);
+//                    $cmd = pg_query($cnn, $min);
 //                       If ( $cnn->State = $ConnectionState->Closed ) {
 //                           //$cnn->Open();
 //
 //                       }
 //                       $minMax[1] ;
+//                    $DA = new DataAdapter();
+//                    $res = $DA->Read($cmd);
+                    $quantsData->min = $DA->execute_scalar($cnn, $min);
 
-                    $quantsData->min = $cmd->ExecuteScalar();
+//                    $quantsData->min = $cmd->ExecuteScalar();
 
-                    $cmd->CommandText = $max;
+//                    $cmd->CommandText = $max;
 
-                    $quantsData->max = $cmd->ExecuteScalar();
+                    $quantsData->max = $DA->execute_scalar($cnn, $max);
+//                    $quantsData->max = $cmd->ExecuteScalar();
 
 //                       $cnn->Close();
 
-                    $minMax[0] = $quantsData->min;
-                    $minMax[1] = $quantsData->max;
+                    $minMax[0] = intval($quantsData->min);
+                    $minMax[1] = intval($quantsData->max);
 
                     $tableMinMax[$tableName] = $minMax;
 
@@ -544,13 +547,14 @@ class SpatialData {
 
                 $quantsData->gName = $datarow->area_name;
 
-                If ( $SS->quantData->ContainsKey($tableName) ) {
-                    $SS->quantData($tableName)->gName .= "; " . $quantsData->gName;
+                If ( array_key_exists($tableName, $SS->quantData)) {
+                    $SS->quantData[$tableName]->gName = $SS->quantData[$tableName]->gName . "; " . $quantsData->gName;
 
                 } Else {
 
                     $SS->quantData[$tableName] = $quantsData;
-                    $SS->quantCount .= 1;                    }
+                    $SS->quantCount = intval($SS->quantCount) + 1;
+                }
 
 
             }
@@ -561,19 +565,17 @@ class SpatialData {
 
         $qcnn = $DB->getDBConnection("Qual_Data");
 
-        $QselStr = "";
+        $QselStr = ("SELECT * FROM qualdata.dc_info WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326), qualdata.dc_info.the_geom);");
 
-
-        $QselStr .= ("SELECT * FROM qualdata.dc_info ");
-        $QselStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326), qualdata.dc_info.the_geom);");
-
+        Log::toFile('Intersects query : ' . $QselStr);
 
         $QDataAdapter = pg_query($qcnn, $QselStr);
-        $QresultsTable = New DataTable();
-        $QDataAdapter->Fill($QresultsTable);
+//        $QresultsTable = New DataTable();
+//        $QDataAdapter->Fill($QresultsTable);
 
+        $res = $DA->Read($QDataAdapter);
 
-        ForEach ( $QresultsTable->rows as $Qdatarow ) {
+        ForEach ( $res as $Qdatarow ) {
 
             $coverage = $Qdatarow->coverage;
 
@@ -585,21 +587,32 @@ class SpatialData {
             ForEach ($items as $place ) //items;
                 If ( !$place == "") {
 
-                    $wordStatArray = explode("wordStats", $place);
+//                    $wordStatArray = explode("wordStats", $place);
+//
+//                    $locDetails = $wordStatArray[0];
+//                    $word_stats = $wordStatArray[1];
+//
+//                    $word_stats = substr($word_stats, strpos($word_stats, "["));
+//
+//                    $word_stats = substr($word_stats, -3);
+//
+////                    $word_stats = $word_stats->Remove(0,$word_stats->IndexOf("["));
+////                    $word_stats = $word_stats->Remove(($word_stats->Length - 3), 3);
+//
+//                    $locDetails .= "wordsStats" . ":" . $word_stats . "}";
 
-                    $locDetails = $wordStatArray[0];
-                    $word_stats = $wordStatArray[1];
+                    $pattern = "/\"{name:(.*), data/";
+                    $replacement = '{"name":"$1", "data"';
+                    $subject = $place;
 
-                    $word_stats = substr($word_stats, strpos($word_stats, "["));
+                    $result = preg_replace($pattern, $replacement, $subject);
 
-                    $word_stats = substr($word_stats, -3);
+                    $locDetails = substr($result, 0, -2) . "}";
 
-//                    $word_stats = $word_stats->Remove(0,$word_stats->IndexOf("["));
-//                    $word_stats = $word_stats->Remove(($word_stats->Length - 3), 3);
-
-                    $locDetails .= "wordsStats" . ":" . $word_stats . "}";
 
                     $places = json_decode($locDetails);
+
+                    Log::toFile('qual places : ' . print_r($places, true));
 
                     If ( !$places == null ) {
 
@@ -621,7 +634,7 @@ class SpatialData {
                             $SS->qualData->$Qdatarow->identifier->gName[] = ($coord);
                         } Else {
                             $SS->qualData[$Qdatarow->identifier] = $qualData;
-                            $SS->qualCount += 1;
+                            $SS->qualCount = intval($SS->qualCount) + 1;
                         }
                     }
 
@@ -679,7 +692,7 @@ class SpatialData {
         $DT = $DR[0];
         If ( $DT ) {
 
-            Log::toFile('surveyYear' . print_r($DT, true));
+//            Log::toFile('surveyYear' . print_r($DT, true));
 
             $sName = $DT->short_title;
 

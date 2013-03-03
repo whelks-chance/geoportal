@@ -18,6 +18,8 @@ class Log {
     // log files could easily end up with plain text passwords, or worse, readable by anyone.
 
     public static $logFile = "/var/www/logging/geoportal_debug.log";
+//    public static $logFile = "geoportal_debug.log";
+
 
     public static function toFile($content) {
         if(Log::$loggingOn) {
@@ -26,8 +28,11 @@ class Log {
             $timestamp = $date->format('U = Y-m-d H:i:s');
             $complete = $timestamp . " --> " . $content . PHP_EOL;
 
-            file_put_contents(Log::$logFile, $complete, FILE_APPEND | LOCK_EX);
+            try {
+                file_put_contents(Log::$logFile, $complete, FILE_APPEND | LOCK_EX);
+            } catch(Exception $e) {
 
+            }
         }
     }
 

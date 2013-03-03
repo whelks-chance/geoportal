@@ -7,6 +7,21 @@
  * To change this template use File | Settings | File Templates.
  */
 
+include('../DataAccess/SpatialData.php');
+include('../DataAccess/getDBConnections.php');
+include('../BusinessLogic/SpatialSearch2.php');
+include('../BusinessLogic/DataAdapter.php');
+include('../BusinessLogic/quantDataRecord2.php');
+include('../../views/layouts/variables.php');
+include('Log.php');
+
+$spatial = new SpatialData();
+
+$polygon = "POLYGON((290090.03538979 263094.86837517,290090.03538979 273325.43037517,309845.60338979 273325.43037517,309845.60338979 263094.86837517,290090.03538979 263094.86837517))";
+$pol2 = "POLYGON((299262.26338978997 314247.67837517,299262.26338978997 325536.57437517005,311256.71538979 325536.57437517005,311256.71538979 314247.67837517,299262.26338978997 314247.67837517))";
+$res = $spatial->SpatialSearch($polygon);
+
+print_r($res);
 
         $pattern = "/\"{name:(.*), data/";
         $replacement = '{"name":"$1", "data"';

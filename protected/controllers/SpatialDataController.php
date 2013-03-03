@@ -199,11 +199,11 @@ class SpatialDataController extends Controller {
                 Switch ($Type) {
                     case "Quant":
                         $count = $res->quantCount;
-                            Yii::app()->session["quantCount"] = $count;
+                        Yii::app()->session["quantCount"] = $count;
                         break;
                     case "Qual":
                         $count = $res->qualCount;
-                            Yii::app()->session["qualCount"] = $count;
+                        Yii::app()->session["qualCount"] = $count;
                         break;
                     case "Grey":
 
@@ -231,41 +231,41 @@ class SpatialDataController extends Controller {
         $cnt = $start;
         $cnt_end = intVal($cnt) + intVal($limit);
 
-            $Str = "";
+        $Str = "";
 
-            Switch ($Type) {
+        Switch ($Type) {
 
-                case "Quant":
+            case "Quant":
 
-                    while ( $cnt < $cnt_end || $cnt != $res->quantCount) {
+                while ( $cnt < $cnt_end || $cnt != $res->quantCount) {
 
                     $pageResults[$res->quantData] = ($res->quantData[$cnt]);
                     $cnt += 1;
-                    }
+                }
 
-                    $Str = '{"totalCount":' . $count . ',"quantData":' . json_encode($pageResults) . "}";
+                $Str = '{"totalCount":' . $count . ',"quantData":' . json_encode($pageResults) . "}";
 
 
                 break;
-                case "Qual":
-                    while( $cnt = $cnt_end Or $cnt = $res->qualCount) {
+            case "Qual":
+                while( $cnt = $cnt_end Or $cnt = $res->qualCount) {
 
-                        $pageResults[$res->qualData] = ($res->qualData[$cnt]);
-                        $cnt += 1;
-                    }
+                    $pageResults[$res->qualData] = ($res->qualData[$cnt]);
+                    $cnt += 1;
+                }
 
-                    $Str = '{""totalCount"":' . $count . ',"qualData":' . json_encode($pageResults) . '}';
+                $Str = '{""totalCount"":' . $count . ',"qualData":' . json_encode($pageResults) . '}';
                 break;
-                case "Grey":
+            case "Grey":
 
-                    break;
-                case "Admin":
-                    break;
-            }
-
-            echo $Str;
-
+                break;
+            case "Admin":
+                break;
         }
+
+        echo $Str;
+
+    }
 
 
     // <CompressFilter()>
@@ -301,8 +301,8 @@ class SpatialDataController extends Controller {
         $shapes = $SD->generateQualSpatialData("red", $ID);
 
         If ( sizeof($shapes) > 0 ) {
-                echo '({"success": true, "shapes": ' . json_encode($shapes) . "})";
-            } Else {
+            echo '({"success": true, "shapes": ' . json_encode($shapes) . "})";
+        } Else {
             $msg = New jsonMsg();
             $msg->success = False;
             $msg->message = "No Spatial Data currently available for this record.";
@@ -373,14 +373,14 @@ class SpatialDataController extends Controller {
     Public Function actiongetFeatureInfo($lat, $lon, $tableIDs) {
 
         // ' create a list of tables from the JSON
-            $tables = json_decode($tableIDs);
-            $SD = New SpatialData();
-            $results = $SD->getFeatureInfoTable($lat, $lon, $tables);
+        $tables = json_decode($tableIDs);
+        $SD = New SpatialData();
+        $results = $SD->getFeatureInfoTable($lat, $lon, $tables);
 
 
-            Return json_encode($results);
+        Return json_encode($results);
 
 
-        }
+    }
 
 }

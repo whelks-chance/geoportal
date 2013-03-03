@@ -13,7 +13,7 @@ $javascriptFiles = array(
 //    "Libraries/ext-4.1.1a/ext-all.js",
 //    "Libraries/ext-4.1.1a/ext-base.js",
 
-    "GeoTools/processing.js",
+    "GeoTools/processing-1.4.1.min.js",
     "Libraries/OpenLayers-2.12/OpenLayers.js",
     "Libraries/cloudmade.js",
 

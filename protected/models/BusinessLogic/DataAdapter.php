@@ -24,16 +24,32 @@ class DataAdapter {
         $toReturn = array();
 
         while ($row = pg_fetch_object($queryResult)) {
-         //   Log::toFile('row : ' . print_r($row, true));
+            //   Log::toFile('row : ' . print_r($row, true));
 //            Log::toFile('column count : ' . count($row));
-    //        Log::toFile('keys : ' . print_r(array_keys($row), true));
-    //        Log::toFile('values : ' . print_r(array_values($row), true));
+            //        Log::toFile('keys : ' . print_r(array_keys($row), true));
+            //        Log::toFile('values : ' . print_r(array_values($row), true));
 
             $toReturn[] = $row;
         }
+        Log::toFile('Data Object : ' . print_r($toReturn, true));
 
-   //     Log::toFile('return search object array : ' + print_r($toReturn, true));
+        //     Log::toFile('return search object array : ' + print_r($toReturn, true));
         return $toReturn;
+    }
+
+    public function execute_scalar($cnn, $pgsql) {
+
+        Log::toFile('Executing scalar ' . $pgsql);
+        $rs = pg_query($cnn, $pgsql);
+
+        $count = pg_num_rows($rs);
+        Log::toFile('DataAdapter sees x results : ' . $count);
+
+        if (pg_num_rows($rs)) {
+            $r = pg_fetch_row($rs);
+            return $r[0];
+        }
+        return null;
     }
 
 }
