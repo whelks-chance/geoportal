@@ -612,7 +612,7 @@ class SpatialData {
 
                     $places = json_decode($locDetails);
 
-                    Log::toFile('qual places : ' . print_r($places, true));
+//                    Log::toFile('qual places : ' . print_r($places, true));
 
                     If ( !$places == null ) {
 
@@ -631,7 +631,7 @@ class SpatialData {
                         $qualData->recorddate = Trim($Qdatarow->created);
 
                         If ( array_key_exists($Qdatarow->identifier, $SS->qualData)) {
-                            $SS->qualData->$Qdatarow->identifier->gName[] = ($coord);
+                            $SS->qualData[$Qdatarow->identifier]->gName = ($coord);
                         } Else {
                             $SS->qualData[$Qdatarow->identifier] = $qualData;
                             $SS->qualCount = intval($SS->qualCount) + 1;

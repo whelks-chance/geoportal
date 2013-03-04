@@ -11,10 +11,10 @@ class qualDataRecordGroup {
 
     public $sName = ""; // As String
     public $name = ""; // As String
-    public $gName = ""; // As New List(Of qualCoords)
+    public $gName = array(); // As New List(Of qualCoords)
     public $recorddate = ""; // As String
     public $creator = ""; // As String
-    public $pages = ""; // As Double
+    public $pages = 0; // As Double
     public $thematic = ""; // As String
 
 

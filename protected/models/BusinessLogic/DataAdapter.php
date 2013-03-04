@@ -31,7 +31,7 @@ class DataAdapter {
 
             $toReturn[] = $row;
         }
-        Log::toFile('Data Object : ' . print_r($toReturn, true));
+//        Log::toFile('Data Object : ' . print_r($toReturn, true));
 
         //     Log::toFile('return search object array : ' + print_r($toReturn, true));
         return $toReturn;

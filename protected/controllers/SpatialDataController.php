@@ -159,8 +159,8 @@ class SpatialDataController extends Controller {
             $limit = $_POST['limit'];
         }
         $Type = "";
-        if(isset($_POST['Type'])) {
-            $Type = $_POST['Type'];
+        if(isset($_POST['type'])) {
+            $Type = $_POST['type'];
         }
 
         $SD = New SpatialData();
@@ -178,10 +178,10 @@ class SpatialDataController extends Controller {
             $results = Yii::app()->session["spatialResults"];
             Switch ($Type) {
                 case "Quant":
-                    $count = Yii::app()->session["quantCount"];
+                    $count = intval(Yii::app()->session["quantCount"]);
                     break;
                 case "Qual":
-                    $count = Yii::app()->session["qualCount"];
+                    $count = intval(Yii::app()->session["qualCount"]);
                     break;
                 case "Grey":
                     break;
@@ -198,11 +198,11 @@ class SpatialDataController extends Controller {
                 $res = $results[0];
                 Switch ($Type) {
                     case "Quant":
-                        $count = $res->quantCount;
+                        $count = intval($res->quantCount);
                         Yii::app()->session["quantCount"] = $count;
                         break;
                     case "Qual":
-                        $count = $res->qualCount;
+                        $count = intval($res->qualCount);
                         Yii::app()->session["qualCount"] = $count;
                         break;
                     case "Grey":
@@ -228,7 +228,7 @@ class SpatialDataController extends Controller {
 
         $pageResults = array();
 
-        $cnt = $start;
+        $cnt = intval($start);
         $cnt_end = intVal($cnt) + intVal($limit);
 
         $Str = "";
@@ -237,22 +237,34 @@ class SpatialDataController extends Controller {
 
             case "Quant":
 
-                while ( $cnt < $cnt_end || $cnt != $res->quantCount) {
+                Log::toFile('cnt_end and quantCount : ' . $cnt_end . ' : ' . $res->quantCount);
+                Log::toFile('quantData : ' . print_r($res->quantData, true));
+                $keys = array_keys($res->quantData);
 
-                    $pageResults[$res->quantData] = ($res->quantData[$cnt]);
-                    $cnt += 1;
+                while ( $cnt < $cnt_end && $cnt < $res->quantCount) {
+
+                    $pageResults[] = ($res->quantData[$keys[$cnt]]);
+                    $cnt ++;
                 }
+
+                Log::toFile('quantResults ' . print_r($pageResults, true));
 
                 $Str = '{"totalCount":' . $count . ',"quantData":' . json_encode($pageResults) . "}";
 
 
                 break;
             case "Qual":
-                while( $cnt = $cnt_end Or $cnt = $res->qualCount) {
 
-                    $pageResults[$res->qualData] = ($res->qualData[$cnt]);
-                    $cnt += 1;
+                Log::toFile('cnt_end and qualCount : ' . $cnt_end . ' : ' . $res->quantCount);
+                Log::toFile('qualData : ' . print_r($res->qualData, true));
+                $keys = array_keys($res->qualData);
+
+                while( $cnt < $cnt_end && $cnt < $res->qualCount) {
+
+                    $pageResults[] = ($res->qualData[$keys[$cnt]]);
+                    $cnt ++;
                 }
+                Log::toFile('quantResults ' . print_r($pageResults, true));
 
                 $Str = '{""totalCount"":' . $count . ',"qualData":' . json_encode($pageResults) . '}';
                 break;
