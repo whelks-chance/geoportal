@@ -553,7 +553,7 @@ class SpatialData {
                 } Else {
 
                     $SS->quantData[$tableName] = $quantsData;
-                    $SS->quantCount = intval($SS->quantCount) + 1;
+                    $SS->quantCount ++; //= intval($SS->quantCount) + 1;
                 }
 
 

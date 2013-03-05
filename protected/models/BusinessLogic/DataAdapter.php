@@ -16,7 +16,14 @@ class DataAdapter {
 
     }
 
-    public function Read($queryResult)
+    public static function DefaultExecuteAndRead($query) {
+        Log::toFile('Query (default) : ' . $query );
+        $cmd = pg_query(getDBConnections::getDBConnection(), $query);
+
+        return DataAdapter::Read($cmd);
+    }
+
+    public static function Read($queryResult)
     {
         $count = pg_num_rows($queryResult);
         Log::toFile('DataAdapter sees x results : ' . $count);
@@ -32,7 +39,6 @@ class DataAdapter {
             $toReturn[] = $row;
         }
 //        Log::toFile('Data Object : ' . print_r($toReturn, true));
-
         //     Log::toFile('return search object array : ' + print_r($toReturn, true));
         return $toReturn;
     }

@@ -4,7 +4,8 @@ GeoPortal.Windows.MyAccount = Ext.extend(Ext.Window, {
     id: 'myACWin',
     layout: 'auto',
     width: 800,
-    height: 800,
+    height: Ext.getBody().getViewSize().height * 0.8,
+    autoScroll: true,
     maximizable: true,
     modal: true,
     initComponent: function () {

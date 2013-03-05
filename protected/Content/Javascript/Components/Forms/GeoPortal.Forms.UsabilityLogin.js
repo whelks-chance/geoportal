@@ -13,28 +13,29 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
                     xtype: 'textfield',
                     allowBlank: false,
                     id: 'txtUsername',
-                    anchor: '100%',
+//                    anchor: '100%',
                     fieldLabel: 'Username'
                 },
                 {
                     xtype: 'textfield',
                     allowBlank: false,
                     id: 'txtPassword',
-                    anchor: '100%',
+//                    anchor: '100%',
                     fieldLabel: 'Password',
                     inputType: 'password'
                 },
                 {
                     xtype: 'label',
-                    text: 'WARNING: The WISERD Geoportal is not yet compatible with Internet Explorer web browser'
+                    text: 'WARNING: The WISERD Geoportal is not compatible with Internet Explorer 8 or lower'
                }
             ],
-            bbar: {
-                xtype: 'toolbar',
-                anchor: '100%',
-                fieldLabel: 'Login',
-                hideLabel: true,
-                labelSeparator: '',
+            fbar: {
+//                xtype: 'panel',
+//                dock: 'bottom',
+//                fieldLabel: 'Login',
+//                hideLabel: true,
+//                labelSeparator: '',
+                height:25,
                 items: [
                     //{
                       //  xtype: 'tbfill'

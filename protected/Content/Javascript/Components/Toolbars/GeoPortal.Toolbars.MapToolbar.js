@@ -398,7 +398,7 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
 
         btnMA = new Ext.Button({
             id: 'btnTBMyAcc',
-            disabled: true,
+//            disabled: true,
             icon: 'images/silk/user_green.png',
             tooltip: "My Account..(Under development)",
             handler: this.OnMAClick

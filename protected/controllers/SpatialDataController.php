@@ -266,7 +266,7 @@ class SpatialDataController extends Controller {
                 }
                 Log::toFile('quantResults ' . print_r($pageResults, true));
 
-                $Str = '{""totalCount"":' . $count . ',"qualData":' . json_encode($pageResults) . '}';
+                $Str = '{"totalCount":' . $count . ',"qualData":' . json_encode($pageResults) . '}';
                 break;
             case "Grey":
 
@@ -364,7 +364,43 @@ class SpatialDataController extends Controller {
     }
 
     // <CompressFilter()>
-    Public Function actionDynamicSLD2($type, $fromColour, $toColour, $fieldName, $min, $max, $classes, $layer, $labelName) {
+    Public Function actionDynamicSLD2() {
+        $type = "";
+        if(isset($_POST['type'])) {
+            $type = $_POST['type'];
+        }
+        $fromColour = "";
+        if(isset($_POST['fromColour'])) {
+            $fromColour = $_POST['fromColour'];
+        }
+        $toColour = "";
+        if(isset($_POST['toColour'])) {
+            $toColour = $_POST['toColour'];
+        }
+        $fieldName = "";
+        if(isset($_POST['fieldName'])) {
+            $fieldName = $_POST['fieldName'];
+        }
+        $min = "";
+        if(isset($_POST['min'])) {
+            $min = $_POST['min'];
+        }
+        $max = "";
+        if(isset($_POST['max'])) {
+            $max = $_POST['max'];
+        }
+        $classes = "";
+        if(isset($_POST['classes'])) {
+            $classes = $_POST['classes'];
+        }
+        $layer = "";
+        if(isset($_POST['layer'])) {
+            $layer = $_POST['layer'];
+        }
+        $labelName = "";
+        if(isset($_POST['labelName'])) {
+            $labelName = $_POST['labelName'];
+        }
 
         $SLD = New SLD();
 

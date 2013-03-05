@@ -3,6 +3,8 @@
     id: 'bugWindow',
     width: 800,
     height: Ext.getBody().getViewSize().height * 0.8,
+    maximizable: true,
+    autoScroll: true,
     buttons: [{ xtype: 'button',
         text: 'Submit',
         icon: '../images/silk/email.png',

@@ -1,7 +1,7 @@
 ﻿GeoPortal.Forms.ChangePassword = Ext.extend(Ext.form.FormPanel, {
     width: 300,
     id: 'frmChangePW',
-    height: 140,
+//    height: 140,
     padding: 5,
     initComponent: function () {
         this.buttons  =[

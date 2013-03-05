@@ -2,8 +2,9 @@
 GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
     padding: 10,
     monitorValid: true,
-    autoHeight: true,
+    height: Ext.getBody().getViewSize().height * 0.8,
     labelWidth: 80,
+    autoScroll: true,
     id: 'frmRegister',
     //registartion function
     RegisterMe: function () {

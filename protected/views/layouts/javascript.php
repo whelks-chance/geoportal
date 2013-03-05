@@ -107,7 +107,7 @@ $cssFiles = array(
 );
 
 $externalScripts = array(
-    "http://code.jquery.com/jquery-migrate-1.0.0.js",
+//    "http://code.jquery.com/jquery-migrate-1.0.0.js",
     "http://extjs.cachefly.net/ext-3.3.1/resources/css/ext-all.css"
 );
 

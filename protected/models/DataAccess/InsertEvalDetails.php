@@ -51,6 +51,10 @@ class InsertEvalDetails {
         If (pg_affected_rows($cmdEval) != 1) {
             Return False;
         }Else{
+            $user = getDBConnections::getUser($user->username, $user->enteredPassword);
+
+            Log::toFile('user : ' . print_r($user, true));
+
             Return True;
         }
 
