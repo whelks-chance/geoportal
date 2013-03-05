@@ -27,11 +27,11 @@ class AccountController extends Controller {
     Function actiongetMyDetails() {
         $db = new getDBConnections;
         $db->getDBConnection();
-        If ($debug = True) {
-
-            $db->getUser("rfry", "Jan1981");
-
-        };
+//        If (variables::$debug == True) {
+//
+//            $db->getUser("rfry", "Jan1981");
+//
+//        };
 
         If (! Yii::app()->session["User"] == null) {
 

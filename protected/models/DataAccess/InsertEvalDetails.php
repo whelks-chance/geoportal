@@ -14,21 +14,31 @@ class InsertEvalDetails {
 
 //        $user = new UserDetails4Evaluation();
 
-       // 'check to see if username and password are correct
+        // 'check to see if username and password are correct
 
 //        'define string
         $checkUserString = "SELECT COUNT(username) FROM alphausersdetails where username = '" . $user->username . "' AND password = crypt('" . $user->enteredPassword . "', password);";
 //        'get DB connection string
-        $dbCheckUser = new getDBConnections();
+//        $dbCheckUser = new getDBConnections();
 //        'new DB connection
-        $cnnCheckUser  = $dbCheckUser -> getDBConnection("Geoportal"); // As NpgsqlConnection
-        $cmdCheckUser = pg_query($cnnCheckUser, $checkUserString);
+//        $cnnCheckUser  = $dbCheckUser -> getDBConnection("Geoportal"); // As NpgsqlConnection
+//        $cmdCheckUser = pg_query($cnnCheckUser, $checkUserString);
 
-        $count = pg_num_rows($cmdCheckUser);
+        $rows = DataAdapter::DefaultExecuteAndRead($checkUserString);
 
-        If ($count <> 1) {
+//        If ($count <> 1) {
+//            Return False;
+//        } else {
+        Log::toFile('user pw count ' . print_r($rows, true));
+
+        $row = $rows[0];
+
+        $count = $row->count;
+
+        if(!$count == '1'){
             Return False;
         }
+//        }
 
 //        'if user exists - continue to insert the data
         If ($user->browser = "") {

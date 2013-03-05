@@ -128,11 +128,11 @@ class getDBConnections {
 
             $DR = $DRs[0];
 
-            //TODO is bio needed?
+            //TODO is bio etc needed?
 //            $myACDetails->Bio = $DR->biotext;
             $myACDetails->Email2 = $DR->email;
 //            $myACDetails->Telephone = $DR->telephone;
-            $myACDetails->Address = $DR->browser . $DR->os;
+            $myACDetails->Address = $DR->browser . " " . $DR->os;
             $myACDetails->Institution = $DR->institution;
 
         }
@@ -174,8 +174,10 @@ class getDBConnections {
 
             If (!pg_num_rows($cmd) == 0) {
 
-                $updatePWStr = "Update alphausersdetails set password = crypt('" . $newPW . "', gen_salt('bf'))";
+                $updatePWStr = "Update alphausersdetails set password = crypt('" . $newPW . "', gen_salt('bf')) where id = '" . $UID . "')";
                 $cmd = pg_query($this::getDBConnection(), $updatePWStr );
+
+//                $cmd = DataAdapter::DefaultExecuteAndRead($updatePWStr);
 
                 If (pg_affected_rows($cmd) == 1) {
 

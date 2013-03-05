@@ -72,7 +72,13 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
     OnMAClick: function () {
 
         var myAC = new GeoPortal.Windows.MyAccount();
-        Ext.getCmp("frmMyDetails").getForm().load({ url: accountURL, waitMsg: 'Loading.......', method: 'POST', sucess: myAC.show() });
+        Ext.getCmp("frmMyDetails").getForm().load({
+            url: accountURL,
+            waitMsg: 'Loading.......',
+            method: 'POST',
+            sucess: myAC.show(),
+            failure: Ext.Msg.alert('Account Error', 'You are no longer logged in. Please Refresh the page and try again')
+    });
 
     },
     CreateItems: function () {
