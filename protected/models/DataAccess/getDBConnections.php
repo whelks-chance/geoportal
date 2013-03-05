@@ -82,7 +82,8 @@ class getDBConnections {
 
             $DR = $DRs[0];
 
-            Log::toFile('found user : ' . print_r($DR, true));
+//TODO warning : prints passwords
+//            Log::toFile('found user : ' . print_r($DR, true));
 
             $user = New UserDetails();
 

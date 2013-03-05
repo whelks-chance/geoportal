@@ -17,7 +17,7 @@ class DataAdapter {
     }
 
     public static function DefaultExecuteAndRead($query) {
-        Log::toFile('Query (default) : ' . $query );
+//        Log::toFile('Query (default) : ' . $query );
         $cmd = pg_query(getDBConnections::getDBConnection(), $query);
 
         return DataAdapter::Read($cmd);
@@ -45,7 +45,7 @@ class DataAdapter {
 
     public function execute_scalar($cnn, $pgsql) {
 
-        Log::toFile('Executing scalar ' . $pgsql);
+//        Log::toFile('Executing scalar ' . $pgsql);
         $rs = pg_query($cnn, $pgsql);
 
         $count = pg_num_rows($rs);

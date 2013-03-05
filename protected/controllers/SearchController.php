@@ -24,7 +24,7 @@ class SearchController extends Controller {
             }
         }
 
-        Log::toFile(PHP_EOL . PHP_EOL . "A search is requested" . PHP_EOL);
+//        Log::toFile(PHP_EOL . PHP_EOL . "A search is requested" . PHP_EOL);
 
         $res = New getResults();
         $resultsExsist = $res->getQuestionnaireData(0, 1, $Keywords, True, $Mappable);

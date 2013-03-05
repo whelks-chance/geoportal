@@ -321,7 +321,7 @@ class getMetaData {
 
             $coverage = Trim($DR->coverage);
 
-            Log::toFile("QDC item : " . print_r($coverage, true));
+//            Log::toFile("QDC item : " . print_r($coverage, true));
 
             $placeNames = "";
 

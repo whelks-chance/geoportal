@@ -237,8 +237,8 @@ class SpatialDataController extends Controller {
 
             case "Quant":
 
-                Log::toFile('cnt_end and quantCount : ' . $cnt_end . ' : ' . $res->quantCount);
-                Log::toFile('quantData : ' . print_r($res->quantData, true));
+//                Log::toFile('cnt_end and quantCount : ' . $cnt_end . ' : ' . $res->quantCount);
+//                Log::toFile('quantData : ' . print_r($res->quantData, true));
                 $keys = array_keys($res->quantData);
 
                 while ( $cnt < $cnt_end && $cnt < $res->quantCount) {
@@ -247,7 +247,7 @@ class SpatialDataController extends Controller {
                     $cnt ++;
                 }
 
-                Log::toFile('quantResults ' . print_r($pageResults, true));
+//                Log::toFile('quantResults ' . print_r($pageResults, true));
 
                 $Str = '{"totalCount":' . $count . ',"quantData":' . json_encode($pageResults) . "}";
 
@@ -255,8 +255,8 @@ class SpatialDataController extends Controller {
                 break;
             case "Qual":
 
-                Log::toFile('cnt_end and qualCount : ' . $cnt_end . ' : ' . $res->quantCount);
-                Log::toFile('qualData : ' . print_r($res->qualData, true));
+//                Log::toFile('cnt_end and qualCount : ' . $cnt_end . ' : ' . $res->quantCount);
+//                Log::toFile('qualData : ' . print_r($res->qualData, true));
                 $keys = array_keys($res->qualData);
 
                 while( $cnt < $cnt_end && $cnt < $res->qualCount) {
@@ -264,7 +264,7 @@ class SpatialDataController extends Controller {
                     $pageResults[] = ($res->qualData[$keys[$cnt]]);
                     $cnt ++;
                 }
-                Log::toFile('quantResults ' . print_r($pageResults, true));
+//                Log::toFile('quantResults ' . print_r($pageResults, true));
 
                 $Str = '{"totalCount":' . $count . ',"qualData":' . json_encode($pageResults) . '}';
                 break;

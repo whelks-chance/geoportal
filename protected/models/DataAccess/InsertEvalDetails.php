@@ -62,7 +62,8 @@ class InsertEvalDetails {
         }Else{
             $user = getDBConnections::getUser($user->username, $user->enteredPassword);
 
-            Log::toFile('user : ' . print_r($user, true));
+            //TODO warning, prints user data
+//            Log::toFile('user : ' . print_r($user, true));
 
             Return True;
         }
