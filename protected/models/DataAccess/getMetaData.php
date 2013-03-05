@@ -401,7 +401,7 @@ class getMetaData {
     Public Function getQualWords( $ID , $place1  ,  $Place2  ,  $Place3 ) {
         $wordStats = array();
         $wordCol = array();
-        $pageCol = New Dictionary(String, new pageCollection());
+        $pageCol = array();
         $docwords = array();
 
         $db = New getDBConnections();

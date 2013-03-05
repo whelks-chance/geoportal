@@ -174,7 +174,7 @@ class getDBConnections {
 
             If (!pg_num_rows($cmd) == 0) {
 
-                $updatePWStr = "Update alphausersdetails set password = crypt('" . $newPW . "', gen_salt('bf')) where id = '" . $UID . "')";
+                $updatePWStr = "Update alphausersdetails set password = crypt('" . $newPW . "', gen_salt('bf')) where id = '" . $UID . "'";
                 $cmd = pg_query($this::getDBConnection(), $updatePWStr );
 
 //                $cmd = DataAdapter::DefaultExecuteAndRead($updatePWStr);

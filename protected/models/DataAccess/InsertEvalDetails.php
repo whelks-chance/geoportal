@@ -29,7 +29,6 @@ class InsertEvalDetails {
 //        If ($count <> 1) {
 //            Return False;
 //        } else {
-        Log::toFile('user pw count ' . print_r($rows, true));
 
         $row = $rows[0];
 
