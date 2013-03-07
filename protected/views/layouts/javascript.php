@@ -103,12 +103,13 @@ $cssFiles = array(
     "CSS/style.css",
     "CSS/wgp.css",
     "CSS/colorpicker.css",
+    "CSS/ext-all.css"
     //"Scripts/jquery-ui-1.8.14.custom.css"
 );
 
 $externalScripts = array(
 //    "http://code.jquery.com/jquery-migrate-1.0.0.js",
-    "http://extjs.cachefly.net/ext-3.3.1/resources/css/ext-all.css"
+//    "http://extjs.cachefly.net/ext-3.3.1/resources/css/ext-all.css"
 );
 
 $baseUrl = Yii::app()->baseUrl;

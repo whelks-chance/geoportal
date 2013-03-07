@@ -202,20 +202,20 @@ class getMetaData {
 
     Public Function getResponseTable($SID, $unit) {
 
-        $db = new getDBConnections();
+//        $db = new getDBConnections();
 
-        $cnn = $db->getDBConnection("Survey_Data");
+//        $cnn = $db->getDBConnection("Survey_Data");
 
         $tablename = $this::getTableName($SID, $unit);
 
 
         $selectStr = "Select * from " . $tablename . ";";
 
-        $cmd = pg_query($cnn, $selectStr);
+//        $cmd = pg_query($cnn, $selectStr);
+//
+//        $DA = new DataAdapter();
 
-        $DA = new DataAdapter();
-
-        $resultRows = $DA->Read($cmd);
+        $resultRows = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
 
         $responses = array();
 

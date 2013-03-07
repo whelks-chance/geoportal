@@ -16,9 +16,9 @@ class DataAdapter {
 
     }
 
-    public static function DefaultExecuteAndRead($query) {
-//        Log::toFile('Query (default) : ' . $query );
-        $cmd = pg_query(getDBConnections::getDBConnection(), $query);
+    public static function DefaultExecuteAndRead($query, $DB = "Geoportal") {
+        Log::toFile('Query (default) : ' . $query );
+        $cmd = pg_query(getDBConnections::getDBConnection($DB), $query);
 
         return DataAdapter::Read($cmd);
     }

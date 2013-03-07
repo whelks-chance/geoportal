@@ -130,11 +130,11 @@
 
             $SID = "";
             $unit = "";
-            if(isset($_POST['SID'])) {
-                $SID = $_POST['SID'];
+            if(isset($_GET['SID'])) {
+                $SID = $_GET['SID'];
             }
-            if(isset($_POST['unit'])) {
-                $unit = $_POST['unit'];
+            if(isset($_GET['unit'])) {
+                $unit = $_GET['unit'];
             }
 
             $getMeta = New getMetaData();

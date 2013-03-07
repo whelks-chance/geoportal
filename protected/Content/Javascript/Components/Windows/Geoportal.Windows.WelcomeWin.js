@@ -1,34 +1,37 @@
 ﻿Ext.ns('Geoportal.Windows');
 Geoportal.Windows.WelcomeWin = Ext.extend(Ext.Window, {
     title: 'Welcome to the WISERD Geoportal (This window is under development)',
-    width: 600,
+    width: Ext.getBody().getViewSize().width * 0.5,
     height: Ext.getBody().getViewSize().height * 0.8,
     resizable: true,
     modal: true,
-    draggable: true,    
+    autoScroll: 'true',
+    draggable: true,
     initComponent: function () {
         this.items = [
             {
                 xtype: 'tabpanel',
                 activeTab: 0,
-                width: 600,                
-                height: Ext.getBody().getViewSize().height * 0.78,
-                padding: 20, 
-                                                     items: [
+//                layout:'fit',
+//                width: 600,
+//                height: Ext.getBody().getViewSize().height * 0.78,
+                autoScroll: 'true',
+                padding: 20,
+                items: [
                     {
                         xtype: 'panel',
                         title: 'Introduction',
                         id: 'tabIntro',
-                        autoScroll: 'true',                        
+                        autoScroll: 'true',
                         autoLoad: 'protected/Content/html/intro.htm'
-                       
-                   
+
+
                     },
                     {
                         xtype: 'panel',
                         title: 'Tutorials',
-                        id: 'tabTutorials',  
-                        autoScroll: 'true',                     
+                        id: 'tabTutorials',
+                        autoScroll: 'true',
                         autoLoad: 'protected/Content/html/tutorials.htm'
                     },
                     {

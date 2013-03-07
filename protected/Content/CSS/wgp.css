@@ -146,15 +146,15 @@
 
 
 .icon-meta {
-	background-image:url(/images/silk/application_side_list.png);
+	background-image:url(../../../images/silk/application_side_list.png);
 }
 .icon-map
 {
-	background-image:url(/images/silk/map_add.png);
+	background-image:url(../../../images/silk/map_add.png);
 }
 .icon-question
 {
-	background-image:url(/images/silk/pencil_add.png);
+	background-image:url(../../../images/silk/pencil_add.png);
 }
 
 .x-color-picker, .x-color-picker {
@@ -235,15 +235,15 @@
 
 .tocWindow 
 {
-	background-image: url(/images/silk/layout.png);
+	background-image: url(../../../images/silk/layout.png);
 }
 .findTools
 {
-	background-image: url(/images/silk/find.png)
+	background-image: url(../../../images/silk/find.png)
 }
 
 #tagCloud { width:770px; height: 780px; background-color:black; text-align:center; padding:5px; overflow:auto; font-size:100%; font-family:arial; }
-#tagCloud h2 { color:#ffffff; font-size:2.5em; margin:0 0 10px 0; background:url(/images/Logos/wiserd-logo.png) no-repeat 0; padding:15px 0 15px 80px; }
+#tagCloud h2 { color:#ffffff; font-size:2.5em; margin:0 0 10px 0; background:url(../../../images/Logos/wiserd-logo.png) no-repeat 0; padding:15px 0 15px 80px; }
 #tagList { margin:0; padding:0; }
 #tagList li { list-style-type:none; float:left; margin:0 10px; height:35px; }
 #tagList li a { text-decoration:none; font-family: Sans-Serif; cursor: pointer }
@@ -305,7 +305,7 @@
 
 .x-tree-headers {
 	margin-top: 3px;
-	background: #f9f9f9 url(/images/default/grid/grid3-hrow.gif) repeat-x 0 bottom;
+	background: #f9f9f9 url(../../../images/default/grid/grid3-hrow.gif) repeat-x 0 bottom;
 	cursor:default;
 	zoom:1;
 }

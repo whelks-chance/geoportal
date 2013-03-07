@@ -392,7 +392,7 @@ div.olControlSaveFeaturesItemInactive {
 /* Pan- and Zoom- Panel Styles*/
 
 .olControlPanPanel  div {
-    background-image:url(/images/gray/panel/tool-sprites.gif);
+    background-image:url(../../../images/gray/panel/tool-sprites.gif);
     height:15px;
     width:15px;	
     position: absolute;    													
@@ -423,7 +423,7 @@ div.olControlSaveFeaturesItemInactive {
 
 
 .olControlZoomPanel div {
-    background-image:url(/images/gray/panel/tool-sprites.gif);
+    background-image:url(../../../images/gray/panel/tool-sprites.gif);
     height:15px;
     width:15px;
     /* workaround for button height in IE */

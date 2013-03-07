@@ -5,7 +5,8 @@
     layout: 'fit',
     SID: null,
     height:Ext.getBody().getViewSize().height * 0.8,
-    resizable: false,
+    resizable: true,
+    maximizable: true,
     hideBorders: true,
     initComponent: function () {
      this.UnitStore = new Ext.data.JsonStore({

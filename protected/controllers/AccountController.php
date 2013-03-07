@@ -20,6 +20,7 @@ class AccountController extends Controller {
         $Db = new getDBConnections();
         $user = $Db->getUser($Username, $password);
 
+
         echo json_encode($user);
 
     }

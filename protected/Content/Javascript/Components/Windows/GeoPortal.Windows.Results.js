@@ -4,7 +4,8 @@
 	height: Ext.getBody().getViewSize().height * 0.8,
 	layout: 'fit',
 	resizable: true,
-	id: 'resWin',
+    maximizable: true,
+    id: 'resWin',
 	autoScroll: true,
 	// plugins: rowExpander,
 	initComponent: function () {

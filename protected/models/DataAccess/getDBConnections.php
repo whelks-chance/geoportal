@@ -153,12 +153,14 @@ class getDBConnections {
 
         $updateBio = "UPDATE bio SET institution ='" . $myAccount->Institution . "', biotext ='" . $myAccount->Bio . "', telephone = '" . $myAccount->Telephone . "',  address = '" . $myAccount->Address . "';";
 
-        $command = New NpgsqlCommand($updateUserStr & $updateBio, $cnn);
+//        $command = New NpgsqlCommand($updateUserStr & $updateBio, $cnn);
+//
+//
+//        $int = $command->ExecuteNonQuery();
 
+        $int = DataAdapter::DefaultExecuteAndRead($updateUserStr);
 
-        $int = $command->ExecuteNonQuery();
-
-        If ($int <> 0 ) {
+        If ($int != '0' ) {
             Return True;
         } Else {
             Return False;
