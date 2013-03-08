@@ -10,7 +10,7 @@
 class ColorTranslator {
 
 
-    public function FromHtml($fromColour)
+    public static function FromHtml($fromColour)
     {
         return new Color();
     }

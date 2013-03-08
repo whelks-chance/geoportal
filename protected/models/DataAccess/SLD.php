@@ -10,7 +10,7 @@ class SLD {
 
         $ns = "http://www.opengis.net/sld";
         $ogc = "http://www.opengis.net/ogc";
-        $colorList = generateColourRange($fromColour, $toColour, generateEqualInterval(($max - $min), $classes), $classes - 1, $min);
+        $colorList = $this::generateColourRange($fromColour, $toColour, $this::generateEqualInterval(($max - $min), $classes), $classes - 1, $min);
 
 
 
@@ -157,7 +157,7 @@ class SLD {
             $writer->WriteAttribute("name", "fill");
 
             // 'write fill colour
-            $writer->text("#" & Hex($Colour->Value.R) & Hex($Colour->Value.G) & Hex($Colour->Value.B));
+            $writer->text("#" & dechex($Colour->R) & dechex($Colour->G) & dechex($Colour->B));
             $writer->EndElement();
 
 
@@ -375,8 +375,8 @@ class SLD {
 
         $classInterval = $min;
 
-            $startColor = ColorTranslator->FromHtml($fromColour);
-            $endColor = ColorTranslator->FromHtml($ToColour);
+            $startColor = ColorTranslator::FromHtml($fromColour);
+            $endColor = ColorTranslator::FromHtml($ToColour);
 
             $colourList = array();
             $i = 0;
@@ -397,7 +397,7 @@ class SLD {
                 $gAverage = $gMin + CInt(($gMax - $gMin) * $i / $intervalCount);
                 $bAverage = $bMin + CInt(($bMax - $bMin) * $i / $intervalCount);
 
-                $colourList[$classInterval] = Color->FromArgb($rAverage, $gAverage, $bAverage);
+                $colourList[$classInterval] = Color::FromArgb($rAverage, $gAverage, $bAverage);
                 $classInterval = ($classInterval + $intervalRange);
                 $i += 1;
             }

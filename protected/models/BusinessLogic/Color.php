@@ -12,6 +12,13 @@
  */
 
 class Color {
+
+    public $R = 0;
+    public $G = 0;
+    public $B = 0;
+
+    public $Key = "";
+
     public static function FromArgb($rAverage, $gAverage, $bAverage)
     {
         return new Color();

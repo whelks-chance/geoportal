@@ -364,7 +364,7 @@ class SpatialDataController extends Controller {
     }
 
     // <CompressFilter()>
-    Public Function actionDynamicSLD2() {
+    Function actionDynamicSLD2() {
         $type = "";
         if(isset($_POST['type'])) {
             $type = $_POST['type'];
@@ -405,13 +405,13 @@ class SpatialDataController extends Controller {
         $SLD = New SLD();
 
         $xmlDoc = $SLD->DynamicSLD2($type, $fromColour, $toColour, $fieldName, $min, $max, $classes, $layer, $labelName);
+//
+//        $sw = New StringWriter();
+//        $txml = New XmlTextWriter($sw);
+//        $xmlDoc->WriteTo($txml);
+//
 
-        $sw = New StringWriter();
-        $txml = New XmlTextWriter($sw);
-        $xmlDoc->WriteTo($txml);
-
-
-        Return $sw;
+        echo $xmlDoc;
     }
 
 
