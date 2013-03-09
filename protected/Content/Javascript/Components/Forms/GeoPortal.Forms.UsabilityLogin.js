@@ -35,7 +35,7 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
 //                fieldLabel: 'Login',
 //                hideLabel: true,
 //                labelSeparator: '',
-                height:25,
+//                height:25,
                 items: [
                     //{
                       //  xtype: 'tbfill'
