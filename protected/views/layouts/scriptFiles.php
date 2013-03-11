@@ -32,6 +32,7 @@ include('variables.php')
     var SpatialLabelsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialLabel';
     var SpatialSearch = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/SpatialSearch';
     var VerifySpatialSearch = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/VerifySpatialSearch';
+    var DynamicSLD = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/DynamicSLD';
     var ChoroURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getChoroFields';
     var genSpatialDataURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/GenerateSpatialData';
     var QmetaURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getQMetaDataRecords';
@@ -48,7 +49,7 @@ include('variables.php')
     var getTagsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getCloud';
     var getSpatialDataSets = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialDataSets';
 
-    var geoserverRoot = '<? echo variables::$geoserverRoot ?>';
+    var geoserverWMS = '<? echo variables::$geoserverRoot ?>';
 
 </script>
 

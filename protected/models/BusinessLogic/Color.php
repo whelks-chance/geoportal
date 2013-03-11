@@ -6,9 +6,9 @@
  * Time: 22:31
  * To change this template use File | Settings | File Templates.
  *
- * @property mixed R
- * @property mixed G
- * @property mixed B
+ * @property integer R
+ * @property integer G
+ * @property integer B
  */
 
 class Color {

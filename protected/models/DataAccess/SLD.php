@@ -17,51 +17,55 @@ class SLD {
 //            $stream = New MemoryStream();
 
         //Using writer = Xml$writer->Create(stream, xmlSettings);
-
+        @date_default_timezone_set("GMT");
         $writer = new XMLWriter();
-
-        $writer->setIndent(true);
 
         $writer->openMemory();
 
+        $writer->startDocument('1.0');
+
+        $writer->setIndent(true);
+
+
         // '$writer->WriteStartDocument();
 
-        $writer->StartElement("StyledLayerDescriptor", $ns);
+        $writer->StartElement("StyledLayerDescriptor");
         $writer->WriteAttribute("version", "1.0.0");
-        $writer->WriteAttribute("xml$ns", $ns);
-        $writer->WriteAttribute("xml$ns", "sld", null, $ns);
-        $writer->WriteAttribute("xml$ns", "ogc", null, "http://www.opengis.net/ogc");
-        $writer->WriteAttribute("xml$ns", "gml", null, "http://www.opengis.net/gml");
+        $writer->WriteAttribute("xmlns", $ns);
 
-        $writer->StartElement("sld", "NamedLayer", $ns);
+        $writer->WriteAttributeNS("xmlns", "sld", null, $ns);
+        $writer->WriteAttributeNS("xmlns", "ogc", null, "http://www.opengis.net/ogc");
+        $writer->WriteAttributeNS("xmlns", "gml", null, "http://www.opengis.net/gml");
+
+        $writer->StartElementNS("sld", "NamedLayer", $ns);
 
         // 'write sld name
-        $writer->StartElement("sld", "Name", $ns);
+        $writer->StartElementNS("sld", "Name", $ns);
         $writer->text($layer);
         $writer->EndElement();
 
-        $writer->StartElement("sld", "UserStyle", $ns);
+        $writer->StartElementNS("sld", "UserStyle", $ns);
         // 'write featuretype
-        $writer->StartElement("sld", "FeatureTypeStyle", $ns);
+        $writer->StartElementNS("sld", "FeatureTypeStyle", $ns);
 
         // 'write 0 rule
 
-        $writer->StartElement("sld", "Rule", $ns);
+        $writer->StartElementNS("sld", "Rule", $ns);
 
         // 'write sld Rule Title - adds label to Legend
-        $writer->StartElement("sld", "Title", $ns);
+        $writer->StartElementNS("sld", "Title", $ns);
         $writer->text(0);
         $writer->EndElement();
 
-        $writer->StartElement("ogc", "Filter", $ogc);
+        $writer->StartElementNS("ogc", "Filter", $ogc);
 
-        $writer->StartElement("ogc", "PropertyIsEqualTo", $ogc);
+        $writer->StartElementNS("ogc", "PropertyIsEqualTo", $ogc);
         // 'write property name
-        $writer->StartElement("ogc", "PropertyName", $ogc);
+        $writer->StartElementNS("ogc", "PropertyName", $ogc);
         $writer->text($fieldName);
         $writer->EndElement();
         // 'write literal
-        $writer->StartElement("ogc", "Literal", $ogc);
+        $writer->StartElementNS("ogc", "Literal", $ogc);
         $writer->text(0);
         $writer->EndElement();
 
@@ -73,10 +77,10 @@ class SLD {
         // '}
         $writer->EndElement();
 
-        $writer->StartElement("sld", "Polygonsymbolizer", $ns);
+        $writer->StartElementNS("sld", "Polygonsymbolizer", $ns);
 
         // 'write fill tag
-        $writer->StartElement("sld", "Fill", $ns);
+        $writer->StartElementNS("sld", "Fill", $ns);
 
         // 'write fill param
         $writer->StartElement("CssParameter");
@@ -89,7 +93,7 @@ class SLD {
 
         // 'write css fill opacity
         $writer->StartElement("CssParameter"); // '
-        $writer->WriteAttribute(null, "name", null, "fill-opacity");
+        $writer->WriteAttribute("name", "fill-opacity");
         $writer->text(0.0);
         $writer->EndElement();
         // '}
@@ -107,34 +111,34 @@ class SLD {
         ForEach ($colorList as $Colour) { // Colour(Of Integer, Color) In colorList {
 
             // 'write sld rule tag  for polygo$ns
-            $writer->StartElement("sld", "Rule", $ns);
+            $writer->StartElementNS("sld", "Rule", $ns);
 
             // 'write sld Rule Title - adds label to Legend
-            $writer->StartElement("sld", "Title", $ns);
-            $writer->text(($previous + 1) & " - " & $Colour->Key);
+            $writer->StartElementNS("sld", "Title", $ns);
+            $writer->text((intval($previous) + 1) & " - " & $Colour->Key);
             $writer->EndElement();
 
-            $writer->StartElement("$ogc", "Filter", $ogc);
+            $writer->StartElementNS("ogc", "Filter", $ogc);
 
-            $writer->StartElement("$ogc", "PropertyIsBetween", $ogc); // ' "Function name=""categorize""");
+            $writer->StartElementNS("ogc", "PropertyIsBetween", $ogc); // ' "Function name=""categorize""");
             // 'write property name
-            $writer->StartElement("$ogc", "PropertyName", $ogc);
+            $writer->StartElementNS("ogc", "PropertyName", $ogc);
             $writer->text($fieldName);
             $writer->EndElement();
             // 'Lower Boundary
-            $writer->StartElement("$ogc", "LowerBoundary", $ogc);
-            $writer->StartElement("$ogc", "Literal", $ogc);
-            $writer->text($previous + 1);
+            $writer->StartElementNS("ogc", "LowerBoundary", $ogc);
+            $writer->StartElementNS("ogc", "Literal", $ogc);
+            $writer->text(intval($previous) + 1);
             $writer->EndElement();
             // '} boundary
             $writer->EndElement();
 
             // 'upper boundary
-            $writer->StartElement("$ogc", "UpperBoundary", $ogc);
+            $writer->StartElementNS("ogc", "UpperBoundary", $ogc);
             // 'write value
 
 
-            $writer->StartElement("$ogc", "Literal", $ogc);
+            $writer->StartElementNS("ogc", "Literal", $ogc);
             $writer->text($Colour->Key);
             $writer->EndElement();
 
@@ -147,10 +151,10 @@ class SLD {
             $writer->EndElement();
 
             // 'write sld polygon tag
-            $writer->StartElement("sld", "Polygonsymbolizer", $ns);
+            $writer->StartElementNS("sld", "Polygonsymbolizer", $ns);
 
             // 'write fill tag
-            $writer->StartElement("sld", "Fill", $ns);
+            $writer->StartElementNS("sld", "Fill", $ns);
 
             // 'write fill param
             $writer->StartElement("CssParameter");
@@ -163,21 +167,21 @@ class SLD {
 
             // 'write css fill opacity
             $writer->StartElement("CssParameter");  // '
-            $writer->WriteAttribute(null, "name", null, "fill-opacity");
+            $writer->WriteAttribute( "name", "fill-opacity");
             $writer->text(0.85);
             $writer->EndElement();
             // '}
             $writer->EndElement();
             // 'start stroke
-            $writer->StartElement("sld", "Stroke", $ns);
+            $writer->StartElementNS("sld", "Stroke", $ns);
             // 'write cssparam for outline
             $writer->StartElement("CssParameter");
-            $writer->WriteAttribute(null, "name", null, "stroke");
+            $writer->WriteAttribute("name", "stroke");
             $writer->text("#C0C0C0");
             $writer->EndElement();
             // 'width
             $writer->StartElement("CssParameter");
-            $writer->WriteAttribute(null, "name", null, "stroke-width");
+            $writer->WriteAttribute("name", "stroke-width");
             $writer->text(0.5);
             $writer->EndElement();
 
@@ -197,63 +201,63 @@ class SLD {
 
 
         // 'write label rules
-        $writer->StartElement("sld", "Rule", $ns);
+        $writer->StartElementNS("sld", "Rule", $ns);
 
         // 'write rule name
-        $writer->StartElement("sld", "Name", $ns);
+        $writer->StartElementNS("sld", "Name", $ns);
         $writer->text("Default");
         $writer->EndElement();
 
         // 'write scale denominator
-        $writer->StartElement("sld", "MaxScaleDenominator", $ns);
+        $writer->StartElementNS("sld", "MaxScaleDenominator", $ns);
         $writer->text(175000);
         $writer->EndElement();
         // 'text symoblizer
-        $writer->StartElement("sld", "TextSymbolizer", $ns);
+        $writer->StartElementNS("sld", "TextSymbolizer", $ns);
 
         // 'write geom
-        $writer->StartElement("sld", "Geometry", $ns);
+        $writer->StartElementNS("sld", "Geometry", $ns);
         // 'write property name
-        $writer->StartElement("$ogc", "PropertyName", $ogc);
+        $writer->StartElementNS("ogc", "PropertyName", $ogc);
         $writer->text("the_geom");
         $writer->EndElement();
         // '}
         $writer->EndElement();
 
         // 'write label field
-        $writer->StartElement("sld", "Label", $ns);
+        $writer->StartElementNS("sld", "Label", $ns);
 
-        $writer->StartElement("$ogc", "PropertyName", $ogc);
+        $writer->StartElementNS("ogc", "PropertyName", $ogc);
         $writer->text($labelName);
         $writer->EndElement();
         // '}
         $writer->EndElement();
 
         // 'write font properties
-        $writer->StartElement("sld", "Font", $ns);
+        $writer->StartElementNS("sld", "Font", $ns);
 
         // 'Font Name
-        $writer->StartElement("sld", "CssParameter", $ns);
-        $writer->WriteAttribute(null, "name", null, "font-family");
+        $writer->StartElementNS("sld", "CssParameter", $ns);
+        $writer->WriteAttribute("name", "font-family");
         $writer->text("Times New Roman");
         $writer->EndElement();
 
         // 'Font Size
-        $writer->StartElement("sld", "CssParameter", $ns);
-        $writer->WriteAttribute(null, "name", null, "font-size");
+        $writer->StartElementNS("sld", "CssParameter", $ns);
+        $writer->WriteAttribute("name", "font-size");
         $writer->text(10.5);
         $writer->EndElement();
 
 
         // 'font style
-        $writer->StartElement("sld", "CssParameter", $ns);
-        $writer->WriteAttribute(null, "name", null, "font-style");
+        $writer->StartElementNS("sld", "CssParameter", $ns);
+        $writer->WriteAttribute("name", "font-style");
         $writer->text("italic");
         $writer->EndElement();
 
         // 'font weight
-        $writer->StartElement("sld", "CssParameter", $ns);
-        $writer->WriteAttribute(null, "name", null, "font-weight");
+        $writer->StartElementNS("sld", "CssParameter", $ns);
+        $writer->WriteAttribute("name", "font-weight");
         $writer->text("bold");
         $writer->EndElement();
 
@@ -261,18 +265,18 @@ class SLD {
         $writer->EndElement();
 
         // 'label PLacement
-        $writer->StartElement("sld", "LabelPlacement", $ns);
+        $writer->StartElementNS("sld", "LabelPlacement", $ns);
         // 'point placement
-        $writer->StartElement("sld", "PointPlacement", $ns);
+        $writer->StartElementNS("sld", "PointPlacement", $ns);
         // 'anchor Point
-        $writer->StartElement("sld", "AnchorPoint", $ns);
+        $writer->StartElementNS("sld", "AnchorPoint", $ns);
         // 'X
-        $writer->StartElement("sld", "AnchorPointX", $ns);
+        $writer->StartElementNS("sld", "AnchorPointX", $ns);
         $writer->text(0.2);
         $writer->EndElement();
         // 'Y
 
-        $writer->StartElement("sld", "AnchorPointY", $ns);
+        $writer->StartElementNS("sld", "AnchorPointY", $ns);
         $writer->text(0.2);
         $writer->EndElement();
 
@@ -284,13 +288,13 @@ class SLD {
         $writer->EndElement();
 
         // 'write Halo
-        $writer->StartElement("sld", "Halo", $ns);
+        $writer->StartElementNS("sld", "Halo", $ns);
         // 'radius
-        $writer->StartElement("sld", "Radius", $ns);
+        $writer->StartElementNS("sld", "Radius", $ns);
         $writer->text(1.0);
         $writer->EndElement();
         // 'fill colour
-        $writer->StartElement("sld", "Fill", $ns);
+        $writer->StartElementNS("sld", "Fill", $ns);
 
         $writer->StartElement("CssParameter");
         $writer->WriteAttribute("name", "fill");
@@ -301,8 +305,8 @@ class SLD {
 
 
         // 'write css fill opacity
-        $writer->StartElement("sld", "CssParameter", $ns); // '
-        $writer->WriteAttribute(null, "name", null, "fill-opacity");
+        $writer->StartElementNS("sld", "CssParameter", $ns); // '
+        $writer->WriteAttribute("name", "fill-opacity");
         $writer->text(0.5);
         $writer->EndElement();
 
@@ -315,7 +319,7 @@ class SLD {
         $writer->EndElement();
 
         // 'Font Colour
-        $writer->StartElement("sld", "CssParameter", $ns);
+        $writer->StartElementNS("sld", "CssParameter", $ns);
         $writer->WriteAttribute("name", "fill");
 
         // 'write fill colour
@@ -355,9 +359,9 @@ class SLD {
 
         $writer->EndDocument();
 
-        $writer->Flush();
+//        $writer->Flush();
 
-        $xD = $writer->outputMemory();
+        $xD = $writer->outputMemory(true);
 
 //            $output = "";
 //            $stream->Position = 0;
@@ -393,9 +397,9 @@ class SLD {
 
             While ($i <= $intervalCount) {
 
-                $rAverage = $rMin + CInt(($rMax - $rMin) * $i / $intervalCount);
-                $gAverage = $gMin + CInt(($gMax - $gMin) * $i / $intervalCount);
-                $bAverage = $bMin + CInt(($bMax - $bMin) * $i / $intervalCount);
+                $rAverage = $rMin + (($rMax - $rMin) * $i / $intervalCount);
+                $gAverage = $gMin + (($gMax - $gMin) * $i / $intervalCount);
+                $bAverage = $bMin + (($bMax - $bMin) * $i / $intervalCount);
 
                 $colourList[$classInterval] = Color::FromArgb($rAverage, $gAverage, $bAverage);
                 $classInterval = ($classInterval + $intervalRange);
@@ -414,8 +418,8 @@ class SLD {
 
         // ' Dim
 
-        $intervalRange = Math.Round($Total / $intervals, System.MidpointRounding.ToEven);
-
+//        $intervalRange = Math.Round($Total / $intervals, System.MidpointRounding.ToEven);
+        $intervalRange = round($Total / $intervals, 0, PHP_ROUND_HALF_EVEN);
 
 
         Return $intervalRange;

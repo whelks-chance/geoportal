@@ -364,7 +364,7 @@ class SpatialDataController extends Controller {
     }
 
     // <CompressFilter()>
-    Function actionDynamicSLD2() {
+    Public Function actionDynamicSLD() {
         $type = "";
         if(isset($_POST['type'])) {
             $type = $_POST['type'];
