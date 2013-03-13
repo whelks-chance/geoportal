@@ -321,13 +321,13 @@ class getMetaData {
 
             $coverage = Trim($DR->coverage);
 
-//            Log::toFile("QDC item : " . print_r($coverage, true));
+            Log::toFile("QDC item : " . $coverage);
 
             $placeNames = "";
 
-            $items[] = explode(";", $coverage );
+            $items = explode(";", $coverage );
 
-            Log::toFile("coverageItems : " . sizeof($items));
+            Log::toFile("coverageItems : " . count($items));
 
             $locDetails = "";
             $word_stats = "";
@@ -336,7 +336,7 @@ class getMetaData {
             ForEach ($items as $place) {
                 If (! $place == "" ) {
 
-//                    Log::toFile("QDC : " . print_r($place, true));
+                    Log::toFile("QDC : " . print_r($place, true));
 
                     $pattern = "/\"{name:(.*), data/";
                     $replacement = '{"name":"$1", "data"';
@@ -344,7 +344,8 @@ class getMetaData {
 
                     $result = preg_replace($pattern, $replacement, $subject);
 
-                    $result = substr($result, 0, -2) . "}";
+                    $result = substr($result, 0, -2);
+                    $result .= "}";
 
                     $placeObject = json_decode($result);
 
