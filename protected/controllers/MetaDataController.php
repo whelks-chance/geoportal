@@ -183,17 +183,17 @@
             $place2 = "";
             $place3 = "";
 
-            if(isset($_POST['ID'])) {
-                $ID = $_POST['ID'];
+            if(isset($_GET['ID'])) {
+                $ID = $_GET['ID'];
             }
-            if(isset($_POST['place1'])) {
-                $place1 = $_POST['place1'];
+            if(isset($_GET['place1'])) {
+                $place1 = $_GET['place1'];
             }
-            if(isset($_POST['place2'])) {
-                $place2 = $_POST['place2'];
+            if(isset($_GET['place2'])) {
+                $place2 = $_GET['place2'];
             }
-            if(isset($_POST['place3'])) {
-                $place3 = $_POST['place3'];
+            if(isset($_GET['place3'])) {
+                $place3 = $_GET['place3'];
             }
 
             $getMeta = New getMetaData();

@@ -13,9 +13,9 @@
 
 class Color {
 
-    public $R = 0;
-    public $G = 0;
-    public $B = 0;
+    public $R = "";
+    public $G = "";
+    public $B = "";
 
     public $Key = "";
 

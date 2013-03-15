@@ -15,18 +15,18 @@ class SpatialData {
 
         //$cnn->Open();
 
-        $DA = new DataAdapter();
+        $DAresultObjects = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
 
-        $resultObjects = $DA->Read($cmd);
+//        $resultObjects = $DA->Read($cmd);
 
-        ForEach ($resultObjects as $DR ) {
+        ForEach ($DAresultObjects as $DR ) {
             $units = New AvailableSpatialUnits();
             $units->spatial_id = Trim($DR->spatial_id);
             $units->long_start = Trim($DR->long_start);
             $units->long_finish = Trim($DR->long_finish);
             $units->Name = $this::getFullName($DR->spatial_id);
 
-            $spatialArray = explode("_", $DR->spatial);
+            $spatialArray = explode("_", $DR->spatial_id);
             $units->short_name = strtolower($spatialArray[3]);
 
             $results[] = ($units);

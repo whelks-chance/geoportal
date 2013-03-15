@@ -50,6 +50,8 @@ include('variables.php')
     var getSpatialDataSets = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialDataSets';
 
     var geoserverWMS = '<? echo variables::$geoserverRoot ?>';
+    var geoportalAddr = '<? echo variables::$geoportalAddr ?>';
+
 
 </script>
 

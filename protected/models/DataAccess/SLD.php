@@ -22,7 +22,7 @@ class SLD {
 
         $writer->openMemory();
 
-        $writer->startDocument('1.0');
+//        $writer->startDocument('1.0', 'ISO-8859-1');
 
         $writer->setIndent(true);
 
@@ -33,27 +33,28 @@ class SLD {
         $writer->WriteAttribute("version", "1.0.0");
         $writer->WriteAttribute("xmlns", $ns);
 
+//        $writer->WriteAttribute( "xsi", "http://www.opengis.net/sld");
         $writer->WriteAttributeNS("xmlns", "sld", null, $ns);
         $writer->WriteAttributeNS("xmlns", "ogc", null, "http://www.opengis.net/ogc");
         $writer->WriteAttributeNS("xmlns", "gml", null, "http://www.opengis.net/gml");
 
-        $writer->StartElementNS("sld", "NamedLayer", $ns);
+        $writer->StartElement("NamedLayer");
 
         // 'write sld name
-        $writer->StartElementNS("sld", "Name", $ns);
+        $writer->StartElement("Name");
         $writer->text($layer);
         $writer->EndElement();
 
-        $writer->StartElementNS("sld", "UserStyle", $ns);
+        $writer->StartElement("UserStyle");
         // 'write featuretype
-        $writer->StartElementNS("sld", "FeatureTypeStyle", $ns);
+        $writer->StartElement("FeatureTypeStyle");
 
         // 'write 0 rule
 
-        $writer->StartElementNS("sld", "Rule", $ns);
+        $writer->StartElement("Rule");
 
         // 'write sld Rule Title - adds label to Legend
-        $writer->StartElementNS("sld", "Title", $ns);
+        $writer->StartElement("Title");
         $writer->text(0);
         $writer->EndElement();
 
@@ -115,7 +116,7 @@ class SLD {
 
             // 'write sld Rule Title - adds label to Legend
             $writer->StartElementNS("sld", "Title", $ns);
-            $writer->text((intval($previous) + 1) & " - " & $Colour->Key);
+            $writer->text((intval($previous) + 1) . " - " . $Colour->Key);
             $writer->EndElement();
 
             $writer->StartElementNS("ogc", "Filter", $ogc);
@@ -161,7 +162,7 @@ class SLD {
             $writer->WriteAttribute("name", "fill");
 
             // 'write fill colour
-            $writer->text("#" & dechex($Colour->R) & dechex($Colour->G) & dechex($Colour->B));
+            $writer->text("#" . dechex($Colour->R) . dechex($Colour->G) . dechex($Colour->B));
             $writer->EndElement();
 
 
@@ -195,7 +196,7 @@ class SLD {
             // 'write } tag
             $writer->EndElement();
 
-            $$previous = $Colour->Key;
+            $previous = $Colour->Key;
 
         }
 
@@ -370,8 +371,20 @@ class SLD {
 //            $xD = new XmlDocument();
 //            $xD->LoadXml($sr->ReadToEnd());
 
+//        $xD = $this->rmBOM($xD);
+
+        Log::toFile($xD);
+
         Return $xD;
     }
+
+
+//    function rmBOM($string) {
+//        if(substr($string, 0,3) == pack("CCC",0xef,0xbb,0xbf)) {
+//            $string=substr($string, 3);
+//        }
+//    return $string;
+//    }
 
 
     Private Function generateColourRange($fromColour, $ToColour, $intervalRange, $intervalCount, $min) {

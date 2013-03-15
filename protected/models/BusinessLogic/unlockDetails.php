@@ -13,12 +13,12 @@ class unlockDetails {
     public $Name = ""; // As String
     public $lat = ""; // As String
     public $lon = ""; // As String
-    public $rank = ""; // As Integer
-    public $score = ""; // As Double
+    public $rank = 0; // As Integer
+    public $score = 0; // As Double
     public $country = ""; // As String
     public $Gazetteer = ""; // As String
-    public $Occurences = ""; // As Integer
-    public $wordsStats = ""; // As List(Of words)
+    public $Occurences = 0; // As Integer
+    public $wordsStats = array(); // As List(Of words)
 
 
 

@@ -10,9 +10,17 @@
 class ColorTranslator {
 
 
-    public static function FromHtml($fromColour)
+    public static function FromHtml($color)
     {
-        return new Color();
+        if ($color[0] == '#')
+            $color = substr($color, 1);
+
+        $newColour = new Color();
+        $newColour->R = $color[0].$color[1];
+        $newColour->G = $color[2].$color[3];
+        $newColour->B = $color[4].$color[5];
+
+        return $newColour;
     }
 
     public static function ToHtml($param1)

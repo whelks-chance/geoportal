@@ -7,8 +7,8 @@ class SpatialDataController extends Controller {
     Function actiongetSpatialUnits() {
 
         $surveyID = "";
-        if(isset($_POST['SurveyID'])) {
-            $surveyID = $_POST['SurveyID'];
+        if(isset($_POST['surveyID'])) {
+            $surveyID = $_POST['surveyID'];
         }
 
         $SD = New SpatialData();
@@ -404,7 +404,7 @@ class SpatialDataController extends Controller {
 
         $SLD = New SLD();
 
-        $xmlDoc = $SLD->DynamicSLD2($type, $fromColour, $toColour, $fieldName, $min, $max, $classes, $layer, $labelName);
+        $xmlDoc = $SLD->DynamicSLD2($type, $fromColour, $toColour, $fieldName, intval($min), intval($max), intval($classes), $layer, $labelName);
 //
 //        $sw = New StringWriter();
 //        $txml = New XmlTextWriter($sw);

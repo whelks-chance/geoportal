@@ -34,15 +34,4 @@
     }
 
 
-
-
-    class qualWords {
-
-        Public $name = "";
-        Public $page = "";
-        Public $count; // As Integer
-
-    }
-
-
 ?>
