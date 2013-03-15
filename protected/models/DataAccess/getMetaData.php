@@ -321,13 +321,13 @@ class getMetaData {
 
             $coverage = Trim($DR->coverage);
 
-            Log::toFile("QDC item : " . $coverage);
+//            Log::toFile("QDC item : " . $coverage);
 
             $placeNames = "";
 
             $items = explode(";", $coverage );
 
-            Log::toFile("coverageItems : " . count($items));
+//            Log::toFile("coverageItems : " . count($items));
 
             $locDetails = "";
             $word_stats = "";
@@ -336,7 +336,7 @@ class getMetaData {
             ForEach ($items as $place) {
                 If (! $place == "" ) {
 
-                    Log::toFile("QDC : " . print_r($place, true));
+//                    Log::toFile("QDC : " . print_r($place, true));
 
                     $pattern = "/\"{name:(.*), data/";
                     $replacement = '{"name":"$1", "data"';
@@ -405,27 +405,34 @@ class getMetaData {
         $pageCol = array();
         $docwords = array();
 
-        $db = New getDBConnections();
+//        $db = New getDBConnections();
 
-        $cnn = $db->getDBConnection("Qual_Data");
+//        $cnn = $db->getDBConnection("Qual_Data");
 
 
         $selStr = "Select coverage from qualdata.dc_info WHERE identifier ='" . $ID . "';";
 
-        $cmd = pg_query($cnn, $selStr);
+//        $cmd = pg_query($cnn, $selStr);
 
-        $DA = new DataAdapter();
+//        $DA = new DataAdapter();
 
-        $resultRows = $DA->Read($cmd);
-
-        ForEach ($resultRows as $DR) {
+//        $resultRows = $DA->Read($cmd);
 
 
-            $coverage = Trim($DR->coverage);
+        $resultRows = DataAdapter::DefaultExecuteAndRead($selStr, "Qual_Data");
+
+//        Log::toFile("qual word : " . print_r($resultRows, true));
+
+        ForEach ($resultRows[0] as $DR) {
+
+//            $coverage = Trim($DR->coverage);
+
+//            Log::toFile("DR : " . print_r($DR, true));
 
             $placeNames = "";
 
-            $items = explode($coverage, ";");
+            $items = explode(";", $DR);
+
 
             $locDetails = "";
             $word_stats = "";
@@ -435,21 +442,44 @@ class getMetaData {
 
                     $w = array();
 
-                    $placeArray = explode($place, "wordStats");
-                    $locDetails = $placeArray[0];
-                    $word_stats = $placeArray[1];
+                    $pattern = "/\"{name:(.*), data/";
+                    $replacement = '{"name":"$1", "data"';
+                    $subject = $place;
 
-                    $word_stats = substr($word_stats, 0, strpos($word_stats, '[')); // $word_stats.Remove(0, $word_stats.IndexOf("["));
+//                    Log::toFile("qual words places pre reg : " . print_r($subject, true));
 
-                    $word_stats = substr($word_stats, (strlen($word_stats) - 3));  //$word_stats.Remove((strlen($word_stats) - 3), 3);
 
-                    $locDetails .= "wordsStats" . ":" . $word_stats . "}";
+                    $result = preg_replace($pattern, $replacement, $subject);
 
-                    $places = json_decode($locDetails);
+                    $result = substr($result, 0, -2) . "}";
+
+//                    Log::toFile("qual words places string : " . print_r($result, true));
+
+                    $places = json_decode($result);
+
+//                    Log::toFile("qual words places : " . print_r($places, true));
+
+
+//                    $placeArray = explode($place, "wordStats");
+//                    $locDetails = $placeArray[0];
+//                    $word_stats = $placeArray[1];
+//
+//                    $word_stats = substr($word_stats, 0, strpos($word_stats, '[')); // $word_stats.Remove(0, $word_stats.IndexOf("["));
+//
+//                    $word_stats = substr($word_stats, (strlen($word_stats) - 3));  //$word_stats.Remove((strlen($word_stats) - 3), 3);
+//
+//                    $locDetails .= "wordsStats" . ":" . $word_stats . "}";
+//
+//                    $places = json_decode($locDetails);
 
                     If ($place1 == $places->Name Or $Place2 == $places->Name Or $Place3 == $places->Name ) {
 
-                        ForEach ($places->wordsStats as $stat) {
+                        $wordData = $places->wordStats->data;
+
+//                        Log::toFile("wordData : " . print_r($wordData, true));
+
+
+                        ForEach ($wordData as $stat) {
                             $wordcountPos = New qualWords();
 
                             $wordcountPos->count = $stat->count;
@@ -464,22 +494,23 @@ class getMetaData {
                     }
                 }
 
-                $wordCol[] = ($docwords);
+                $wordCol = ($docwords);
 
             }
 
         }
 
+        Log::toFile("wordCol : " . print_r($wordCol, true));
 
         ForEach ( $wordCol as $placeCollection) {
 
             ForEach ($placeCollection as $wrd) {
 
-                If (array_key_exists($pageCol, $wrd->page) ) {
+                If (array_key_exists($wrd->page, $pageCol) ) {
 
                     $page = $pageCol[$wrd->page];
 
-                    If ($page->place2 == null ) {
+                    If ($page->place2 == "" ) {
                         $page->place2 = $wrd->name;
                         $page->place2Count = $wrd->count;
                     } Else {
@@ -500,9 +531,10 @@ class getMetaData {
 
             }
 
+            Log::toFile("pageCol : " . print_r($pageCol, true));
 
-            ForEach ($pageCol as $obj) {
-                $wordStats[] = ($obj->Value);
+            ForEach ($pageCol as $key => $obj) {
+                $wordStats[$key] = ($obj);
 
             }
 

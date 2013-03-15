@@ -3,7 +3,8 @@
     SID: null,
     height: Ext.getBody().getViewSize().height * 0.8,
     id: 'QualMetaWin',
-    resizable: false,
+    maximizable: true,
+//    resizable: false,
     initComponent: function () {
         this.chartPanel = new GeoPortal.Charts.QualChart({ ID: this.SID }); //, place1: Ext.getCmp('cmboPlace1').getValue(), place2: Ext.getCmp('place2').getValue(), place3: Ext.getCmp('place3').getValue() });
         this.PlaceStore = new Ext.data.JsonStore({

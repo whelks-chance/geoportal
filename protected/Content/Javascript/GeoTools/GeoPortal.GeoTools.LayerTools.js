@@ -435,9 +435,11 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
 
 
             //"http://23.21.162.107/geoportal/services/SLDProvider.ashx?json=";
-            var startUrl = "http://131.251.172.95:7000/geoportal/services/SLDProvider.ashx?json=";
+//            var startUrl = "http://131.251.172.95:7000/geoportal/services/SLDProvider.ashx?json=";
+            var startUrl = geoportalAddr + 'r=SpatialData/DynamicSLD';
 
-            var params = encodeURIComponent('{"fromColour":"' + fromColour + '","toColour":"' + toColour + '","fieldName":"successful","min":' + min + ',"max": ' + max + ',"classes":' + 5 + ',"layer": "' + layerName + '"}');
+//            var params = encodeURIComponent('{"fromColour":"' + fromColour + '","toColour":"' + toColour + '","fieldName":"successful","min":' + min + ',"max": ' + max + ',"classes":' + 5 + ',"layer": "' + layerName + '"}');
+            var params = encodeURIComponent('&fromColour=' + fromColour + '&toColour=' + toColour + 'fieldName=successful' + '&min=' + min + '&max=' + max + '&classes=' + 5 + '&layer=' + layerName);
 
             var fullURL = startUrl + params;
             var new_layer;
@@ -449,9 +451,27 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
                     //"http://localhost:5432/geoserver/WISERD/wms",
 //		                        "http://131.251.172.95:7000/geoserver/WISERD/wms/",
                     geoserverWMS,
-                    { transparent: true, attribution: 'QuantData', sld_body: SLD.conn.responseText, viewparams: 'tableName:' + tableName, styles: '', id: id },
-                    { ratio: 1, singleTile: true, tiled: true, tileOptions: { maxGetUrlLength: maxLength, width: 512, height: 512 }, transitionEffect: 'resize', format: 'png',
-                        displayInLayerSwitcher: false, unsupportedBrowsers: []
+                    {
+                        transparent: true,
+                        attribution: 'QuantData',
+                        sld_body: SLD.conn.responseText,
+                        viewparams: 'tableName:' + tableName,
+                        styles: '',
+                        id: id
+                    },
+                    {
+                        ratio: 1,
+                        singleTile: true,
+                        tiled: true,
+                        tileOptions: {
+                            maxGetUrlLength: maxLength,
+                            width: 512,
+                            height: 512
+                        },
+                        transitionEffect: 'resize',
+                        format: 'png',
+                        displayInLayerSwitcher: false,
+                        unsupportedBrowsers: []
                     }
                 );
             } else {
