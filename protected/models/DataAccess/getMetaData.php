@@ -243,22 +243,22 @@ class getMetaData {
     Public Function getFields( $SID, $unit ) {
         $dc = New getDBConnections();
 
-        $cnn = $dc->getDBConnection("Survey_Data");
+//        $cnn = $dc->getDBConnection("Survey_Data");
 
 
         $TableName = $this::getTableName($SID, $unit);
 
-
         $selectStr = "Select column_name as name from information_schema.columns where table_name ='" . $TableName . "';";
-
 
         $results = array();
 
-        $cmd = pg_query($cnn, $selectStr);
+//        $cmd = pg_query($cnn, $selectStr);
+//
+//        $DA = new DataAdapter();
 
-        $DA = new DataAdapter();
+//        $resultRows = $DA->Read($cmd);
 
-        $resultRows = $DA->Read($cmd);
+        $resultRows = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
 
         ForEach ($resultRows as $DR) {
 
@@ -276,19 +276,19 @@ class getMetaData {
 
     Private Function getTableName( $SID, $unit ) {
 
-        If ($unit = "Police Region" ) {
+        If ($unit == "Police Region" ) {
             Return "x_" . $SID . "_police_";
-        } ElseIf ($unit = "Assembly Economic Fora Area" ) {
+        } ElseIf ($unit == "Assembly Economic Fora Area" ) {
             Return "x_" . $SID . "_aefa_";
-        } ElseIf ($unit = "Fire Brigade Region" ) {
+        } ElseIf ($unit == "Fire Brigade Region" ) {
             Return "x_" . $SID . "_fire_";
-        } ElseIf ($unit = "Lower Super Output Area" ) {
+        } ElseIf ($unit == "Lower Super Output Area" ) {
             Return "x_" . $SID . "_lsoa_";
-        } ElseIf ($unit = "Parliamentary Constituencies" ) {
+        } ElseIf ($unit == "Parliamentary Constituencies" ) {
             Return "x_" . $SID . "_parl_";
-        } ElseIf ($unit = "Postcode Sector" ) {
+        } ElseIf ($unit == "Postcode Sector" ) {
             Return "x_" . $SID . "_pcode_";
-        } ElseIf ($unit = "Unitary Authority" ) {
+        } ElseIf ($unit == "Unitary Authority" ) {
             Return "x_" . $SID . "_ua_";
         }
         return null;

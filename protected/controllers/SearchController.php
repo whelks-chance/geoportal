@@ -134,10 +134,10 @@ class SearchController extends Controller {
             $QualResults = $res->getQualData($keywords);
             $qCount = sizeof($QualResults);
 
-                Yii::app()->session["QualResults"] = $QualResults;
-                Yii::app()->session["QualresCount"] = $qCount;
+            Yii::app()->session["QualResults"] = $QualResults;
+            Yii::app()->session["QualresCount"] = $qCount;
 
-            }
+        }
 
 
         $resultsset = New results();
@@ -154,31 +154,43 @@ class SearchController extends Controller {
 
 //        Do Until $cnt = $cnt_end Or $cnt = $QualResults->Count;
         while ($cnt <= $cnt_end || $cnt == sizeof($QualResults)) {
-                $pageResults[] = ($QualResults[$cnt]);
+            $pageResults[] = ($QualResults[$cnt]);
 
 //            Log::toFile($cnt . ' of ' . $qCount . ' : ' . print_r($QualResults, true));
 
-                $cnt += 1;
+            $cnt += 1;
         }
 
 
-            $str = '{"totalCount":"' . $qCount . '", "results":' . json_encode($pageResults) . '}';
+        $str = '{"totalCount":"' . $qCount . '", "results":' . json_encode($pageResults) . '}';
 
-            echo $str;
+        echo $str;
 
 
-           // ' Return Json(res, JsonRequestBehavior.AllowGet)
-        }
+        // ' Return Json(res, JsonRequestBehavior.AllowGet)
+    }
 
 
     //<CompressFilter()>
-    Function getQuestions($start, $limit, $SID) {
-//$start As Integer,  $limit As Integer,  $SID = ""
-//            Npgsql.NpgsqlConnection.ClearAllPools();
+    Function actiongetQuestions() {
+
+        $start = 0;
+        $limit = 0;
+        $SID = "";
+
+        if(isset($_POST['start'])) {
+            $start = intval($_POST['start']);
+        }
+        if(isset($_POST['limit'])) {
+            $limit = intval($_POST['limit']);
+        }
+        if(isset($_POST['SID'])) {
+            $SID = $_POST['SID'];
+        }
 
         $res = New getResults();
         $results = $res->getSurveyQuestion($SID);
-        $count = sizeof($results);
+        $count = count($results);
 
         $resultsset = New results();
 
@@ -192,18 +204,18 @@ class SearchController extends Controller {
         $cnt_end = $cnt + $limit;
 
 //            Do Until cnt = cnt_end Or cnt = results->Count;
-        while ($cnt = $cnt_end or $cnt = sizeof($results)) {
-                $pageResults[] = ($results->Item($cnt));
-                $cnt += 1;
+        while ($cnt <= $cnt_end || $cnt == sizeof($results)) {
+            $pageResults[] = ($results[$cnt]);
+            $cnt += 1;
         }
 
 
-            $str = '{"totalCount":"' . $count . '", "questions":"' . json_encode($pageResults) . "}";
+        $str = '{"totalCount":"' . $count . '", "questions":' . json_encode($pageResults) . "}";
 
-            echo $str;
+        echo $str;
 
 
-        }
+    }
 
 }
 

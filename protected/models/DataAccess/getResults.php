@@ -14,7 +14,7 @@ class getResults {
         $SSearch = "";
         //'keywords = "wales"
 
-    //    Log::toFile(var_export($keywordsArray));
+        //    Log::toFile(var_export($keywordsArray));
 
         If (sizeof($keywordsArray) > 1) {
 
@@ -361,29 +361,33 @@ class getResults {
 //        $DA->Fill($DT);
 
         ForEach ($rows as $row) { // row As DataRow In DT.Rows
-            $qid = $row->Item["qid"];
+            $qid = $row->qid;
 
             If (!$qid == "") {
-                $DR = new DataReader();
+//                $DR = new DataR();
 
                 $selQ = "Select questionnumber, literal_question_text, thematic_groups, thematic_tags FROM questions WHERE qid = '" . Trim($qid) . "';";
 
-                $cmd = pg_query($cnn, $selQ);
+//                $cmd = pg_query($cnn, $selQ);
 //                        cnn.Open();
-                $DR->ExecuteReader($cmd);
+//                $DR->ExecuteReader($cmd);
 //                        DR.Read();
+                $results = DataAdapter::DefaultExecuteAndRead($selQ, "Survey_Data");
 
-                $question = new allQuestions();
-                $question->qid = $qid;
-                $question->questionNumber = Trim($DR->Item("questionnumber"));
-                $question->questionText = Trim($DR->Item("literal_question_text"));
-                $question->group = Trim($DR->Item("thematic_groups"));
-                $question->tag = Trim($DR->Item("thematic_tags"));
+//                $DR = $results[0];
 
-//                        cnn.Close();
+                forEach($results as $DR) {
 
+                    $question = new allQuestions();
+                    $question->qid = $qid;
+                    $question->questionNumber = Trim($DR->questionnumber);
+                    $question->questionText = Trim($DR->literal_question_text);
+                    $question->group = Trim($DR->thematic_groups);
+                    $question->tag = Trim($DR->thematic_tags);
 
-                $Qs[] = $question;
+                    $Qs[] = $question;
+
+                }
 
             }
 
@@ -463,7 +467,7 @@ class getResults {
 
             If ( pg_num_rows($cmd) > 0) {
 
-            $DR = pg_fetch_object($cmd);
+                $DR = pg_fetch_object($cmd);
 
 //            } Else {
 
