@@ -276,6 +276,8 @@ class getMetaData {
 
     Private Function getTableName( $SID, $unit ) {
 
+        Log::toFile("getTableName " . $SID . " " . $unit);
+
         If ($unit == "Police Region" ) {
             Return "x_" . $SID . "_police_";
         } ElseIf ($unit == "Assembly Economic Fora Area" ) {

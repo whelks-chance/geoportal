@@ -136,6 +136,12 @@
             if(isset($_GET['unit'])) {
                 $unit = $_GET['unit'];
             }
+            if(isset($_POST['SID'])) {
+                $SID = $_POST['SID'];
+            }
+            if(isset($_POST['unit'])) {
+                $unit = $_POST['unit'];
+            }
 
             $getMeta = New getMetaData();
 
