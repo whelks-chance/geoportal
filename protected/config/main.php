@@ -46,10 +46,22 @@ return array(
             ),
             'coreScriptPosition' => CClientScript::POS_BEGIN,
         ),
-        'user'=>array(
-            // enable cookie-based authentication
-            'allowAutoLogin'=>true,
+
+        //TODO replace
+//        'user'=>array(
+//            // enable cookie-based authentication
+//            'allowAutoLogin'=>true,
+//        ),
+
+        'session' => array(
+            'timeout' => 86400,
         ),
+        'user'=>array(
+            'allowAutoLogin' => true,
+            'autoRenewCookie' => true,
+            'authTimeout' => 31557600,
+        ),
+
         // uncomment the following to enable URLs in path-format
         /*
         'urlManager'=>array(

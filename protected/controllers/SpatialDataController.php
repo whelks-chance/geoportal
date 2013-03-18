@@ -179,9 +179,15 @@ class SpatialDataController extends Controller {
             Switch ($Type) {
                 case "Quant":
                     $count = intval(Yii::app()->session["quantCount"]);
+
+                    Log::toFile("Return Quant : " . $count);
+
                     break;
                 case "Qual":
                     $count = intval(Yii::app()->session["qualCount"]);
+
+                    Log::toFile("Return Qual : " . $count);
+
                     break;
                 case "Grey":
                     break;
@@ -189,21 +195,27 @@ class SpatialDataController extends Controller {
                     break;
             }
 
+
             $res = $results[0];
         } Else {
             $results = null;
             If ( $results == null ) {
                 $results = $SD->SpatialSearch($geography);
-
                 $res = $results[0];
+
+                Yii::app()->session["quantCount"] = intval( $res->quantCount);
+                Yii::app()->session["qualCount"] = intval($res->qualCount);
+
                 Switch ($Type) {
                     case "Quant":
                         $count = intval($res->quantCount);
-                        Yii::app()->session["quantCount"] = $count;
+//                        Yii::app()->session["quantCount"] = $count;
+                        Log::toFile("Quant res : Quant session : " . $count . " : " . Yii::app()->session["quantCount"]);
+
                         break;
                     case "Qual":
                         $count = intval($res->qualCount);
-                        Yii::app()->session["qualCount"] = $count;
+//                        Yii::app()->session["qualCount"] = $count;
                         break;
                     case "Grey":
 
