@@ -16,6 +16,7 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
             method: 'post',
             waitMsg: 'Creating User.....',
             params: { UserName: regPanel.getForm().getValues().txtRegUserName,
+                password: regPanel.getForm().getValues().txtRegPassword,
                 firstName: regPanel.getForm().getValues().txtRegFName,
                 lastName: regPanel.getForm().getValues().txtRegLName,
                 Email: regPanel.getForm().getValues().txtRegEmail,
@@ -54,8 +55,24 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
                                     {
                                         xtype: 'textfield',
                                         fieldLabel: 'UserName',
+                                        allowBlank: false,
                                         anchor: '100%',
                                         id: 'txtRegUserName'
+                                    }
+                                ]
+                            },
+                            {
+                                xtype: 'container',
+                                columnWidth: 1,
+                                layout: 'form',
+                                items: [
+                                    {
+                                        xtype: 'textfield',
+                                        fieldLabel: 'Password',
+                                        allowBlank: false,
+                                        anchor: '100%',
+                                        id: 'txtRegPassword',
+                                        inputType: 'password'
                                     }
                                 ]
                             },

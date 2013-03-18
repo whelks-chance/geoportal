@@ -25,7 +25,7 @@
         this.items = [
             {
                 xtype: 'grid',
-                height: 770,
+//                height: 770,
                 id: 'grdResponses',
                 store: this.ResponseStore,
                 frame: true,

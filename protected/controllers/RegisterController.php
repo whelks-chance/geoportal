@@ -10,11 +10,17 @@ class RegisterController extends Controller {
     // <CompressFilter()>
     public function actionRegister() {
 
+        $defaultPassword = 'password';
+
         $UserName = ""; $firstName = ""; $lastName = ""; $Email = ""; $Email2 = "";
         $Bio = ""; $Institution = ""; $Tel = ""; $Address = "";
 
         if(isset($_POST['UserName'])) {
             $UserName = $_POST['UserName'];
+        }
+
+        if(isset($_POST['password'])) {
+            $defaultPassword = $_POST['password'];
         }
 
         $reg = New regUser();
@@ -23,7 +29,7 @@ class RegisterController extends Controller {
         $reg->FirstName = $firstName;
         $reg->LastName = $lastName;
         $reg->Email = $Email;
-        $reg->Password = "test";
+        $reg->Password = $defaultPassword;
 
         $DBconn = New getDBConnections();
 
