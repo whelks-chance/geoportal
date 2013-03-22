@@ -315,7 +315,7 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
             icon: 'images/silk/magnifier_zoom_in.png',
             id: 'btnAdvSearch',
             tooltip: 'Advanced Search... (Under development)',
-            disabled: true,           
+            disabled: false,
             handler: function () {
                 //get TOC by ID using Ext find method
                 var advSearch = Ext.getCmp('advSearch');

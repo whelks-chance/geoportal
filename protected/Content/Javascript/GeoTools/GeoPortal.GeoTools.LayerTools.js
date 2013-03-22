@@ -446,6 +446,10 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
 
             if (CQL_Filter == false) {
 
+                var sldResponse = SLD.conn.responseText;
+
+                sldResponse = sldResponse.replace(/\uFEFF/g, '');
+
                 new_layer = new OpenLayers.Layer.WMS(layerName,
                     //"http://23.21.162.107:8081/geoserver/WISERD/wms",
                     //"http://localhost:5432/geoserver/WISERD/wms",
@@ -454,7 +458,7 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
                     {
                         transparent: true,
                         attribution: 'QuantData',
-                        sld_body: SLD.conn.responseText,
+                        sld_body: sldResponse,
                         viewparams: 'tableName:' + tableName,
                         styles: '',
                         id: id
@@ -476,12 +480,16 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
                 );
             } else {
 
+                var sldResponse = SLD.conn.responseText;
+
+                sldResponse = sldResponse.replace(/\uFEFF/g, '');
+
                 new_layer = new OpenLayers.Layer.WMS(layerName,
                     //"http://23.21.162.107:8081/geoserver/WISERD/wms",
                     // "http://localhost:5432/geoserver/WISERD/wms",
 //                                "http://131.251.172.95:7000/geoserver/WISERD/wms/",
                     geoserverWMS,
-                    { layers: 'WISERD:SQL', transparent: true, attribution: 'QuantData', sld_body: SLD.conn.responseText, viewparams: 'tableName: ' + tableName, styles: '', CQL_Filter: CQL_Filter, id: id },
+                    { layers: 'WISERD:SQL', transparent: true, attribution: 'QuantData', sld_body: sldResponse, viewparams: 'tableName: ' + tableName, styles: '', CQL_Filter: CQL_Filter, id: id },
                     { ratio: 1, singleTile: true, tiled: true, tileOptions: { maxGetUrlLength: maxLength, width: 512, height: 512 }, transitionEffect: 'resize', format: 'png',
                         displayInLayerSwitcher: false, unsupportedBrowsers: []
                     }

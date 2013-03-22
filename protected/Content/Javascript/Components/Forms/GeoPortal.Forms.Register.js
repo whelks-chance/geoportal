@@ -5,6 +5,7 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
     height: Ext.getBody().getViewSize().height * 0.8,
     labelWidth: 80,
     autoScroll: true,
+    maximizable: true,
     id: 'frmRegister',
     //registartion function
     RegisterMe: function () {
@@ -28,20 +29,28 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
             },
             success: function (form, action) {
                 Ext.getCmp("RegWin").hide();
-                 Ext.Msg.alert("Success!", action.result.message);
+                Ext.Msg.alert("Success!", action.result.message);
             },
             failure: function (form, action) {
+                console.log(action);
                 Ext.Msg.alert("Error", action.result.message);
             }
         })
 
 
     },
+    FormReset : function() {
+        var regPanel = Ext.getCmp('frmRegister');
+        regPanel.getForm().reset();
+    },
+    Info : function(){
+        Ext.Msg.alert("Why Register?", "The WISERD programme will use the details you provide for the purpose of [insert purpose i,e why you need the information]. As a collaborative programme, the information you provide will be shared between Aberystwyth, Bangor, Cardiff, Glamorgan and Swansea Universities all of whom are registered under the Data Protection Act with the Information Commissioners Office. Your information will be kept securely and will not be provided to third parties outside of the collaboration without your permission.");
+    },
     initComponent: function () {
         this.items = [
             {
                 xtype: 'fieldset',
-                title: 'User Details',
+                title: 'Login Details',
                 items: [
                     {
                         xtype: 'container',
@@ -75,44 +84,50 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
                                         inputType: 'password'
                                     }
                                 ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                xtype : 'fieldset',
+                title : 'User Details',
+                items: [
+                    {
+                        xtype: 'container',
+                        columnWidth: 0.5,
+                        layout: 'form',
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'First Name',
+                                anchor: '100%',
+                                id: 'txtRegFName'
                             },
                             {
-                                xtype: 'container',
-                                columnWidth: 0.5,
-                                layout: 'form',
-                                items: [
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'FirstName',
-                                        anchor: '95%',
-                                        id: 'txtRegFName'
-                                    },
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'Email',
-                                        anchor: '95%',
-                                        id: 'txtRegEmail'
-                                    }
-                                ]
+                                xtype: 'textfield',
+                                fieldLabel: 'Email',
+                                anchor: '100%',
+                                id: 'txtRegEmail'
+                            }
+                        ]
+                    },
+                    {
+                        xtype: 'container',
+                        columnWidth: 0.5,
+                        layout: 'form',
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                anchor: '100%',
+                                fieldLabel: 'LastName',
+                                id: 'txtRegLName'
                             },
                             {
-                                xtype: 'container',
-                                columnWidth: 0.5,
-                                layout: 'form',
-                                items: [
-                                    {
-                                        xtype: 'textfield',
-                                        anchor: '100%',
-                                        fieldLabel: 'LastName',
-                                        id: 'txtRegLName'
-                                    },
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'Email 2',
-                                        anchor: '100%',
-                                        id: 'txtRegEmail2'
-                                    }
-                                ]
+                                xtype: 'textfield',
+                                fieldLabel: 'Email 2',
+                                anchor: '100%',
+                                id: 'txtRegEmail2'
                             }
                         ]
                     }
@@ -181,12 +196,25 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
             xtype: 'toolbar',
             items: [
                 {
+                    xtype: 'button',
+                    text: 'Data Info',
+                    id: 'btnInfo',
+                    handler: function(){
+                        Ext.Msg.alert("Why Register?", "The WISERD programme will use the details you provide for the purpose of [insert purpose i,e why you need the information]. <br>As a collaborative programme, the information you provide will be shared between Aberystwyth, Bangor, Cardiff, Glamorgan and Swansea Universities, all of whom are registered under the Data Protection Act with the Information Commissioners Office. <br>Your information will be kept securely and will not be provided to third parties outside of the collaboration without your permission.");
+                    }
+                },
+                {
+                    xtype: 'tbseparator'
+                },
+                {
                     xtype: 'tbfill'
                 },
                 {
                     xtype: 'button',
                     text: 'Reset',
-                    id: 'btnReset'
+                    id: 'btnReset',
+                    handler: this.FormReset,
+                    scope: this
                 },
                 {
                     xtype: 'tbseparator'

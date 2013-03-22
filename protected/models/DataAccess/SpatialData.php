@@ -378,7 +378,7 @@ class SpatialData {
             $gAverage = $gMin + (($gMax - $gMin) * $i / $intervalCount);
             $bAverage = $bMin + (($bMax - $bMin) * $i / $intervalCount);
 
-            $colourList[$classInterval] = Color::FromArgb($rAverage, $gAverage, $bAverage);
+            $colourList[$classInterval] = ColorTranslator::FromArgb($rAverage, $gAverage, $bAverage);
             $classInterval = $classInterval + $intervalRange + 1;
             $i += 1;
         }

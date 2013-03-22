@@ -47,7 +47,7 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
                         icon: 'images/silk/user_add.png',
                         handler: function () {
 
-                            var RegForm = new GeoPortal.Forms.Register()
+                            var RegForm = new GeoPortal.Forms.Register();
 
                             var win = new Ext.Window({
                             id: "RegWin",
@@ -56,9 +56,10 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
                             modal: true,
                             width: 600,
                             layout: 'fit',
-                            resizable: false
+                            resizable: true,
+                            maximizable: true
 
-                            })
+                            });
                         win.show();
                         }
                     },

@@ -21,15 +21,28 @@ class Log {
 //    public static $logFile = "geoportal_debug.log";
 
 
-    public static function toFile($content) {
+    public static function toFile($content, $file = "", $timestamp = true, $append = true) {
+        if($file == "") {
+            $file = Log::$logFile;
+        }
+
         if(Log::$loggingOn) {
 
-            $date = new DateTime();
-            $timestamp = $date->format('U = Y-m-d H:i:s');
-            $complete = $timestamp . " --> " . $content . PHP_EOL;
+            if ($timestamp) {
+
+                $date = new DateTime();
+                $timestamp = $date->format('U = Y-m-d H:i:s');
+                $content = $timestamp . " --> " . $content . PHP_EOL;
+
+            }
 
             try {
-                file_put_contents(Log::$logFile, $complete, FILE_APPEND | LOCK_EX);
+                if ($append) {
+                    file_put_contents($file, $content, FILE_APPEND | LOCK_EX);
+                } else {
+                    file_put_contents($file, $content, LOCK_EX);
+                }
+
             } catch(Exception $e) {
 
             }
