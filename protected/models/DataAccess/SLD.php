@@ -109,6 +109,7 @@ class SLD {
 
         $previous = $min;
 
+        /** @var $Colour Color */
         ForEach ($colorList as $key => $Colour) { // Colour(Of Integer, Color) In colorList {
 
             // 'write sld rule tag  for polygo$ns
@@ -162,7 +163,7 @@ class SLD {
             $writer->WriteAttribute("name", "fill");
 
             // 'write fill colour
-            $writer->text($Colour->getHex()); //  "#" . dechex($Colour->R) . dechex($Colour->G) . dechex($Colour->B));
+            $writer->text(ColorTranslator::getHex($Colour)); //  "#" . dechex($Colour->R) . dechex($Colour->G) . dechex($Colour->B));
             $writer->EndElement();
 
 
