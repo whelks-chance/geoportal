@@ -18,6 +18,15 @@ class variables {
 
     public static $databasePort = "7007";
 
+//    Mail preferences
+    public static $MailHost = 'smtp.googlemail.com:465';
+    public static $SMTPSecure = "ssl";
+    public static $SMTPAuth = true;
+    public static $MailUsername = 'wiserd.dataportal@wherever.com';
+    public static $MailPassword = 'replace-Me';
+    public static $MailFromEmail = 'wiserd.dataportal@wherever.com';
+    public static $MailFromShortName = "wiserd";
+
     public static function debug()
     {
         return true;

@@ -8,39 +8,71 @@
  */
 
 
-Public Class sendEmail{
+class sendEmail{
 
-    Public Function SendEmail($msgFrom , $msgTo , $cc , $subject , $message ) {
+    Public static Function SendRegisterEmail($Username, $Email, $Password ) {
 
-        require_once "Mail.php";
+        $Subject = "WISERD DataPortal Registration Confirmation";
 
-        $from = "<from.gmail.com>";
-        $to = "<to.yahoo.com>";
-        $subject = "Hi!";
-        $body = "Hi,\n\nHow are you?";
+        $content = "<br>Welcome " . $Username . ", and thank you for registering with the WISERD DataPortal.";
 
-        $host = "ssl://smtp.gmail.com";
-        $port = "465";
-        $username = "myaccount@gmail.com";  //<> give errors
-        $password = "password";
+        $content .= "<br><br>You may now log in with the username " . $Username . " and password " . $Password . ".";
 
-        $headers = array ('From' => $from,
-            'To' => $to,
-            'Subject' => $subject);
-        $smtp = Mail::factory('smtp',
-            array ('host' => $host,
-                'port' => $port,
-                'auth' => true,
-                'username' => $username,
-                'password' => $password));
+        $content .= "<br><br>Please do not reply to this automated email, as the address is not monitored.";
 
-        $mail = $smtp->send($to, $headers, $body);
+        $content .= "<br><br>Any questions or comments are very welcome at noone@nowhere.xyz";
 
-        if (PEAR::isError($mail)) {
-            echo("<p>" . $mail->getMessage() . "</p>");
-        } else {
-            echo("<p>Message successfully sent!</p>");
-        }
+        sendEmail::SendAnEmail($Email, $Username, $Subject, $content);
+    }
+
+    Public static Function SendAnEmail( $Email, $Username, $Subject = "", $content = "") {
+
+        Yii::import('application.extensions.phpmailer.JPhpMailer');
+//        include('../../extensions/phpmailer/JPhpMailer.php');
+
+        $mail = new JPhpMailer;
+        $mail->IsSMTP();
+        $mail->Host = variables::$MailHost ;
+        $mail->SMTPSecure = variables::$SMTPSecure;
+        $mail->SMTPAuth = variables::$SMTPAuth;
+        $mail->Username = variables::$MailUsername;
+        $mail->Password = variables::$MailPassword;
+        $mail->SetFrom(variables::$MailFromEmail, variables::$MailFromShortName);
+        $mail->Subject = $Subject;
+        $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+        $mail->MsgHTML($content);
+        $mail->AddAddress($Email, $Username);
+        $mail->Send();
+
+//        require_once "Mail.php";
+//
+//        $from = "<from.gmail.com>";
+//        $to = "<to.yahoo.com>";
+//        $subject = "Hi!";
+//        $body = "Hi,\n\nHow are you?";
+//
+//        $host = "ssl://smtp.gmail.com";
+//        $port = "465";
+//        $username = "myaccount@gmail.com";  //<> give errors
+//        $password = "password";
+//
+//        $headers = array ('From' => $from,
+//            'To' => $to,
+//            'Subject' => $subject);
+//        $smtp = Mail::factory('smtp',
+//            array ('host' => $host,
+//                'port' => $port,
+//                'auth' => true,
+//                'username' => $username,
+//                'password' => $password));
+//
+//        $mail = $smtp->send($to, $headers, $body);
+//
+//        if (PEAR::isError($mail)) {
+//            echo("<p>" . $mail->getMessage() . "</p>");
+//        } else {
+//            echo("<p>Message successfully sent!</p>");
+//        }
 
 
 //            $msg = New MailMessage();

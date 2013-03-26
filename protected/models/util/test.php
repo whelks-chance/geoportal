@@ -7,7 +7,9 @@
  * To change this template use File | Settings | File Templates.
  */
 
-mail("iharvey111@gmail.com", "test", "content");
+include ('../DataAccess/sendEmail.php');
+
+//sendEmail::SendAnEmail();
 
 //include('../DataAccess/SpatialData.php');
 //include('../DataAccess/getDBConnections.php');

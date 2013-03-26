@@ -22,6 +22,18 @@ class RegisterController extends Controller {
         if(isset($_POST['password'])) {
             $defaultPassword = $_POST['password'];
         }
+        if(isset($_POST['Email'])) {
+            $Email = $_POST['Email'];
+        }
+        if(isset($_POST['Email2'])) {
+            $Email2 = $_POST['Email2'];
+        }
+        if(isset($_POST['password'])) {
+            $defaultPassword = $_POST['password'];
+        }
+        if(isset($_POST['password'])) {
+            $defaultPassword = $_POST['password'];
+        }
 
         $reg = New regUser();
 
@@ -39,6 +51,9 @@ class RegisterController extends Controller {
 
         if ($DBconn->insertUser($reg, $conn)) {
             $result->success = True;
+
+            sendEmail::SendRegisterEmail($UserName, $Email, $defaultPassword);
+
             $result->message = "Congratulations " . $firstName . " ! You have registered to use the WISERD GeoPortal!";
         }else{
             $result->success = False;
