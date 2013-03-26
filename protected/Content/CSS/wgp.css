@@ -243,7 +243,7 @@
 }
 
 #tagCloud { width:770px; height: 780px; background-color:black; text-align:center; padding:5px; overflow:auto; font-size:100%; font-family:arial; }
-#tagCloud h2 { color:#ffffff; font-size:2.5em; margin:0 0 10px 0; background:url(../../../images/Logos/wiserd-logo.png) no-repeat 0; padding:15px 0 15px 80px; }
+#tagCloud h2 { color:#ffffff; font-size:2.5em; margin:0 0 10px 0; background:url(../images/Logos/wiserd-logo.png) no-repeat 0; padding:15px 0 15px 80px; }
 #tagList { margin:0; padding:0; }
 #tagList li { list-style-type:none; float:left; margin:0 10px; height:35px; }
 #tagList li a { text-decoration:none; font-family: Sans-Serif; cursor: pointer }

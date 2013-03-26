@@ -42,22 +42,24 @@ class SpatialData {
 
         $dc = New getDBConnections();
 
-        $cnn = $dc->getDBConnection("Survey_Data");
+//        $cnn = $dc->getDBConnection("Survey_Data");
 
         $selectStr = "Select column_name as name from information_schema.columns where table_name = '" . $TableName . "';";
 
 
         $results = array();
 
-        $cmd = pg_query($cnn, $selectStr);
+//        $cmd = pg_query($cnn, $selectStr);
 
-        $DA = new DataAdapter();
+//        $DA = new DataAdapter();
 
-        $resultObjects = $DA->Read($cmd);
+//        $resultObjects = $DA->Read($cmd);
+
+        $resultObjects = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
 
         ForEach ($resultObjects as $DR ) {
             $label = New SpatialLabels();
-            $label->Name = Trim($DR->Name);
+            $label->Name = Trim($DR->name);
             $results[] = ($label);
         }
 
@@ -184,14 +186,13 @@ class SpatialData {
 
         $dc = New getDBConnections();
 
-        $cnn = $dc->getDBConnection("Survey_Data");
+//        $cnn = $dc->getDBConnection("Survey_Data");
 
         $selectStr = "Select column_name as name from information_schema.columns where table_name = '" . $TableName . "';";
 
-
         $results = array();
 
-        $cmd = pg_query($cnn, $selectStr);
+//        $cmd = pg_query($cnn, $selectStr);
 
 //        //$cnn->Open();
 //
@@ -202,9 +203,11 @@ class SpatialData {
 //        $DR->Read();
 
 
-        $DA = new DataAdapter();
+//        $DA = new DataAdapter();
 
-        $resultObjects = $DA->Read($cmd);
+//        $resultObjects = $DA->Read($cmd);
+
+        $resultObjects = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
 
 
         //      unset($resultObjects[0]);
@@ -212,7 +215,7 @@ class SpatialData {
 
         ForEach ($resultObjects as $DR ) {
             $label = New SpatialLabels;
-            $label->Name = Trim($DR->Name);
+            $label->Name = Trim($DR->name);
             $results[] = ($label);
         }
 

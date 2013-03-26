@@ -342,6 +342,7 @@ function doSpatialSearch(geography, loadMask) {
                             type: 'Quant'
                         },
                         callback: function () {
+                            console.log(searchResults);
                             searchResults.show();
                             loadMask.hide();
                         }

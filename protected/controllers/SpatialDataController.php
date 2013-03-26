@@ -7,6 +7,10 @@ class SpatialDataController extends Controller {
     Function actiongetSpatialUnits() {
 
         $surveyID = "";
+        //  messy fix to catch typos
+        if(isset($_POST['SurveyID'])) {
+            $surveyID = $_POST['SurveyID'];
+        }
         if(isset($_POST['surveyID'])) {
             $surveyID = $_POST['surveyID'];
         }
@@ -20,7 +24,12 @@ class SpatialDataController extends Controller {
 
     }
     // // <CompressFilter()>
-    Function actiongetSpatialLabel($TableName) {
+    Function actiongetSpatialLabel() {
+
+        $TableName = "";
+        if(isset($_POST['TableName'])) {
+            $TableName = $_POST['TableName'];
+        }
 
         $SD = New SpatialData();
 
@@ -30,7 +39,12 @@ class SpatialDataController extends Controller {
         echo '{"rows":' . json_encode($SL) . "}";
     }
     // // <CompressFilter()>
-    Function actiongetChoroFields($TableName) {
+    Function actiongetChoroFields() {
+
+        $TableName = "";
+        if(isset($_POST['TableName'])) {
+            $TableName = $_POST['TableName'];
+        }
 
         $SD = New SpatialData();
 
@@ -346,24 +360,35 @@ class SpatialDataController extends Controller {
     }
 
 
-    Public Function actiongetMinMax($TableName, $ColName) {
+    Public Function actiongetMinMax() {
+
+        $TableName = "";
+        if(isset($_POST['tableName'])) {
+            $TableName = $_POST['tableName'];
+        }
+        $ColName = "";
+        if(isset($_POST['colName'])) {
+            $ColName = $_POST['colName'];
+        }
 
         $getMin = "Select MIN(" . $ColName . ") from " . $TableName;
         $getMax = "Select MAX(" . $ColName . ") from " . $TableName;
 
-        $db = New getDBConnections();
+//        $db = New getDBConnections();
 
-        $dBCnn = $db->getDBConnection("Survey_Data");
-        $cmd = pg_query($dBCnn, $getMin);
+//        $dBCnn = $db->getDBConnection("Survey_Data");
+//        $cmd = pg_query($dBCnn, $getMin);
 
 //            dBCnn.Open();
 
-        $min = $cmd->ExecuteScalar();
+//        $min = $cmd->ExecuteScalar();
 
-        $cmd->CommandText = $getMax;
+//        $cmd->CommandText = $getMax;
 
-        $max = $cmd->ExecuteScalar();
+//        $max = $cmd->ExecuteScalar();
 
+        $min = DataAdapter::defaultExecuteScalar($getMin, "Survey_Data");
+        $max = DataAdapter::defaultExecuteScalar($getMax, "Survey_Data");
 //            dBCnn.Close();
 
 
@@ -371,7 +396,7 @@ class SpatialDataController extends Controller {
         $minMax[0] = $min;
         $minMax[1] = $max;
 
-        Return json_encode($minMax);
+        echo json_encode($minMax);
 
     }
 

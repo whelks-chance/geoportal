@@ -34,6 +34,7 @@ include('variables.php')
     var VerifySpatialSearch = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/VerifySpatialSearch';
     var DynamicSLD = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/DynamicSLD';
     var ChoroURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getChoroFields';
+    var SpatialMinMax = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getMinMax';
     var genSpatialDataURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/GenerateSpatialData';
     var QmetaURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getQMetaDataRecords';
     var SmetaURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getSMetaDataRecords';

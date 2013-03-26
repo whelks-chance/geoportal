@@ -142,14 +142,30 @@
             if(isset($_POST['unit'])) {
                 $unit = $_POST['unit'];
             }
-
+            $start = 0;
+            $limit = 0;
+            if(isset($_POST['start'])) {
+                $start = $_POST['start'];
+            }
+            if(isset($_POST['limit'])) {
+                $limit = $_POST['limit'];
+            }
 
             $getMeta = New getMetaData();
 
             $ResponseMetaData = $getMeta->getResponseTable($SID, $unit);
 
+            $cnt = $start;
+            $cnt_end = $cnt + $limit;
+
+            $pageResults = array();
+            while( $cnt <= $cnt_end || $cnt == sizeof($ResponseMetaData)){
+                $pageResults[] = ($ResponseMetaData[$cnt]);
+                $cnt += 1;
+            }
+
             If (! $ResponseMetaData == null ) {
-                echo '({"success": true, "data": ' . json_encode($ResponseMetaData) . '})';
+                echo '({"success": true, "data": ' . json_encode($pageResults) . '})';
             } Else {
 
                 echo '({"success": false, "message": "Error loading form - please try again"})';
@@ -211,7 +227,7 @@
 
 
             If (! $docWords == null ) {
-                echo '({"success": true, "data": ' . json_encode($docWords) . '})';
+                echo '({"data": ' . json_encode(array_values( $docWords) ) . '})';
             } Else {
 
                 echo '({"success": false, "message": "Error loading form - please try again"})';

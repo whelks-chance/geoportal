@@ -5,6 +5,7 @@
 	layout: 'fit',
 	resizable: true,
     maximizable: true,
+    minimizable: true,
     id: 'resWin',
 	autoScroll: true,
 	// plugins: rowExpander,

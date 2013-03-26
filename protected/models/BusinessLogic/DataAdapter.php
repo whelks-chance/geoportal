@@ -58,5 +58,15 @@ class DataAdapter {
         return null;
     }
 
+    public static function defaultExecuteScalar($query, $DB = "Geoportal") {
+        Log::toFile('Query Scalar (default) : ' . $query );
+        $rs = pg_query(getDBConnections::getDBConnection($DB), $query);
+
+        if (pg_num_rows($rs)) {
+            $r = pg_fetch_row($rs);
+            return $r[0];
+        }
+    }
+
 }
 ?>

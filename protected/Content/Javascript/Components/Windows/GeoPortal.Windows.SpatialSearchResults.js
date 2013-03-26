@@ -7,6 +7,7 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
     id: 'spatResWin',
     title: 'Spatial Search Results',
     resizable: false,
+    maximizable: true,
     minimizable: true,
     animCollapse: true,
     constrainHeader: true,
@@ -240,6 +241,7 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                     xtype: 'container',
                     id: 'ResultsContainer',
                     layout: 'column',
+                    resizable: true,
                     items: [
                         {
                             xtype: 'container',
@@ -253,12 +255,13 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                     tabPosition: 'bottom',
                                     items: [
                                         {
-                                            xtype: 'panel',
-                                            title: 'Survey',
-                                            items: [
-                                                {
+//                                            xtype: 'panel',
+//                                            title: 'Survey',
+//                                            items: [
+//                                                {
+                                                    title: 'Survey',
                                                     xtype: 'grid',
-                                                    height: (this.height * 0.6) - 23,
+//                                                    height: (this.height * 0.6) - 23,
                                                     stripeRows: true,
                                                     id: 'grdSurvey',
                                                     frame: false,
@@ -312,6 +315,9 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                                                 icon: 'images/silk/application_form.png',
                                                                 tooltip: 'Show Metadata',
                                                                 handler: function (grid, rowIndex, colIndex) {
+
+
+
                                                                     var ID = record.data.id;
                                                                     var metaWindow = new GeoPortal.Windows.QualMetaData({ title: 'MetaData for :' + ID, SID: ID });
                                                                     Ext.getCmp("frmQDC").getForm().load({ url: QDCmetaURL, waitMsg: 'Loading.......', method: 'POST', sucess: metaWindow.show(), params: { SID: ID} });
@@ -433,12 +439,12 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                                             }
                                                         ]
                                                     }
-                                                }
-                                            ]
+//                                                }
+//                                            ]
                                         },
                                         { title: 'Qual Data',
                                             xtype: 'grid',
-                                            width: 780,
+//                                            width: 780,
                                             id: 'grdQual',
                                             frame: true,
                                             stripeRows: true,

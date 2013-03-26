@@ -8,6 +8,7 @@
             fields: ['qid', 'questionNumber', 'questionText', 'group', 'tag'],
             baseParams: { SID: this.SID, start: 0, limit: 30 },
             root: 'questions',
+            loadMask: { msg: "Loading Data.."},
             id: 'questions',
             url: QuestionsURL,
              totalProperty: 'totalCount'

@@ -285,7 +285,7 @@
                         }
 
                         var minmax = Ext.Ajax.request({
-                            url: 'SpatialData/getMinMax',
+                            url: SpatialMinMax,
                             method: 'POST',
                             params: {
                                 tableName: unitCmbo.getValue(),

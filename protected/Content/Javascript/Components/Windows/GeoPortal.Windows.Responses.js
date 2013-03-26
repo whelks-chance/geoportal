@@ -21,11 +21,16 @@
             url: responseTableURL,
             totalProperty: 'totalCount'
         });
+        this.ResponseStore.on('load', function(store, recs, opt){
+            console.log('response resize here');
+            this.doLayout();
+            //update your display here
+        }, this);
         this.ResponseStore.load();
         this.items = [
             {
                 xtype: 'grid',
-//                height: 770,
+//                height: (Ext.getBody().getViewSize().height * 0.8) - 50,
                 id: 'grdResponses',
                 store: this.ResponseStore,
                 frame: true,
