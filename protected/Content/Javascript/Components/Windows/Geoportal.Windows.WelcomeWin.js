@@ -27,20 +27,20 @@ Geoportal.Windows.WelcomeWin = Ext.extend(Ext.Window, {
 
 
                     },
-                    {
-                        xtype: 'panel',
-                        title: 'Tutorials',
-                        id: 'tabTutorials',
-                        autoScroll: 'true',
-                        autoLoad: 'protected/Content/html/tutorials.htm'
-                    },
-                    {
-                        xtype: 'panel',
-                        title: 'FAQs',
-                        id: 'tabFAQ',
-                        autoScroll: 'true',
-                        autoLoad: 'protected/Content/html/FAQs.htm'
-                    },
+//                    {
+//                        xtype: 'panel',
+//                        title: 'Tutorials',
+//                        id: 'tabTutorials',
+//                        autoScroll: 'true',
+//                        autoLoad: 'protected/Content/html/tutorials.htm'
+//                    },
+//                    {
+//                        xtype: 'panel',
+//                        title: 'FAQs',
+//                        id: 'tabFAQ',
+//                        autoScroll: 'true',
+//                        autoLoad: 'protected/Content/html/FAQs.htm'
+//                    },
                     {
                         xtype: 'panel',
                         title: 'About',
