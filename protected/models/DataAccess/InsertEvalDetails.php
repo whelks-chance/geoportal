@@ -17,7 +17,7 @@ class InsertEvalDetails {
         // 'check to see if username and password are correct
 
 //        'define string
-        $checkUserString = "SELECT COUNT(username), id FROM alphausersdetails where username = '" . $user->username . "' AND password = crypt('" . $user->enteredPassword . "', password);";
+        $checkUserString = "SELECT COUNT(username) FROM alphausersdetails where username = '" . $user->username . "' AND password = crypt('" . $user->enteredPassword . "', password);";
 //        'get DB connection string
 //        $dbCheckUser = new getDBConnections();
 //        'new DB connection
