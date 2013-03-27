@@ -155,17 +155,17 @@
 
             $ResponseMetaData = $getMeta->getResponseTable($SID, $unit);
 
-            $cnt = $start;
-            $cnt_end = $cnt + $limit;
-
-            $pageResults = array();
-            while( $cnt <= $cnt_end || $cnt == sizeof($ResponseMetaData)){
-                $pageResults[] = ($ResponseMetaData[$cnt]);
-                $cnt += 1;
-            }
+//            $cnt = $start;
+//            $cnt_end = $cnt + $limit;
+//
+//            $pageResults = array();
+//            while( $cnt <= $cnt_end || $cnt == sizeof($ResponseMetaData)){
+//                $pageResults[] = ($ResponseMetaData[$cnt]);
+//                $cnt += 1;
+//            }
 
             If (! $ResponseMetaData == null ) {
-                echo '({"success": true, "data": ' . json_encode($pageResults) . '})';
+                echo '({"success": true, "data": ' . json_encode($ResponseMetaData) . '})';
             } Else {
 
                 echo '({"success": false, "message": "Error loading form - please try again"})';

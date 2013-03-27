@@ -107,7 +107,7 @@ class SLD {
         $writer->EndElement();
 
 
-        $previous = $min;
+        $lowerBoundary = $min;
 
         /** @var $Colour Color */
         ForEach ($colorList as $key => $Colour) { // Colour(Of Integer, Color) In colorList {
@@ -117,7 +117,7 @@ class SLD {
 
             // 'write sld Rule Title - adds label to Legend
             $writer->StartElement("sld:Title");
-            $writer->text((intval($previous) + 1) . " - " . $key);
+            $writer->text((intval($lowerBoundary)) . " - " . $key);
             $writer->EndElement();
 
             $writer->StartElement("ogc:Filter");
@@ -130,7 +130,7 @@ class SLD {
             // 'Lower Boundary
             $writer->StartElement("ogc:LowerBoundary");
             $writer->StartElement("ogc:Literal");
-            $writer->text(intval($previous) + 1);
+            $writer->text(intval($lowerBoundary));
             $writer->EndElement();
             // '} boundary
             $writer->EndElement();
@@ -197,7 +197,7 @@ class SLD {
             // 'write } tag
             $writer->EndElement();
 
-            $previous = $key;
+            $lowerBoundary = $key + 1;
 
         }
 
@@ -408,7 +408,7 @@ class SLD {
         $gMin = hexdec($startColor->G);
         $bMin = hexdec($startColor->B);
 
-
+        $intervalCount = $intervalCount +1;
 
         While ($i <= $intervalCount) {
 
@@ -421,6 +421,7 @@ class SLD {
             $i += 1;
         }
 
+//        $colourList[$classInterval] = ColorTranslator::FromArgb(0, 0, 0);
 
 
         Return $colourList;

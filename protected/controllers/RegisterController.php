@@ -54,7 +54,7 @@ class RegisterController extends Controller {
 
             sendEmail::SendRegisterEmail($UserName, $Email, $defaultPassword);
 
-            $result->message = "Congratulations " . $firstName . " ! You have registered to use the WISERD GeoPortal!";
+            $result->message = "Congratulations " . $firstName . "! You have registered to use the WISERD GeoPortal!";
         }else{
             $result->success = False;
             $result->message = "Error! Please Try again";

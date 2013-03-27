@@ -30,7 +30,9 @@ class ColorTranslator {
     public static function FromArgb($rAverage, $gAverage, $bAverage)
     {
 
-//        Log::toFile("Color from A r,g,b : " . $rAverage . "," . $gAverage . "," . $bAverage);
+        Log::toFile("Color from A r,g,b : " . $rAverage . "," . $gAverage . "," . $bAverage);
+
+
 
         $color = new Color();
         $color->R = dechex($rAverage);
@@ -39,7 +41,7 @@ class ColorTranslator {
 
 //        $color = $this->tidyColour($color);
 
-//        Log::toFile("Color : " . print_r($color, true));
+        Log::toFile("Color : " . print_r($color, true));
 
         return $color;
 
@@ -50,17 +52,17 @@ class ColorTranslator {
 
         $thisR = $colour->R;
         if (strlen($thisR) == 1) {
-            $thisR .= "0" . $thisR;
+            $thisR = "0" . $thisR;
         }
 
         $thisG = $colour->G;
         if (strlen($thisG) == 1) {
-            $thisG .= "0" . $thisG;
+            $thisG = "0" . $thisG;
         }
 
         $thisB = $colour->B;
         if (strlen($thisB) == 1) {
-            $thisB .= "0" . $thisB;
+            $thisB = "0" . $thisB;
         }
 
         $toReturn = "#" . $thisR . $thisG . $thisB;

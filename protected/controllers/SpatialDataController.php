@@ -439,6 +439,10 @@ class SpatialDataController extends Controller {
             $labelName = $_POST['labelName'];
         }
 
+        $pattern = '/[^0-9]*/';
+        $min = preg_replace($pattern,'', $min);
+        $max = preg_replace($pattern,'', $max);
+
         $SLD = New SLD();
 
         $xmlDoc = $SLD->DynamicSLD2($type, $fromColour, $toColour, $fieldName, intval($min), intval($max), intval($classes), $layer, $labelName);

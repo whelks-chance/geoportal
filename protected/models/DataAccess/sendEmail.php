@@ -10,6 +10,10 @@
 
 class sendEmail{
 
+    Public static Function SendBugEmail($content) {
+        return sendEmail::SendAnEmail(variables::$MailFromEmail, "BugReport", "Bug Report", $content);
+    }
+
     Public static Function SendRegisterEmail($Username, $Email, $Password ) {
 
         $Subject = "WISERD DataPortal Registration Confirmation";
@@ -25,7 +29,7 @@ class sendEmail{
         sendEmail::SendAnEmail($Email, $Username, $Subject, $content);
     }
 
-    Public static Function SendAnEmail( $Email, $Username, $Subject = "", $content = "") {
+    Public static Function SendAnEmail( $EmailAddress, $Username, $Subject = "", $content = "") {
 
         Yii::import('application.extensions.phpmailer.JPhpMailer');
 //        include('../../extensions/phpmailer/JPhpMailer.php');
@@ -41,8 +45,10 @@ class sendEmail{
         $mail->Subject = $Subject;
         $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
         $mail->MsgHTML($content);
-        $mail->AddAddress($Email, $Username);
-        $mail->Send();
+        $mail->AddAddress($EmailAddress, $Username);
+        $sent = $mail->Send();
+
+        return $sent;
 
 //        require_once "Mail.php";
 //
