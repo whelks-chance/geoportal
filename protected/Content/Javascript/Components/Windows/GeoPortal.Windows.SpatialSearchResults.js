@@ -854,93 +854,92 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                         handler: function () {
                             var root = Ext.getCmp('layers2add').getRootNode();
                             var LayerType = "Proportional";
-                            Ext.MessageBox.confirm('Confirm', 'Do you want to any qualitative data to the map as a Heatmap?',
-
-                                function (btn, text) {
 
 
-                                    if (btn == 'yes') {
-                                        LayerType = "HeatMap";
-                                    };
+                            for (var i = 0; i < root.childNodes.length; i++) {
+                                var node = root.childNodes[i];
+                                if (node.attributes.text == 'Survey Data') {
+                                    for (var q = 0; q < node.childNodes.length; q++) {
+                                        var layer = node.childNodes[q];
+
+                                        var min = layer.attributes.min;
+                                        var max = layer.attributes.max;
+
+                                        var fromColour = '#FFFFFF';
+
+                                        showResults(layer.attributes.geographies, layer.attributes.text, fromColour, layer.attributes.colourName, false, layer.attributes.unit, 'Survey Data', layer.attributes.SID, layer.attributes.id, layer.attributes.tName, min, max);
 
 
-                                    for (var i = 0; i < root.childNodes.length; i++) {
-                                        var node = root.childNodes[i];
-                                        if (node.attributes.text == 'Survey Data') {
-                                            for (var q = 0; q < node.childNodes.length; q++) {
-                                                var layer = node.childNodes[q];
-
-                                                var min = layer.attributes.min;
-                                                var max = layer.attributes.max;
-
-                                                var fromColour = '#FFFFFF';
-
-                                                showResults(layer.attributes.geographies, layer.attributes.text, fromColour, layer.attributes.colourName, false, layer.attributes.unit, 'Survey Data', layer.attributes.SID, layer.attributes.id, layer.attributes.tName, min, max);
-
-
-
-                                            }
-
-                                        } else if (node.attributes.text == 'Qualitative Data') {
-                                            for (var p = 0; p < node.childNodes.length; p++) {
-                                                var quallayer = node.childNodes[p];
-
-
-
-
-                                                var id = buildQualMapLayer(quallayer.attributes.text, "Qualitative Data", "Transcripts", quallayer.attributes.SID, quallayer.attributes.text, LayerType, quallayer.attributes.colourName);
-
-                                                for (var i = 0; i < quallayer.attributes.geographies.length; i++) {
-                                                    var lat = quallayer.attributes.geographies[i].lat;
-                                                    var lon = quallayer.attributes.geographies[i].lon
-
-
-                                                    var feature = new Object();
-                                                    feature.lat = lat;
-                                                    feature.lon = lon;
-                                                    feature.colour = quallayer.attributes.colourName;
-                                                    feature.counts = (quallayer.attributes.geographies[i].counts * 2);
-                                                    feature.title = quallayer.attributes.geographies[i].name;
-                                                    feature.QID = quallayer.attributes.SID;
-
-
-                                                    addQualFeature(feature, id, LayerType)
-
-
-                                                }
-
-                                            }
-                                        } else {
-                                            var id = buildQualMapLayer(quallayer.attributes.text, "Qualitative Data", "Transcripts", quallayer.attributes.SID, quallayer.attributes.text, LayerType);
-
-                                            for (var i = 0; i < quallayer.attributes.geographies.length; i++) {
-                                                var lat = quallayer.attributes.geographies[i].lat;
-                                                var lon = quallayer.attributes.geographies[i].lon
-
-
-                                                var feature = new Object();
-                                                feature.lat = lat;
-                                                feature.lon = lon;
-                                                feature.colour = quallayer.attributes.colourName;
-                                                feature.counts = (quallayer.attributes.geographies[i].counts * 2);
-                                                feature.title = quallayer.attributes.geographies[i].name;
-                                                feature.QID = quallayer.attributes.SID;
-                                                addQualFeature(feature, id, LayerType)
-
-                                            }
-
-                                        }
-
-                                        Ext.getCmp('spatResWin').minimize();
 
                                     }
 
+                                } else if (node.attributes.text == 'Qualitative Data') {
+                                    for (var p = 0; p < node.childNodes.length; p++) {
+                                        var quallayer = node.childNodes[p];
 
 
 
 
+                                        var id = buildQualMapLayer(quallayer.attributes.text, "Qualitative Data", "Transcripts", quallayer.attributes.SID, quallayer.attributes.text, LayerType, quallayer.attributes.colourName);
 
-                                });
+                                        for (var i = 0; i < quallayer.attributes.geographies.length; i++) {
+                                            var lat = quallayer.attributes.geographies[i].lat;
+                                            var lon = quallayer.attributes.geographies[i].lon
+
+
+                                            var feature = new Object();
+                                            feature.lat = lat;
+                                            feature.lon = lon;
+                                            feature.colour = quallayer.attributes.colourName;
+                                            feature.counts = (quallayer.attributes.geographies[i].counts * 2);
+                                            feature.title = quallayer.attributes.geographies[i].name;
+                                            feature.QID = quallayer.attributes.SID;
+
+
+                                            addQualFeature(feature, id, LayerType)
+
+
+                                        }
+
+                                    }
+                                } else {
+                                    var id = buildQualMapLayer(quallayer.attributes.text, "Qualitative Data", "Transcripts", quallayer.attributes.SID, quallayer.attributes.text, LayerType);
+
+                                    for (var i = 0; i < quallayer.attributes.geographies.length; i++) {
+                                        var lat = quallayer.attributes.geographies[i].lat;
+                                        var lon = quallayer.attributes.geographies[i].lon
+
+
+                                        var feature = new Object();
+                                        feature.lat = lat;
+                                        feature.lon = lon;
+                                        feature.colour = quallayer.attributes.colourName;
+                                        feature.counts = (quallayer.attributes.geographies[i].counts * 2);
+                                        feature.title = quallayer.attributes.geographies[i].name;
+                                        feature.QID = quallayer.attributes.SID;
+                                        addQualFeature(feature, id, LayerType)
+
+                                    }
+
+                                }
+
+                                Ext.getCmp('spatResWin').minimize();
+
+                            }
+
+////                            //TODO remove me!!
+//                            Ext.MessageBox.confirm('Confirm', 'Do you want to any qualitative data to the map as a Heatmap?',
+//
+//                                function (btn, text) {
+//
+//
+//                                    if (btn == 'yes') {
+//                                        LayerType = "HeatMap";
+//                                    };
+
+//
+//                                }
+//                            );
 
                         }
                     }

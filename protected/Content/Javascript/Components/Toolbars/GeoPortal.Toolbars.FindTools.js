@@ -322,9 +322,14 @@ function doSpatialSearch(geography, loadMask) {
         Ext.getCmp('spatResWin').close();
     }
 
-    var searchResults = new GeoPortal.Windows.SpatialResults({ animateTarget: Ext.getCmp('minSS').el });
+    var searchResults = new GeoPortal.Windows.SpatialResults(
+        { animateTarget: Ext.getCmp('minSS').el }
+    );
+    console.log(searchResults);
+
     var grdqual = Ext.getCmp('grdQual');
     var grid = Ext.getCmp('grdSurvey');
+    searchResults.doLayout();
     grdqual.store.load(
         {
             params: {
@@ -334,6 +339,7 @@ function doSpatialSearch(geography, loadMask) {
                 type: 'Qual'
             },
             callback: function () {
+                searchResults.doLayout();
                 grid.store.load(
                     {
                         params: {
@@ -343,6 +349,7 @@ function doSpatialSearch(geography, loadMask) {
                         },
                         callback: function () {
                             console.log(searchResults);
+                            searchResults.doLayout();
                             searchResults.show();
                             loadMask.hide();
                         }

@@ -120,7 +120,7 @@ $this->breadcrumbs=array(
         welcomeWin.show();
 
 
-        var frmLogin = new Ext.Window({ title: 'Welcome to the WISERD Geoportal  - Please log-in',
+        var frmLogin = new Ext.Window({ title: 'Welcome to the WISERD DataPortal  - Please log-in',
             items: new GeoPortal.Forms.UsabilityLogin(),
             id: 'WinLogin',
             resizable: false,

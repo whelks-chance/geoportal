@@ -17,7 +17,7 @@ class InsertEvalDetails {
         // 'check to see if username and password are correct
 
 //        'define string
-        $checkUserString = "SELECT COUNT(username) FROM alphausersdetails where username = '" . $user->username . "' AND password = crypt('" . $user->enteredPassword . "', password);";
+        $checkUserString = "SELECT COUNT(username), id FROM alphausersdetails where username = '" . $user->username . "' AND password = crypt('" . $user->enteredPassword . "', password);";
 //        'get DB connection string
 //        $dbCheckUser = new getDBConnections();
 //        'new DB connection
@@ -47,7 +47,7 @@ class InsertEvalDetails {
         $date = new DateTime();
         $timestamp = $date->format('U = Y-m-d H:i:s');
 
-        $evalInsert = "UPDATE alphausersdetails SET timestamp = '" . $timestamp . "', browser = '" . $user->browser . "', os = '" . $user->os . "', screenres = '" . $user->screenSize . "', browser_ver = '" . $user->versionStr . "', browser_no = '" . $user->versionNo . "' WHERE username = '" . $user->username . "';";
+        $evalInsert = "UPDATE alphausersdetails SET timestamp = '" . $timestamp . "', browser = '" . $user->browser . "', os = '" . $user->os . "', screenres = '" . $user->screenSize . "', browser_ver = '" . $user->versionStr . "', browser_no = '" . $user->versionNo . "' WHERE username = '" . $user->username . "' AND password = crypt('" . $user->enteredPassword . "', password);";
         $dbEval = New getDBConnections();
         $cnnEval = $dbEval -> getDBConnection("Geoportal");
         $cmdEval = pg_query($cnnEval, $evalInsert );
@@ -60,9 +60,9 @@ class InsertEvalDetails {
         If (pg_affected_rows($cmdEval) != 1) {
             Return False;
         }Else{
-            $user = getDBConnections::getUser($user->username, $user->enteredPassword);
 
             //TODO warning, prints user data
+//            $user = getDBConnections::getUser($user->username, $user->enteredPassword);
 //            Log::toFile('user : ' . print_r($user, true));
 
             Return True;

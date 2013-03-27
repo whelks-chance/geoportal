@@ -1,6 +1,6 @@
 ﻿Ext.ns('Geoportal.Windows');
 Geoportal.Windows.WelcomeWin = Ext.extend(Ext.Window, {
-    title: 'Welcome to the WISERD Geoportal (This window is under development)',
+    title: 'Welcome to the WISERD DataPortal (This window is under development)',
     width: Ext.getBody().getViewSize().width * 0.5,
     height: Ext.getBody().getViewSize().height * 0.8,
     resizable: true,

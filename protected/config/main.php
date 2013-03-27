@@ -7,7 +7,7 @@
 // CWebApplication properties can be configured here.
 return array(
     'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-    'name'=>'WISERD GeoPortal',
+    'name'=>'WISERD DataPortal',
 //    'defaultController' => 'myController/myAction',
 
     // preloading 'log' component

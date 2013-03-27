@@ -26,7 +26,7 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
                 },
                 {
                     xtype: 'label',
-                    text: 'WARNING: The WISERD Geoportal is not compatible with Internet Explorer 8 or lower'
+                    text: 'WARNING: The WISERD DataPortal is not compatible with Internet Explorer 8 or lower'
                }
             ],
             fbar: {

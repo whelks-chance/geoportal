@@ -42,7 +42,7 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
     OnPrintClick: function () { },
 
     OnGuideClick: function (b, e) {
-        window.open("Content/PDF/UserGuide.pdf", "WISERD Geoportal User Guide", "resizable,scrollbars");
+        window.open("Content/PDF/UserGuide.pdf", "WISERD DataPortal User Guide", "resizable,scrollbars");
         return false;
     },
 
