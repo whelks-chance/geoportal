@@ -309,10 +309,6 @@ function createRectangleAction() {
     });
     return rec_action;
 
-
-
-
-
 }
 
 function doSpatialSearch(geography, loadMask) {
@@ -323,12 +319,21 @@ function doSpatialSearch(geography, loadMask) {
     }
 
     var searchResults = new GeoPortal.Windows.SpatialResults(
-        { animateTarget: Ext.getCmp('minSS').el }
+        {
+            animateTarget: Ext.getCmp('minSS').el
+//            callback: function() {
+//            }
+        }
     );
+
     console.log(searchResults);
 
     var grdqual = Ext.getCmp('grdQual');
     var grid = Ext.getCmp('grdSurvey');
+
+    console.log(grdqual);
+    console.log(grid);
+
     searchResults.doLayout();
     grdqual.store.load(
         {
@@ -338,6 +343,7 @@ function doSpatialSearch(geography, loadMask) {
                 limit: 15,
                 type: 'Qual'
             },
+            scope : this,
             callback: function () {
                 searchResults.doLayout();
                 grid.store.load(
@@ -347,6 +353,7 @@ function doSpatialSearch(geography, loadMask) {
                             limit: 15,
                             type: 'Quant'
                         },
+                        scope: this,
                         callback: function () {
                             console.log(searchResults);
                             searchResults.doLayout();
@@ -360,11 +367,6 @@ function doSpatialSearch(geography, loadMask) {
         }
     );
 
-
-
-
-
 }
-
 
 

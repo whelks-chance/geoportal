@@ -127,7 +127,7 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                 var colour = Ext.getCmp('fieldColour1').getValue();
 
                                 lnode.attributes.colourName = colour;
-                                lnode.attributes.colour = '<div style="background-color:' + colour + '; text-align: center; color: white;" >' + colour + '</div>'; ;
+                                lnode.attributes.colour = '<div style="background-color:' + colour + '; text-align: center; color: white;" >' + colour + '</div>';
 
                                 //lnode.reload();
 
@@ -196,7 +196,7 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
 
             //o - oldValue
             //n - newValue
-        };
+        }
 
         this.resProxy = new Ext.data.HttpProxy({ api: {
             read: SpatialSearch
@@ -259,186 +259,186 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
 //                                            title: 'Survey',
 //                                            items: [
 //                                                {
-                                                    title: 'Survey',
-                                                    xtype: 'grid',
+                                            title: 'Survey',
+                                            xtype: 'grid',
 //                                                    height: (this.height * 0.6) - 23,
-                                                    stripeRows: true,
-                                                    id: 'grdSurvey',
-                                                    frame: false,
-                                                    loadMask: true,
-                                                    store: this.resStore,
-                                                    viewConfig: {
-                                                        forceFit: true
-                                                    },
-                                                    view: this.group,
-                                                    sm: new Ext.grid.RowSelectionModel({
-                                                        singleSelect: true,
-                                                        listeners: {
-                                                            rowselect: function (sm, row, rec) {
-                                                                Ext.getCmp("details").getForm().loadRecord(rec);
-                                                            }
+                                            stripeRows: true,
+                                            id: 'grdSurvey',
+                                            frame: false,
+                                            loadMask: true,
+                                            store: this.resStore,
+                                            viewConfig: {
+                                                forceFit: true
+                                            },
+                                            view: this.group,
+                                            sm: new Ext.grid.RowSelectionModel({
+                                                singleSelect: true,
+                                                listeners: {
+                                                    rowselect: function (sm, row, rec) {
+                                                        Ext.getCmp("details").getForm().loadRecord(rec);
+                                                    }
+                                                }
+                                            }),
+                                            columns: [
+                                                {
+                                                    xtype: 'gridcolumn',
+                                                    dataIndex: 'sID',
+                                                    header: 'ID',
+                                                    sortable: true,
+                                                    width: 50
+                                                }, {
+                                                    xtype: 'gridcolumn',
+                                                    dataIndex: 'geography',
+                                                    header: 'Geography',
+                                                    sortable: true,
+                                                    width: 50
+                                                },
+                                                {
+                                                    xtype: 'gridcolumn',
+                                                    dataIndex: 'sName',
+                                                    header: 'SurveyName',
+                                                    sortable: true,
+                                                    width: 200
+                                                },
+                                                {
+                                                    xtype: 'gridcolumn',
+                                                    dataIndex: 'sYear',
+                                                    header: 'Date',
+                                                    sortable: true,
+                                                    width: 100
+                                                },
+                                                {
+                                                    xtype: 'actioncolumn',
+                                                    dataIndex: 'showMeta',
+                                                    header: 'Show MetaData?',
+                                                    items: [{
+                                                        icon: 'images/silk/application_form.png',
+                                                        tooltip: 'Show Metadata',
+                                                        handler: function (grid, rowIndex, colIndex) {
+
+
+
+                                                            var ID = record.data.id;
+                                                            var metaWindow = new GeoPortal.Windows.QualMetaData({ title: 'MetaData for :' + ID, SID: ID });
+                                                            Ext.getCmp("frmQDC").getForm().load({ url: QDCmetaURL, waitMsg: 'Loading.......', method: 'POST', sucess: metaWindow.show(), params: { SID: ID} });
                                                         }
-                                                    }),
-                                                    columns: [
+                                                    }]
+                                                },
+                                                {
+                                                    xtype: 'actioncolumn',
+                                                    items: [
                                                         {
-                                                            xtype: 'gridcolumn',
-                                                            dataIndex: 'sID',
-                                                            header: 'ID',
-                                                            sortable: true,
-                                                            width: 50
-                                                        }, {
-                                                            xtype: 'gridcolumn',
-                                                            dataIndex: 'geography',
-                                                            header: 'Geography',
-                                                            sortable: true,
-                                                            width: 50
-                                                        },
-                                                        {
-                                                            xtype: 'gridcolumn',
-                                                            dataIndex: 'sName',
-                                                            header: 'SurveyName',
-                                                            sortable: true,
-                                                            width: 200
-                                                        },
-                                                        {
-                                                            xtype: 'gridcolumn',
-                                                            dataIndex: 'sYear',
-                                                            header: 'Date',
-                                                            sortable: true,
-                                                            width: 100
-                                                        },
-                                                        {
-                                                            xtype: 'actioncolumn',
-                                                            dataIndex: 'showMeta',
-                                                            header: 'Show MetaData?',
-                                                            items: [{
-                                                                icon: 'images/silk/application_form.png',
-                                                                tooltip: 'Show Metadata',
-                                                                handler: function (grid, rowIndex, colIndex) {
+                                                            icon: 'images/silk/cross.png',                // Use a URL in the icon config
+                                                            tooltip: 'Add to Map',
+                                                            handler: function (grid, rowIndex, colIndex) {
+                                                                var store = grid.getStore();
+                                                                var rec = store.getAt(rowIndex);
+                                                                if (rec.data.Added == false) {
+                                                                    rec.set("Added", true);
+                                                                    rec.commit();
+                                                                    var node = Ext.getCmp('layers2add').root.childNodes[0];
+                                                                    Ext.getCmp("details").getForm().loadRecord(rec);
 
 
 
-                                                                    var ID = record.data.id;
-                                                                    var metaWindow = new GeoPortal.Windows.QualMetaData({ title: 'MetaData for :' + ID, SID: ID });
-                                                                    Ext.getCmp("frmQDC").getForm().load({ url: QDCmetaURL, waitMsg: 'Loading.......', method: 'POST', sucess: metaWindow.show(), params: { SID: ID} });
+                                                                    var new_node = new Ext.tree.AsyncTreeNode({
+                                                                        text: rec.data.tName,
+                                                                        leaf: true,
+                                                                        icon: "images/silk/table.png",
+                                                                        allowDrag: false,
+                                                                        children: [],
+                                                                        tName: rec.data.tName,
+                                                                        unit: rec.data.geography,
+                                                                        geographies: rec.data.gName,
+                                                                        min: rec.data.min,
+                                                                        max: rec.data.max,
+                                                                        colourName: '#F70A45',
+                                                                        SID: rec.data.sID,
+                                                                        colour: '<div style="background-color:#F70A45; text-align: center; color: white"> #F70A45 </div>',
+                                                                        uiProvider: Ext.tree.ColumnNodeUI
+
+                                                                    });
+
+                                                                    var id = "";
+                                                                    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+                                                                    for (var z = 0; z < 5; z++)
+                                                                        id += possible.charAt(Math.floor(Math.random() * possible.length));
+
+                                                                    new_node.setId(id);
+                                                                    node.appendChild(new_node);
+
                                                                 }
-                                                            }]
-                                                        },
-                                                        {
-                                                            xtype: 'actioncolumn',
-                                                            items: [
-                                                                {
-                                                                    icon: 'images/silk/cross.png',                // Use a URL in the icon config
-                                                                    tooltip: 'Add to Map',
-                                                                    handler: function (grid, rowIndex, colIndex) {
-                                                                        var store = grid.getStore();
-                                                                        var rec = store.getAt(rowIndex);
-                                                                        if (rec.data.Added == false) {
-                                                                            rec.set("Added", true);
+                                                                else {
+                                                                    var survey_node = Ext.getCmp('layers2add').root.childNodes[0];
+                                                                    var node_to_remove;
+                                                                    for (var i = 0; i < survey_node.childNodes.length; i++) {
+                                                                        if (survey_node.childNodes[i].attributes.tName == rec.data.tName) {
+
+                                                                            node_to_remove = survey_node.childNodes[i];
+                                                                            survey_node.removeChild(node_to_remove, true);
+                                                                            rec.set("Added", false);
                                                                             rec.commit();
-                                                                            var node = Ext.getCmp('layers2add').root.childNodes[0];
-                                                                            Ext.getCmp("details").getForm().loadRecord(rec);
-
-
-
-                                                                            var new_node = new Ext.tree.AsyncTreeNode({
-                                                                                text: rec.data.tName,
-                                                                                leaf: true,
-                                                                                icon: "images/silk/table.png",
-                                                                                allowDrag: false,
-                                                                                children: [],
-                                                                                tName: rec.data.tName,
-                                                                                unit: rec.data.geography,
-                                                                                geographies: rec.data.gName,
-                                                                                min: rec.data.min,
-                                                                                max: rec.data.max,
-                                                                                colourName: '#F70A45',
-                                                                                SID: rec.data.sID,
-                                                                                colour: '<div style="background-color:#F70A45; text-align: center; color: white"> #F70A45 </div>',
-                                                                                uiProvider: Ext.tree.ColumnNodeUI
-
-                                                                            });
-
-                                                                            var id = "";
-                                                                            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-                                                                            for (var z = 0; z < 5; z++)
-                                                                                id += possible.charAt(Math.floor(Math.random() * possible.length));
-
-                                                                            new_node.setId(id);
-                                                                            node.appendChild(new_node);
-
                                                                         }
-                                                                        else {
-                                                                            var survey_node = Ext.getCmp('layers2add').root.childNodes[0];
-                                                                            var node_to_remove;
-                                                                            for (var i = 0; i < survey_node.childNodes.length; i++) {
-                                                                                if (survey_node.childNodes[i].attributes.tName == rec.data.tName) {
-
-                                                                                    node_to_remove = survey_node.childNodes[i];
-                                                                                    survey_node.removeChild(node_to_remove, true);
-                                                                                    rec.set("Added", false);
-                                                                                    rec.commit();
-                                                                                }
-
-                                                                            }
-
-                                                                        }
-
-                                                                    },
-                                                                    getClass: function (value, metaData, record) {
-
-                                                                        if (record.data.Added == false) {
-                                                                            this.items[0].icon = 'images/silk/cross.png';
-                                                                            this.items[0].tooltip = 'Add to Map';
-
-                                                                        };
-                                                                        if (record.data.Added == true) {
-                                                                            this.items[0].icon = 'images/silk/tick.png';
-                                                                            this.items[0].tooltip = 'Remove from Map';
-
-                                                                        };
-
 
                                                                     }
-                                                                }],
-                                                            dataIndex: 'Added',
-                                                            header: 'Add to Map?',
-                                                            sortable: true,
-                                                            editable: true,
-                                                            width: 80
-                                                        }
-                                                    ],
-                                                    bbar: {
-                                                        xtype: 'paging',
-                                                        store: this.resStore,
-                                                        pageSize: 15,
-                                                        displayInfo: false,
-                                                        displayMsg: 'Displaying Results {0} -{1} of {2}',
-                                                        items: [
-                                                            {
-                                                                xtype: 'tbseparator'
-                                                            },
-                                                            {
-                                                                xtype: 'button',
-                                                                text: 'Save Search',
-                                                                icon: 'images/silk/disk.png',
-                                                                handler: function () { }
-
-                                                            },
-                                                            {
-                                                                xtype: 'button',
-                                                                text: 'Print Page',
-                                                                icon: 'images/silk/printer.png',
-                                                                handler: function () {
-                                                                    var grid = Ext.getCmp('resultsGrid');
-                                                                    Ext.ux.Printer.print(grid);
-
 
                                                                 }
+
+                                                            },
+                                                            getClass: function (value, metaData, record) {
+
+                                                                if (record.data.Added == false) {
+                                                                    this.items[0].icon = 'images/silk/cross.png';
+                                                                    this.items[0].tooltip = 'Add to Map';
+
+                                                                }
+                                                                if (record.data.Added == true) {
+                                                                    this.items[0].icon = 'images/silk/tick.png';
+                                                                    this.items[0].tooltip = 'Remove from Map';
+
+                                                                }
+
+
                                                             }
-                                                        ]
+                                                        }],
+                                                    dataIndex: 'Added',
+                                                    header: 'Add to Map?',
+                                                    sortable: true,
+                                                    editable: true,
+                                                    width: 80
+                                                }
+                                            ],
+                                            bbar: {
+                                                xtype: 'paging',
+                                                store: this.resStore,
+                                                pageSize: 15,
+                                                displayInfo: false,
+                                                displayMsg: 'Displaying Results {0} -{1} of {2}',
+                                                items: [
+                                                    {
+                                                        xtype: 'tbseparator'
+                                                    },
+                                                    {
+                                                        xtype: 'button',
+                                                        text: 'Save Search',
+                                                        icon: 'images/silk/disk.png',
+                                                        handler: function () { }
+
+                                                    },
+                                                    {
+                                                        xtype: 'button',
+                                                        text: 'Print Page',
+                                                        icon: 'images/silk/printer.png',
+                                                        handler: function () {
+                                                            var grid = Ext.getCmp('resultsGrid');
+                                                            Ext.ux.Printer.print(grid);
+
+
+                                                        }
                                                     }
+                                                ]
+                                            }
 //                                                }
 //                                            ]
                                         },
@@ -732,30 +732,30 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                     padding: '2px',
                                     hideBorders: false,
                                     items: [
-                                        { xtype: 'form',
-                                            items: [
-                                                {
-                                                    xtype: 'textfield',
-                                                    id: 'sName',
-                                                    anchor: '95%',
-                                                    fieldLabel: 'Data Name'
-                                                },
-                                                {
-                                                    xtype: 'textfield',
-                                                    anchor: '95%',
-                                                    id: 'sYear',
-                                                    fieldLabel: 'Year'
-                                                },
-                                                {
-                                                    xtype: 'textarea',
-                                                    id: 'gName',
-                                                    height: 150,
-                                                    anchor: '95%',
-                                                    fieldLabel: 'Geographies'
-                                                }]
+//                                        {
+//                                            xtype: 'form',
 
+//                                            items: [
+                                        {
+                                            xtype: 'textfield',
+                                            id: 'sName',
+                                            anchor: '95%',
+                                            fieldLabel: 'Data Name'
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            anchor: '95%',
+                                            id: 'sYear',
+                                            fieldLabel: 'Year'
+                                        },
+                                        {
+                                            xtype: 'textarea',
+                                            id: 'gName',
+                                            height: 150,
+                                            anchor: '95%',
+                                            fieldLabel: 'Geographies'
                                         }]
-
+//                                        }]
                                 }
                             ]
                         },
@@ -796,7 +796,7 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                     title: 'Data to be Mapped',
                                     headerAsText: false,
                                     id: 'layers2add',
-                                    height: this.height * .98,
+                                    height: this.height * 0.98,
                                     rootVisible: true,
                                     columnWidth: 2,
                                     preloadChildren: true,

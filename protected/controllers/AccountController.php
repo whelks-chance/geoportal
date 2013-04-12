@@ -108,11 +108,11 @@ class AccountController extends Controller {
         $update = new getDBConnections();
         $update->getDBConnection();
         If ($update->updateMyAccount($newUserDetails, $updateBio, Yii::app()->session["User"]->UID)) {
-            $result->message = "Your Account w= successfully updated!";
+            $result->message = "Your Account was successfully updated!";
             $result->success = True;
 
         } Else {
-            $result->message = "There w= a problem updating your account - ple=e try again!";
+            $result->message = "There was a problem updating your account - please try again!";
             $result->success = False;
 
         }

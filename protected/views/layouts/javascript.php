@@ -8,10 +8,10 @@
  */
 
 $javascriptFiles = array(
-    "Libraries/Ext/ext-base.js",
-    "Libraries/Ext/ext-all.js",
-//    "Libraries/ext-4.1.1a/ext-all.js",
-//    "Libraries/ext-4.1.1a/ext-base.js",
+//    "Libraries/Ext/ext-base.js",
+//    "Libraries/Ext/ext-all.js",
+    "Libraries/Ext/ext-base-debug.js",
+    "Libraries/Ext/ext-all-debug.js",
 
     "GeoTools/processing-1.4.1.min.js",
     "Libraries/OpenLayers-2.12/OpenLayers.js",

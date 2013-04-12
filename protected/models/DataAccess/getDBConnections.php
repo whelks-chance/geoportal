@@ -29,13 +29,13 @@ class getDBConnections {
         If ($debug == False) {
             //            $connString = "Server=localhost;Port=5433;Database=" . $DBName . ";User Id=postgres;Password=January1981" .
             //          '"Server=localhost;Port=5433;Database=" + DBName + ";User Id=rfry;Password=January1981"';
-            $connString = "host=192.168.56.102 port=7007 dbname=" . $DBName . " user=postgres password=postgres";
+            $connString = "host=192.168.56.102 port=7007 dbname=" . $DBName . " user=" . variables::$databaseUsername . " password=" . variables::$databasePassword;
 
         }Else {
             // 'change this string according to whether target build is for Glam server or Amazon server
 //                $connString = "Server=localhost;Port=5433;Database=" . $DBName . ";User Id=postgres;Password=January1981"
             //              'Server=193.63.128.226;Port=5433;Database=" + DBName + ";User Id=rfry;Password=January1981"';
-            $connString = "host=" . variables::$databaseAddr . " port=". variables::$databasePort . " dbname=" . $DBName . " user=postgres password=postgres";
+            $connString = "host=" . variables::$databaseAddr . " port=". variables::$databasePort . " dbname=" . $DBName . " user=" . variables::$databaseUsername . " password=" . variables::$databasePassword;
         }
         $cnn = pg_connect($connString);
 
@@ -78,11 +78,13 @@ class getDBConnections {
 //        $DA = new DataAdapter();
         $DRs = DataAdapter::DefaultExecuteAndRead($loginStr);
 
+//        Log::toFile('Login string : ' . $loginStr . ' Results : ' . print_r($DRs, true));
+
         If ( sizeof($DRs) > 0) {
 
             $DR = $DRs[0];
 
-//TODO warning : prints passwords
+//TODO warning : prints user details
 //            Log::toFile('found user : ' . print_r($DR, true));
 
             $user = New UserDetails();

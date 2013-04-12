@@ -55,6 +55,8 @@ class RegisterController extends Controller {
             sendEmail::SendRegisterEmail($UserName, $Email, $defaultPassword);
 
             $result->message = "Congratulations " . $firstName . "! You have registered to use the WISERD DataPortal!";
+
+            sendEmail::SendRegistrationInfoToSelf($UserName);
         }else{
             $result->success = False;
             $result->message = "Error! Please Try again";
@@ -116,6 +118,11 @@ class RegisterController extends Controller {
             $success = True;
         } else {
             $success = $evalDetailsInsert->EvalDetailsByInsert($UserEvaluationDetails);
+
+            $userDetails = getDBConnections::getUser(
+                $UserEvaluationDetails->username,
+                $UserEvaluationDetails->enteredPassword
+            );
         }
 
         If ($success) {

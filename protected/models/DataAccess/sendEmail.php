@@ -49,6 +49,14 @@ class sendEmail{
         $sent = $mail->Send();
 
         return $sent;
+    }
+
+    public static function SendRegistrationInfoToSelf($UserName) {
+        $subject = "New registration";
+        $content = "New User " . $UserName . " registered.";
+
+        sendEmail::SendAnEmail(variables::$MailFromEmail, $UserName, $subject, $content);
+    }
 
 //        require_once "Mail.php";
 //
@@ -99,7 +107,6 @@ class sendEmail{
 //            }Catch (Exception $ex) {
 //                Return False;
 //            }
-    }
 
 }
 

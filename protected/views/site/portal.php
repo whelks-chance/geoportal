@@ -8,7 +8,7 @@
  */
 
 
-$this->pageTitle=Yii::app()->name . '- Portal';
+$this->pageTitle=Yii::app()->name . ' | DataPortal';
 $this->breadcrumbs=array(
     'Portal',
 );
