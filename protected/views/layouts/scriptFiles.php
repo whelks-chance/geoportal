@@ -24,6 +24,9 @@ include('variables.php')
     var VerifySearchURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Search/verifySearch';
     var simpleSearchURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Search/SimpleSearch';
     var qualSearchURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Search/QualSimpleSearch';
+    var advancedSearchURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdvancedSearch/AdvancedSearch';
+    var advancedSearchMetaURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdvancedSearch/AdvancedSearchMeta';
+
     var BugUrl = '<? echo Yii::app()->baseUrl ?>/index.php?r=Message/submitAbug';
     var SpatialUnitsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialUnits';
     var SpatialSubUnitsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialSubUnit';
