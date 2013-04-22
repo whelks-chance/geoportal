@@ -24,7 +24,7 @@ class sendEmail{
 
         $content .= "<br><br>Please do not reply to this automated email, as the address is not monitored.";
 
-        $content .= "<br><br>Any questions or comments are very welcome at noone@nowhere.xyz";
+        $content .= "<br><br>Help and support information and contact information is available at http://www.wiserd.ac.uk/resources/wiserd-dataportal/";
 
         sendEmail::SendAnEmail($Email, $Username, $Subject, $content);
     }
