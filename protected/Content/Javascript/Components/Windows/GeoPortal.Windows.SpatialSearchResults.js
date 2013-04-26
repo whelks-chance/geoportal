@@ -307,23 +307,23 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                                     sortable: true,
                                                     width: 100
                                                 },
-                                                {
-                                                    xtype: 'actioncolumn',
-                                                    dataIndex: 'showMeta',
-                                                    header: 'Show MetaData?',
-                                                    items: [{
-                                                        icon: 'images/silk/application_form.png',
-                                                        tooltip: 'Show Metadata',
-                                                        handler: function (grid, rowIndex, colIndex) {
-
-
-
-                                                            var ID = record.data.id;
-                                                            var metaWindow = new GeoPortal.Windows.QualMetaData({ title: 'MetaData for :' + ID, SID: ID });
-                                                            Ext.getCmp("frmQDC").getForm().load({ url: QDCmetaURL, waitMsg: 'Loading.......', method: 'POST', sucess: metaWindow.show(), params: { SID: ID} });
-                                                        }
-                                                    }]
-                                                },
+//                                                {
+//                                                    xtype: 'actioncolumn',
+//                                                    dataIndex: 'showMeta',
+//                                                    header: 'Show MetaData?',
+//                                                    items: [{
+//                                                        icon: 'images/silk/application_form.png',
+//                                                        tooltip: 'Show Metadata',
+//                                                        handler: function (grid, rowIndex, colIndex) {
+//
+//
+//
+//                                                            var ID = record.data.id;
+//                                                            var metaWindow = new GeoPortal.Windows.QualMetaData({ title: 'MetaData for :' + ID, SID: ID });
+//                                                            Ext.getCmp("frmQDC").getForm().load({ url: QDCmetaURL, waitMsg: 'Loading.......', method: 'POST', sucess: metaWindow.show(), params: { SID: ID} });
+//                                                        }
+//                                                    }]
+//                                                },
                                                 {
                                                     xtype: 'actioncolumn',
                                                     items: [
@@ -731,6 +731,7 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                     id: 'details',
                                     padding: '2px',
                                     hideBorders: false,
+                                    autoScroll: true,
                                     items: [
 //                                        {
 //                                            xtype: 'form',
@@ -771,14 +772,25 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                     editable: true,
                                     fields: ['text', 'colour'],
                                     listeners: {
-                                        "contextmenu": { fn: function (node, e) {
-                                            var xy = e.getXY();
-                                            rMenu.LayerNode = node;
-                                            if (node.attributes.leaf == true) {
-                                                rMenu.showAt(xy);
+                                        "contextmenu": {
+                                            fn: function (node, e) {
+                                                var xy = e.getXY();
+                                                rMenu.LayerNode = node;
+                                                if (node.attributes.leaf == true) {
+                                                    rMenu.showAt(xy);
 
+                                                }
                                             }
-                                        }
+                                        },
+                                        "click" : {
+                                            fn: function (node, e) {
+                                                var xy = e.getXY();
+                                                rMenu.LayerNode = node;
+                                                if (node.attributes.leaf == true) {
+                                                    rMenu.showAt(xy);
+
+                                                }
+                                            }
                                         }
 
                                     },

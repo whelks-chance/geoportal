@@ -17,7 +17,7 @@ class SearchController extends Controller {
         }
         if(isset($_POST['mappable'])) {
             $mappableString = $_POST['mappable'];
-            if( $mappableString = "true") {
+            if( $mappableString == "true") {
                 $Mappable = true;
             } else {
                 $Mappable = false;

@@ -7,9 +7,14 @@
     maximizable: true,
     minimizable: true,
     id: 'resWin',
-	autoScroll: true,
+//	autoScroll: true,
 	// plugins: rowExpander,
 	initComponent: function () {
+        this.on({
+            'minimize': {
+                fn: this.min
+            }
+        });
 		this.resProxy = new Ext.data.HttpProxy({ api: {
 			read: simpleSearchURL
 		}
@@ -63,6 +68,7 @@
 			header: 'Options'
 			// ,autoWidth:false
 			// ,hideMode:'display'
+            , width : 50
 			, keepSelection: true
 			, actions: [{
 				iconCls: 'icon-meta',
@@ -111,6 +117,8 @@
 			header: 'Options'
 			// ,autoWidth:false
 			// ,hideMode:'display'
+            , width : 50
+            , paddingRight: 50
 			, keepSelection: true
 			, actions: [{
 				iconCls: 'icon-meta'
@@ -207,7 +215,8 @@
 				}
 			}, { title: 'Qual Data',
 				xtype: 'grid',
-				width: 780,
+//				width: 780,
+                    width: '100%',
 				id: 'qualResults',
 				frame: false,
 				flex: 1,

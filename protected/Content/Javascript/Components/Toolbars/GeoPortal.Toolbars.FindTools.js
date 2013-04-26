@@ -37,11 +37,33 @@ function createPolyAction() {
         SearchLayer.destroyFeatures();
         var poly = new OpenLayers.Feature.Vector(feature, { 'name': 'Search Polygon', 'type': 'place' });
         SearchLayer.addFeatures(poly);
-        var loadMask = new Ext.LoadMask(Ext.getBody(), { msg: "Retrieving Spatial Search Results....", removeMask: false });
-        loadMask.show();
-        doSpatialSearch(feature, loadMask);
-        // alert('Poly Done');
-        action.control.deactivate();
+
+        Ext.MessageBox.confirm('Search Options', 'Would you like to specify advanced search parameters?',
+            function (btn, text) {
+                if (btn == 'yes') {
+                    var advSearch = Ext.getCmp('advSearch');
+                    if (advSearch == null) {
+                        var advSearchPanel = new GeoPortal.Forms.AdvancedSearch();
+                        advSearch = new Ext.Window({
+                            title: 'Advanced Search',
+                            id: 'advSearch',
+                            resizable: false,
+                            animateTarget: Ext.getCmp("btnAdvSearch").el,
+                            items: [advSearchPanel]
+                        });
+                    }
+                    advSearch.show();
+                } else {
+                    var loadMask = new Ext.LoadMask(Ext.getBody(), { msg: "Retrieving Spatial Search Results....", removeMask: false });
+                    loadMask.show();
+                    doSpatialSearch(feature, loadMask);
+                    // alert('Poly Done');
+                    action.control.deactivate();
+                }
+            }
+        );
+
+
     };
     var action = new GeoExt.Action({
         icon: 'images/geosilk/line_red.png',

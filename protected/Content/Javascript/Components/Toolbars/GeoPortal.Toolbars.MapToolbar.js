@@ -164,7 +164,7 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
         map.addControl(selectCtrl);
 
 
-     
+
         var identify = new GeoExt.Action({
             tooltip: "Identify Features",
             icon: 'images/silk/information.png',
@@ -305,7 +305,7 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
             icon: 'images/silk/magnifier.png',
             id: 'btnSimpleSearch',
             tooltip: 'Search....',
-            iconAlign: 'right',            
+            iconAlign: 'right',
             handler: function () {
                 doSearch();
             }
@@ -321,19 +321,32 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
                 var advSearch = Ext.getCmp('advSearch');
                 //check to see if visible
 
-                if (advSearch != null) {
-                    advSearch.show();
-                } else {
+                if (advSearch == null) {
+                    var advSearchPanel = new GeoPortal.Forms.AdvancedSearch();
+
                     advSearch = new Ext.Window({
+                        height: Ext.getBody().getViewSize().height * 0.8,
+                        width: Ext.getBody().getViewSize().width * 0.6,
                         title: 'Advanced Search',
                         id: 'advSearch',
-                        resizable: false,
+                        resizable: true,
+                        maximizable: true,
+                        minimizable: true,
+                        animCollapse: true,
+                        layout: 'fit',
                         animateTarget: Ext.getCmp("btnAdvSearch").el,
-                        items: [new GeoPortal.Forms.AdvancedSearch()]
+                        items: [advSearchPanel],
+                        min: function () {
+                            this.hide();
+                            Ext.getCmp('minSS').show();
+                            Ext.getCmp('minSS').el.frame("#9000A1", 3, { duration: 1 });
+                        },
+                        showAnimDuration: 0.25,
+                        hideAnimDuration: 0.25
                     });
-                    advSearch.show();
                 }
-
+                console.log(advSearch);
+                advSearch.show();
             }
         };
 
@@ -415,63 +428,63 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
         return toolbarItems;
     }
 });
-        
+
 //Ext.reg('MapToolbar', GeoPortal.Toolbars.MapToolbar);
 
 
 function doSearch() {
-           var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:"Retrieving Search Results...."});
-          
-          var resWin = Ext.getCmp('resWin');
-                if (resWin != null) {
-                    resWin.destroy();
-                };
-                loadMask.show();
-                var frmSimpleSearch = Ext.getCmp('frmSimpleSearch');
+    var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:"Retrieving Search Results...."});
 
-                if (frmSimpleSearch.form.isValid()) {
-                    frmSimpleSearch.getForm().submit({
-                        url: VerifySearchURL,
-                        timeout: 120,
-                        params: { start: 0, limit: 15, mappable: false },
-                        //method: 'post',
-                        //waitMsg: 'Retrieving Search Results....',
-                        success: function () {
-                            var txtfld = Ext.getCmp('txtSearch');
-                            var val;
-                            if (val == null) { val = txtfld.getValue() };
-                            var resWin = new GeoPortal.Windows.Results({ title: 'Results - Search terms "' + val + '"' });
-                            resWin.qualStore.removeAll();
-                            resWin.resStore.removeAll();
+    var resWin = Ext.getCmp('resWin');
+    if (resWin != null) {
+        resWin.destroy();
+    };
+    loadMask.show();
+    var frmSimpleSearch = Ext.getCmp('frmSimpleSearch');
 
-                            resWin.qualStore.load({params: {keywords: val, start: 0, limit: 15}});
-                            resWin.resStore.load({ url: simpleSearchURL, params: { keywords: val, start: 0, limit: 15, mappable: false }, callback: function () {
-                                 resWin.show(); 
-                                 loadMask.hide();
-                            } 
-                            });
-                             //txtfld.setValue('');
-                             //var form = Ext.getCmp('frmSimpleSearch').getForm();//.reset();
-                          
-                        },
-                        failure: function () {
-                             loadMask.hide();
-                            Ext.Msg.alert('No Results Found', 'Sorry no results were found matching your search terms');
+    if (frmSimpleSearch.form.isValid()) {
+        frmSimpleSearch.getForm().submit({
+            url: VerifySearchURL,
+            timeout: 120,
+            params: { start: 0, limit: 15, mappable: false },
+            //method: 'post',
+            //waitMsg: 'Retrieving Search Results....',
+            success: function () {
+                var txtfld = Ext.getCmp('txtSearch');
+                var val;
+                if (val == null) { val = txtfld.getValue() };
+                var resWin = new GeoPortal.Windows.Results({ title: 'Results - Search terms "' + val + '"' });
+                resWin.qualStore.removeAll();
+                resWin.resStore.removeAll();
 
-                        }
-                    })
-               }
-         }
-            
-            
-function disableTools(){
-            
-             var FindTB = Ext.getCmp('findTB');
-             if (FindTB){
-                for (var i = 0; i < FindTB.topToolbar.items.length; i++) {
-                    var button =FindTB.topToolbar.items.items[i];
-                    button.toggle(false);
+                resWin.qualStore.load({params: {keywords: val, start: 0, limit: 15}});
+                resWin.resStore.load({ url: simpleSearchURL, params: { keywords: val, start: 0, limit: 15, mappable: false }, callback: function () {
+                    resWin.show();
+                    loadMask.hide();
                 }
+                });
+                //txtfld.setValue('');
+                //var form = Ext.getCmp('frmSimpleSearch').getForm();//.reset();
+
+            },
+            failure: function () {
+                loadMask.hide();
+                Ext.Msg.alert('No Results Found', 'Sorry no results were found matching your search terms');
+
             }
-            
-            }   
+        })
+    }
+}
+
+
+function disableTools(){
+
+    var FindTB = Ext.getCmp('findTB');
+    if (FindTB){
+        for (var i = 0; i < FindTB.topToolbar.items.length; i++) {
+            var button =FindTB.topToolbar.items.items[i];
+            button.toggle(false);
+        }
+    }
+
+}

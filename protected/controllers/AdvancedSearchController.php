@@ -89,24 +89,42 @@ class AdvancedSearchController extends Controller {
 
         $dataAdapter = new DataAdapter();
 
-        $query = "Select survey_title, surveyid From Survey";
+        //The Survey titles as value, and surveyID for the key
+        $surveyNameQuery = "Select survey_title, surveyid From Survey";
 
-        $results = $dataAdapter->DefaultExecuteAndRead($query, "Survey_Data");
+        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
 
-        Log::toFile("Surveys : " . print_r($results, true));
+//        Log::toFile("Surveys : " . print_r($surveyNameResults, true));
 
-        $resultArray = array();
+        $surveyDataArray = array();
 
-        foreach ($results as $result) {
-            Log::toFile("Survey : " . print_r($result, true));
-            $resultObject['SurveyID'] = trim($result->surveyid);
-            $resultObject['SurveyName'] = trim($result->survey_title);
-            $resultArray[] = $resultObject;
+        foreach ($surveyNameResults as $surveyData) {
+//            Log::toFile("Survey : " . print_r($surveyData, true));
+            $surveyObject['SurveyID'] = trim($surveyData->surveyid);
+            $surveyObject['SurveyName'] = trim($surveyData->survey_title);
+            $surveyDataArray[] = $surveyObject;
+        }
+
+        //Thematic group name and ID
+        $thematicQuery = "Select tgroupid, grouptitle From thematic_groups";
+
+        $thematicQueryResults = $dataAdapter->DefaultExecuteAndRead($thematicQuery, "Survey_Data");
+
+//        Log::toFile("Surveys : " . print_r($thematicQueryResults, true));
+
+        $thematicDataArray = array();
+
+        foreach ($thematicQueryResults as $thematicData) {
+//            Log::toFile("Survey : " . print_r($thematicData, true));
+            $thematicObject['tgroupid'] = trim($thematicData->tgroupid);
+            $thematicObject['grouptitle'] = trim($thematicData->grouptitle);
+            $thematicDataArray[] = $thematicObject;
         }
 
         $returnArray = array();
         $returnArray['success'] = true;
-        $returnArray['data'] = $resultArray;
+        $returnArray['surveyData'] = $surveyDataArray;
+        $returnArray['thematicData'] = $thematicDataArray;
 
         return json_encode($returnArray);
 

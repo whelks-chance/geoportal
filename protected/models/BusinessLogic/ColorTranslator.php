@@ -30,7 +30,7 @@ class ColorTranslator {
     public static function FromArgb($rAverage, $gAverage, $bAverage)
     {
 
-        Log::toFile("Color from A r,g,b : " . $rAverage . "," . $gAverage . "," . $bAverage);
+//        Log::toFile("Color from A r,g,b : " . $rAverage . "," . $gAverage . "," . $bAverage);
 
 
 
