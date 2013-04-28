@@ -2,7 +2,7 @@
 //    width: 800,
 //    closable: true,
 //    height: '100%',
-    padding: 10,
+//    padding: 10,
     loadMask: true,
     loadMsg: 'loading.....',
     autoScroll: true,
