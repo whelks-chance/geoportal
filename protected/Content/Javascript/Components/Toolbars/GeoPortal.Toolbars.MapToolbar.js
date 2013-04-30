@@ -327,7 +327,7 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
                     advSearch = new Ext.Window({
                         height: Ext.getBody().getViewSize().height * 0.8,
                         width: Ext.getBody().getViewSize().width * 0.6,
-                        title: 'Advanced Search',
+                        title: 'Advanced Options',
                         id: 'advSearch',
                         resizable: true,
                         maximizable: true,
@@ -335,7 +335,18 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
                         animCollapse: true,
                         layout: 'fit',
                         animateTarget: Ext.getCmp("btnAdvSearch").el,
-                        items: [advSearchPanel],
+                        items: [
+//                            advSearchPanel
+                            {
+                                xtype: 'tabpanel',
+                                tabPosition: 'top',
+                                activeTab: 0,
+                                items: [
+                                    advSearchPanel,
+                                    new GeoPortal.Forms.RemoteData(),
+                                ]
+                            }
+                        ],
                         min: function () {
                             this.hide();
                             Ext.getCmp('minSS').show();

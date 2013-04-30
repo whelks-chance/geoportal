@@ -28,6 +28,9 @@ include('variables.php')
     var advancedSearchMetaURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdvancedSearch/AdvancedSearchMeta';
     var remoteSourceURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteSources';
     var remoteDataKeywordSearchURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/doKeywordSearch';
+    var remoteDataSetURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteDataset';
+    var remoteRegionURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRegionBreakdown';
+    var remoteGetDataURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteData';
 
     var BugUrl = '<? echo Yii::app()->baseUrl ?>/index.php?r=Message/submitAbug';
     var SpatialUnitsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialUnits';

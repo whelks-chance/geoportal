@@ -12,6 +12,9 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
 //    hideBorders: true,
     initComponent: function () {
 
+        var datasetID = "";
+        var measuresID = "";
+
         var remoteStore = new Ext.data.JsonStore ({
             fields: [
                 {name: 'name', mapping: 'name'},
@@ -20,16 +23,45 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
 //            root : ""
         });
 
+        var keywordStore = new Ext.data.JsonStore ({
+            fields: [
+                {name: 'name', mapping: 'name'},
+                {name: 'id',  mapping: 'id'}],
+            id: "foundKeywordStore"
+//            root : ""
+        });
+
+        var regionStore = new Ext.data.JsonStore ({
+            fields: [
+                {name: 'name', mapping: 'name'},
+                {name: 'id',  mapping: 'id'}],
+            id: "foundRegionStore",
+            root : "regions"
+        });
+
+        var variableStore = new Ext.data.JsonStore ({
+            fields: [
+                {name: 'name', mapping: 'name'},
+                {name: 'id',  mapping: 'id'}],
+            id: "foundRegionStore",
+            root : "measures"
+        });
+
+        var boundaryStore = new Ext.data.JsonStore ({
+            fields: [
+                {name: 'name', mapping: 'name'},
+                {name: 'id',  mapping: 'id'}],
+            id: "foundBoundaryStore"
+//            root : ""
+        });
+
         Ext.Ajax.request({
             url: remoteSourceURL,
             method : 'POST',
             success: function(resp) {
                 console.log('success!');
-//                        console.log( resp );
                 var responseData = Ext.decode(resp.responseText);
-//                        console.log(responseData);
                 remoteStore.loadData(responseData);
-//                        console.log(surveyStore);
             },
             failure: function(resp) {
                 console.log('failure!');
@@ -38,10 +70,16 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
 
         this.items = [
             {
+
                 xtype: 'fieldset',
+                id: 'fieldsource',
                 title: 'Select Remote Data Source',
                 items: [
                     {
+
+                        // The combo box which allows selection of a remote API from the list.
+                        // List data retrieved from RemoteData/getRemoteSources
+
                         xtype: 'combo',
                         id: 'cmboSource',
                         anchor: '100%',
@@ -53,13 +91,19 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         valueField: 'url',
                         listeners: {
                             'select': function(t){
-                                alert(t.value);
+//                                alert(t.value);
+                            },
+                            afterrender: function(combo) {
+                                var recordSelected = combo.getStore().getAt(0);
+                                combo.setValue(recordSelected.get('field1'));
                             }
                         },
                         mode: 'local',
                         store : remoteStore
                     },
                     {
+                        // Text field for the keyword to be typed in
+
                         xtype: 'textfield',
                         id: 'txtRemoteKeyword',
                         emptyText: 'Keywords...',
@@ -68,6 +112,10 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         name: 'Keyword'
                     },
                     {
+                        // Search button.
+                        // Takes the keyword and the value from the source dropdown and sends to RemoteData/doKeywordSearch
+                        // After results arrive, loads the dataset store
+
                         xtype: 'button',
                         id: 'btnRemoteSearch',
                         icon: 'images/silk/magnifier.png',
@@ -76,34 +124,280 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         handler: function() {
                             var txtcmp = Ext.getCmp('txtRemoteKeyword');
                             var keyword = txtcmp.getValue();
-
-//                            var urlcmp = Ext.getCmp('cmboSource');
-//                            var url = urlcmp.getValue();
-//
-//                            var remoteSourceURL = url.replace('wiserd_dataportal_replace_me', keyword);
+//                            var loadMask = new Ext.LoadMask(this.getBody(), {msg:"Retrieving Search Results...."});
+//                            loadMask.show();
 
                             Ext.Ajax.request({
                                 url: remoteDataKeywordSearchURL,
                                 params : {Keyword : keyword},
                                 method : 'POST',
-//                                useDefaultXhrHeader: false,
-//                                disableCaching: false,
+
                                 success: function(resp) {
                                     console.log('success!');
                                     var responseData = Ext.decode(resp.responseText);
                                     console.log(responseData);
-                                    alert(t.value);
+
+                                    Ext.getCmp('txtRemoteKeyword').enable();
+                                    keywordStore.loadData(responseData);
+//                                    loadMask.hide()
                                 },
                                 failure: function(resp) {
                                     console.log('failure!');
-                                    alert(t.value)
+//                                    loadMask.hide();
                                 }
                             });
                         }
+                    },
+//                ]
+//            },
+//            {
+//                xtype: 'fieldset',
+//                id: 'fielddata',
+//                title: 'Data Resource',
+//                items: [
+
+                    {
+                        // Drop down for the dataset
+                        // Lets user select a survey, sends the id to RemoteData/getRemoteDataset
+                        // Returns the regions available for the data
+
+                        xtype: 'combo',
+                        id: 'cmboDataset',
+                        anchor: '100%',
+                        fieldLabel: 'Select Remote DataSet',
+                        name: 'Dataset',
+                        triggerAction: 'all',
+                        displayField: 'name',
+                        hiddenName: 'hiddenURI',
+                        valueField: 'id',
+                        listeners: {
+                            'select': function(t){
+                                var cmboDataset = Ext.getCmp('cmboDataset');
+                                datasetID = cmboDataset.getValue();
+
+                                Ext.Ajax.request({
+                                    url: remoteDataSetURL,
+                                    params : {Dataset : datasetID},
+                                    method : 'POST',
+                                    success: function(resp) {
+                                        console.log('success!');
+                                        var responseData = Ext.decode(resp.responseText);
+                                        console.log(responseData);
+
+                                        regionStore.loadData(responseData);
+                                        variableStore.loadData(responseData);
+
+                                        var csvarea = Ext.getCmp('jsonarea');
+                                        csvarea.setValue(resp.responseText);
+
+                                    },
+                                    failure: function(resp) {
+                                        console.log('failure!');
+                                    }
+                                });
+                            }
+                        },
+                        mode: 'local',
+                        store : keywordStore
+                    },
+                    {
+                        xtype: 'combo',
+                        id: 'cmboVariable',
+                        anchor: '100%',
+                        fieldLabel: 'Select Variable',
+                        name: 'Variable',
+                        triggerAction: 'all',
+                        displayField: 'name',
+                        hiddenName: 'hiddenVariable',
+                        valueField: 'id',
+                        listeners: {
+                            'select': function(t){
+                                var cmboVariable = Ext.getCmp('cmboVariable');
+                                measuresID = cmboVariable.getValue();
+
+//                                Ext.Ajax.request({
+//                                    url: remoteVariableURL,
+//                                    params : {Dataset : datasetID},
+//                                    method : 'POST',
+//                                    success: function(resp) {
+//                                        console.log('success!');
+//                                        var responseData = Ext.decode(resp.responseText);
+//                                        console.log(responseData);
+//
+////                                        regionStore.loadData(responseData);
+//
+//                                        var csvarea = Ext.getCmp('jsonarea');
+//                                        csvarea.setValue(resp.responseText);
+//
+//                                    },
+//                                    failure: function(resp) {
+//                                        console.log('failure!');
+//                                    }
+//                                });
+                            }
+                        },
+                        mode: 'local',
+                        store : variableStore
+                    },
+                    {
+                        xtype: 'combo',
+                        id: 'cmboRegion',
+                        anchor: '100%',
+                        fieldLabel: 'Select Region',
+                        name: 'Region',
+                        triggerAction: 'all',
+                        displayField: 'name',
+                        hiddenName: 'hiddenRegion',
+                        valueField: 'id',
+                        listeners: {
+                            'select': function(t){
+
+                                var cmboRegion = Ext.getCmp('cmboRegion');
+                                var regionID = cmboRegion.getValue();
+
+                                Ext.Ajax.request({
+                                    url: remoteRegionURL,
+                                    params : {RegionID : regionID, DatasetID: datasetID},
+                                    method : 'POST',
+                                    success: function(resp) {
+                                        console.log('success!');
+                                        var responseData = Ext.decode(resp.responseText);
+                                        console.log(responseData);
+
+                                        boundaryStore.loadData(responseData);
+
+                                        var csvarea = Ext.getCmp('jsonarea');
+                                        csvarea.setValue(resp.responseText);
+
+                                    },
+                                    failure: function(resp) {
+                                        console.log('failure!');
+                                    }
+                                });
+                            }
+                        },
+                        mode: 'local',
+                        store : regionStore
+                    },
+                    {
+                        xtype: 'combo',
+                        id: 'cmboBoundary',
+                        anchor: '100%',
+                        fieldLabel: 'Select Boundary',
+                        name: 'Dataset',
+                        triggerAction: 'all',
+                        displayField: 'name',
+                        hiddenName: 'hiddenBoundary',
+                        valueField: 'id',
+                        listeners: {
+                            'select': function(t){
+                                var cmboDataset = Ext.getCmp('cmboBoundary');
+                                var boundaryID = cmboDataset.getValue();
+
+                                Ext.Ajax.request({
+                                    url: remoteGetDataURL,
+                                    params : {DatasetID : datasetID, BoundaryID : boundaryID, MeasuresID : measuresID},
+                                    method : 'POST',
+                                    success: function(resp) {
+                                        console.log('success!');
+                                        var responseData = Ext.decode(resp.responseText);
+                                        console.log(responseData);
+
+//                                        regionStore.loadData(responseData);
+
+                                        var csvarea = Ext.getCmp('jsonarea');
+                                        csvarea.setValue(resp.responseText);
+
+                                    },
+                                    failure: function(resp) {
+                                        console.log('failure!');
+                                    }
+                                });
+                            }
+                        },
+                        mode: 'local',
+                        store : boundaryStore
+                    },
+                    {
+                        fieldLabel      : 'csvarea',
+                        id              : 'jsonarea',
+                        name            : 'csv',
+                        xtype           : 'textarea',
+                        autoScroll      : true,
+                        height          : 260,
+                        anchor: '100%'
+
                     }
                 ]
             }
         ];
         GeoPortal.Forms.RemoteData.superclass.initComponent.call(this);
+    },
+
+    doMap : function(datasetID) {
+
+
+        var url = "https://www.nomisweb.co.uk/api/v01/dataset/" + datasetID +".data.kml?geography=TYPE279";
+
+
+        var req = new XMLHttpRequest();
+
+        getData();
+
+        function getData(){
+            if(req)
+            {
+                req.open('GET', url, true);
+                req.onreadystatechange = handler;
+                req.send();
+            }
+        }
+
+        function handler(evt)
+        {
+            if (req.readyState == 4)
+            {
+                if (req.status == 200)
+                {
+                    var response = eval('(' + req.responseText + ')');
+                    window.alert('Got data, value is ' + response.obs[0].obs_value.value);
+                }
+                else window.alert('Error with call');
+            }
+        }
+
+        function GetFeaturesFromKMLString (strKML) {
+            var format = new OpenLayers.Format.KML({
+                'internalProjection': myMapObject.baseLayer.projection,
+                'externalProjection': new OpenLayers.Projection("EPSG:4326")
+            });
+            return format.read(strKML);
+        };
+
+        var newLayer = new OpenLayers.Layer.Vector("Vectors", {
+            projection: new OpenLayers.Projection("EPSG:4326"),
+            strategies: [new OpenLayers.Strategy.Fixed()],
+            protocol: new OpenLayers.Protocol.Script({
+//                                                NM_621_1
+                url: "https://www.nomisweb.co.uk/api/v01/dataset/" + datasetID +".data.kml?geography=TYPE279",
+//                                                params: {
+//                                                    q: "select * from xml where url='http://www.topografix.com/fells_loop.gpx'"
+//                                                },
+                format: new OpenLayers.Format.KML(),
+
+                parseFeatures: function(data) {
+                    return this.format.read(data.results[0]);
+                }
+            }),
+            eventListeners: {
+                "featuresadded": function () {
+                    this.map.zoomToExtent(this.getDataExtent());
+                }
+            }
+        })
+        map.addLayer(newLayer);
+
+
+
     }
 });

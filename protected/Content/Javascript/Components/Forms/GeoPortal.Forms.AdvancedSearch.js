@@ -7,7 +7,7 @@
     loadMsg: 'loading.....',
     autoScroll: true,
 
-//    title: 'Advanced Search',
+    title: 'Advanced Search',
     id: 'advPanel',
     doAdvancedSearch: function () {
         this.on({
