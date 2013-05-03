@@ -21,7 +21,7 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
                 firstName: regPanel.getForm().getValues().txtRegFName,
                 lastName: regPanel.getForm().getValues().txtRegLName,
                 Email: regPanel.getForm().getValues().txtRegEmail,
-                Email2: regPanel.getForm().getValues().txtRegEmail2,
+//                Email2: regPanel.getForm().getValues().txtRegEmail2,
                 Bio: regPanel.getForm().getValues().txtRegBio,
                 Institution: regPanel.getForm().getValues().txtRegInstitution,
                 Tel: regPanel.getForm().getValues().txtRegTelephone,
@@ -122,13 +122,13 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
                                 anchor: '100%',
                                 fieldLabel: 'LastName',
                                 id: 'txtRegLName'
-                            },
-                            {
-                                xtype: 'textfield',
-                                fieldLabel: 'Email 2',
-                                anchor: '100%',
-                                id: 'txtRegEmail2'
                             }
+//                            {
+//                                xtype: 'textfield',
+//                                fieldLabel: 'Email 2',
+//                                anchor: '100%',
+//                                id: 'txtRegEmail2'
+//                            }
                         ]
                     }
                 ]

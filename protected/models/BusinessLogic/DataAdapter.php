@@ -26,7 +26,7 @@ class DataAdapter {
     public static function Read($queryResult)
     {
         $count = pg_num_rows($queryResult);
-        Log::toFile('DataAdapter sees x results : ' . $count);
+//        Log::toFile('DataAdapter sees x results : ' . $count);
 
         $toReturn = array();
 
@@ -49,7 +49,7 @@ class DataAdapter {
         $rs = pg_query($cnn, $pgsql);
 
         $count = pg_num_rows($rs);
-        Log::toFile('DataAdapter sees x results : ' . $count);
+//        Log::toFile('DataAdapter sees x results : ' . $count);
 
         if (pg_num_rows($rs)) {
             $r = pg_fetch_row($rs);
@@ -59,7 +59,7 @@ class DataAdapter {
     }
 
     public static function defaultExecuteScalar($query, $DB = "Geoportal") {
-        Log::toFile('Query Scalar (default) : ' . $query );
+//        Log::toFile('Query Scalar (default) : ' . $query );
         $rs = pg_query(getDBConnections::getDBConnection($DB), $query);
 
         if (pg_num_rows($rs)) {

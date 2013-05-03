@@ -38,30 +38,30 @@ function createPolyAction() {
         var poly = new OpenLayers.Feature.Vector(feature, { 'name': 'Search Polygon', 'type': 'place' });
         SearchLayer.addFeatures(poly);
 
-        Ext.MessageBox.confirm('Search Options', 'Would you like to specify advanced search parameters?',
-            function (btn, text) {
-                if (btn == 'yes') {
-                    var advSearch = Ext.getCmp('advSearch');
-                    if (advSearch == null) {
-                        var advSearchPanel = new GeoPortal.Forms.AdvancedSearch();
-                        advSearch = new Ext.Window({
-                            title: 'Advanced Search',
-                            id: 'advSearch',
-                            resizable: false,
-                            animateTarget: Ext.getCmp("btnAdvSearch").el,
-                            items: [advSearchPanel]
-                        });
-                    }
-                    advSearch.show();
-                } else {
-                    var loadMask = new Ext.LoadMask(Ext.getBody(), { msg: "Retrieving Spatial Search Results....", removeMask: false });
-                    loadMask.show();
-                    doSpatialSearch(feature, loadMask);
-                    // alert('Poly Done');
-                    action.control.deactivate();
-                }
-            }
-        );
+//        Ext.MessageBox.confirm('Search Options', 'Would you like to specify advanced search parameters? (Beta)',
+//            function (btn, text) {
+//                if (btn == 'yes') {
+//                    var advSearch = Ext.getCmp('advSearch');
+//                    if (advSearch == null) {
+//                        var advSearchPanel = new GeoPortal.Forms.AdvancedSearch();
+//                        advSearch = new Ext.Window({
+//                            title: 'Advanced Search',
+//                            id: 'advSearch',
+//                            resizable: false,
+//                            animateTarget: Ext.getCmp("btnAdvSearch").el,
+//                            items: [advSearchPanel]
+//                        });
+//                    }
+//                    advSearch.show();
+//                } else {
+//                  var loadMask = new Ext.LoadMask(Ext.getBody(), { msg: "Retrieving Spatial Search Results....", removeMask: false });
+//                  loadMask.show();
+        doSpatialSearch(feature);
+        // alert('Poly Done');
+        action.control.deactivate();
+//                }
+//            }
+//        );
 
 
     };
@@ -259,8 +259,8 @@ function createPlaceAction() {
                                     var progress = new GeoPortal.Toolbars.ProgressBar();
                                     SearchLayer.addFeatures(buffer);
                                     map.zoomToExtent(new_geom.getBounds());
-                                    var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:"Retrieving Spatial Search Results...."});
-                                    loadMask.show();
+//                                    var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:"Retrieving Spatial Search Results...."});
+//                                    loadMask.show();
                                     doSpatialSearch(new_geom, loadMask);
                                     action.control.deactivate();
                                 }
@@ -304,9 +304,9 @@ function createRectangleAction() {
         SearchLayer.destroyFeatures();
         var poly = new OpenLayers.Feature.Vector(feature, { 'name': 'Search Polygon', 'type': 'place' });
         SearchLayer.addFeatures(poly);
-        var loadMask = new Ext.LoadMask(Ext.getBody(), { msg: "Retrieving Spatial Search Results....", removeMask: false });
-        loadMask.show();
-        doSpatialSearch(feature, loadMask);
+//        var loadMask = new Ext.LoadMask(Ext.getBody(), { msg: "Retrieving Spatial Search Results....", removeMask: false });
+//        loadMask.show();
+        doSpatialSearch(feature);
         rec_action.control.deactivate();
         // alert('Poly Done');
     };
@@ -333,62 +333,83 @@ function createRectangleAction() {
 
 }
 
-function doSpatialSearch(geography, loadMask) {
+function doSpatialSearch(geography) {
 
-    if (Ext.getCmp('spatResWin') != null) {
+    Ext.MessageBox.confirm('Search Options', 'Would you like to specify advanced search parameters? (Beta)',
+        function (btn, text) {
+            if (btn == 'yes') {
+                var advSearch = Ext.getCmp('advSearch');
+                if (advSearch == null) {
+                    var advSearchPanel = new GeoPortal.Forms.AdvancedSearch();
+                    advSearch = new Ext.Window({
+//                        title: 'Advanced Search',
+                        id: 'advSearch',
+//                        resizable: false,
+                        animateTarget: Ext.getCmp("btnAdvSearch").el,
+                        items: [advSearchPanel]
+                    });
+                }
+                advSearch.show();
+            } else {
 
-        Ext.getCmp('spatResWin').close();
-    }
+                var loadMask = new Ext.LoadMask(Ext.getBody(), { msg: "Retrieving Spatial Search Results....", removeMask: false });
+                loadMask.show();
 
-    var searchResults = new GeoPortal.Windows.SpatialResults(
-        {
-            animateTarget: Ext.getCmp('minSS').el
+                if (Ext.getCmp('spatResWin') != null) {
+
+                    Ext.getCmp('spatResWin').close();
+                }
+
+                var searchResults = new GeoPortal.Windows.SpatialResults(
+                    {
+                        animateTarget: Ext.getCmp('minSS').el
 //            callback: function() {
 //            }
-        }
-    );
-
-    console.log(searchResults);
-
-    var grdqual = Ext.getCmp('grdQual');
-    var grid = Ext.getCmp('grdSurvey');
-
-    console.log(grdqual);
-    console.log(grid);
-
-    searchResults.doLayout();
-    grdqual.store.load(
-        {
-            params: {
-                geography: geography,
-                start: 0,
-                limit: 15,
-                type: 'Qual'
-            },
-            scope : this,
-            callback: function () {
-                searchResults.doLayout();
-                grid.store.load(
-                    {
-                        params: {
-                            start: 0,
-                            limit: 15,
-                            type: 'Quant'
-                        },
-                        scope: this,
-                        callback: function () {
-                            console.log(searchResults);
-                            searchResults.doLayout();
-                            searchResults.show();
-                            loadMask.hide();
-                        }
                     }
                 );
 
-            }
-        }
-    );
+                console.log(searchResults);
 
+                var grdqual = Ext.getCmp('grdQual');
+                var grid = Ext.getCmp('grdSurvey');
+
+                console.log(grdqual);
+                console.log(grid);
+
+                searchResults.doLayout();
+                grdqual.store.load(
+                    {
+                        params: {
+                            geography: geography,
+                            start: 0,
+                            limit: 15,
+                            type: 'Qual'
+                        },
+                        scope : this,
+                        callback: function () {
+                            searchResults.doLayout();
+                            grid.store.load(
+                                {
+                                    params: {
+                                        start: 0,
+                                        limit: 15,
+                                        type: 'Quant'
+                                    },
+                                    scope: this,
+                                    callback: function () {
+                                        console.log(searchResults);
+                                        searchResults.doLayout();
+                                        searchResults.show();
+                                        loadMask.hide();
+                                    }
+                                }
+                            );
+
+                        }
+                    }
+                );
+            }
+        });
 }
 
 

@@ -276,7 +276,7 @@ class getMetaData {
 
     Private Function getTableName( $SID, $unit ) {
 
-        Log::toFile("getTableName " . $SID . " " . $unit);
+//        Log::toFile("getTableName " . $SID . " " . $unit);
 
         If ($unit == "Police Region" ) {
             Return "x_" . $SID . "_police_";
@@ -306,7 +306,7 @@ class getMetaData {
 
         $selStr = "Select * from qualdata.dc_info WHERE identifier ='" . $SID . "';";
 
-        Log::toFile("DC query : " . $selStr);
+//        Log::toFile("DC query : " . $selStr);
 
         $cmd = pg_query($cnn, $selStr);
 
@@ -502,7 +502,7 @@ class getMetaData {
 
         }
 
-        Log::toFile("wordCol : " . print_r($wordCol, true));
+//        Log::toFile("wordCol : " . print_r($wordCol, true));
 
         ForEach ( $wordCol as $placeCollection) {
 
@@ -533,7 +533,7 @@ class getMetaData {
 
             }
 
-            Log::toFile("pageCol : " . print_r($pageCol, true));
+//            Log::toFile("pageCol : " . print_r($pageCol, true));
 
             ForEach ($pageCol as $key => $obj) {
                 $wordStats[$key] = ($obj);

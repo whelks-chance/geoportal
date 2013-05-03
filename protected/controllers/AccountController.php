@@ -86,7 +86,7 @@ class AccountController extends Controller {
         }
         $Address = "";
         if(isset($_POST['Address'])) {
-            $Address = $_POST['Addres'];
+            $Address = $_POST['Address'];
         }
 
 
@@ -98,7 +98,7 @@ class AccountController extends Controller {
         $newUserDetails->Email = $Email;
         $newUserDetails->UserName = $UserName;
 
-        $updateBio = new MyAccountDetails();
+        $updateBio = new myAccountDetails();
 
         $updateBio->Bio = $Bio;
         $updateBio->Address = $Address;

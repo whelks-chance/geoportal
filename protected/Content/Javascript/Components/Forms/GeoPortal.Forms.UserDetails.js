@@ -7,6 +7,7 @@
     id: 'frmMyDetails',
     title: 'My Details',
     bodyStyle: 'padding: 5px',
+    autoScroll: true,
     hideBorders: true,
     initComponent: function () {
         this.items = [
@@ -50,7 +51,7 @@
                             xtype: 'button',
                             text: 'Change Password',
                             bodyStyle: 'float: right',
-                            icon: '../images/silk/lock_edit.png',
+                            icon: './images/silk/lock_edit.png',
                             handler: function () {
 
                                 var CPWrdWin = new Ext.Window({ items: [new GeoPortal.Forms.ChangePassword], title: 'Change Password', modal: true, height: 180, width: 310, id: 'ChgPWWin' });
@@ -72,14 +73,14 @@
                                 //name: 'Avatar',
                                 //height:100,
                                 bodyStyle: 'margin-left: auto; margin-right: auto ',
-                                id: 'bxMyIcon',
-                                html: '<center><img src="../Services/LoadDBImage.ashx?UID=19" id="imgAvatar" /></center>'
+                                id: 'bxMyIcon'
+//                                html: '<center><img src="../Services/LoadDBImage.ashx?UID=19" id="imgAvatar" /></center>'
                             }
                         ],
                         buttons: [{
                             xtype: 'button',
                             text: 'Change Avatar',
-                            icon: '../images/silk/vcard.png' ,
+                            icon: './images/silk/vcard.png' ,
                              handler: function () {
 
                                  var UploadWin = new Ext.Window({ items: [new genUploadForm()], title: 'Upload Avatar', modal: true, autoHeight: true, width: 310, id: 'UploadAVWin' });
@@ -141,7 +142,7 @@
                   xtype: 'button',
                   text: 'Save',
                   bodyStyle: 'float: right',
-                  icon: '../images/silk/disk.png',
+                  icon: './images/silk/disk.png',
                   handler: function () {
                       var bioPanel = Ext.getCmp('frmMyDetails');
                       bioPanel.getForm().submit({

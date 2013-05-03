@@ -51,7 +51,7 @@ class RemoteDataController extends Controller {
         $url .= "geography=" . $boundaryID;
         $url .= "&&measures" . $measuresID;
 
-        Log::toFile($url);
+//        Log::toFile($url);
 
         $output = RemoteDataController::curlURL($url);
 
@@ -69,13 +69,13 @@ class RemoteDataController extends Controller {
 
         $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $datasetID . "/geography/" . $regionID . ".def.sdmx.json";
 
-        Log::toFile($url);
+//        Log::toFile($url);
 
         $output = RemoteDataController::curlURL($url);
 
         $decoded = json_decode($output, false);
 
-        Log::toFile(print_r($decoded, true));
+//        Log::toFile(print_r($decoded, true));
 
         $allFound = array();
 
@@ -178,7 +178,7 @@ class RemoteDataController extends Controller {
 
         $decoded = json_decode($output, false);
 
-        Log::toFile(print_r($decoded, true));
+//        Log::toFile(print_r($decoded, true));
 
         $allFound = array();
 

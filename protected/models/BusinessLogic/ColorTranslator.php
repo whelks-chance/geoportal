@@ -41,7 +41,7 @@ class ColorTranslator {
 
 //        $color = $this->tidyColour($color);
 
-        Log::toFile("Color : " . print_r($color, true));
+//        Log::toFile("Color : " . print_r($color, true));
 
         return $color;
 

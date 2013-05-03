@@ -374,7 +374,7 @@ class SLD {
 
 //        $xD = $this->rmBOM($xD);
 
-        Log::toFile($xD, "/var/www/logging/sld.xml", false, false);
+//        Log::toFile($xD, "/var/www/logging/sld.xml", false, false);
 
         Return $xD;
     }

@@ -3,7 +3,8 @@
     height: Ext.getBody().getViewSize().height * 0.8,
     SID: null,
     unit: null,
-    resizable: false,
+    layout : 'fit',
+//    resizable: false,
     initComponent: function () {
         this.ResponseStore = new Ext.data.JsonStore({
             fields: [{ name: 'adjustedRRate', type: 'string' },

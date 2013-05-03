@@ -135,7 +135,7 @@ class getDBConnections {
 //            $myACDetails->Bio = $DR->biotext;
             $myACDetails->Email2 = $DR->email;
 //            $myACDetails->Telephone = $DR->telephone;
-            $myACDetails->Address = $DR->browser . " " . $DR->os;
+//            $myACDetails->Address = $DR->browser . " " . $DR->os;
             $myACDetails->Institution = $DR->institution;
 
         }

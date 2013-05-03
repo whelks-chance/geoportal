@@ -1,5 +1,6 @@
 ﻿GeoPortal.Forms.AdvancedSearch = Ext.extend(Ext.form.FormPanel, {
-//    width: 800,
+    width: Ext.getBody().getViewSize().width * 0.8,
+    height: Ext.getBody().getViewSize().height * 0.8,
 //    closable: true,
 //    height: '100%',
 //    padding: 10,

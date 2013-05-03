@@ -93,7 +93,7 @@ class SearchController extends Controller {
         $cnt = $start;
         $cnt_end = $cnt + $limit;
 
-        while( $cnt <= $cnt_end || $cnt == sizeof($results)){
+        while( $cnt <= $cnt_end && $cnt < sizeof($results)){
             $pageResults[] = ($results[$cnt]);
             $cnt += 1;
         }
@@ -153,7 +153,7 @@ class SearchController extends Controller {
         $cnt_end = $cnt + $limit;
 
 //        Do Until $cnt = $cnt_end Or $cnt = $QualResults->Count;
-        while ($cnt <= $cnt_end || $cnt == sizeof($QualResults)) {
+        while ($cnt <= $cnt_end && $cnt < sizeof($QualResults)) {
             $pageResults[] = ($QualResults[$cnt]);
 
 //            Log::toFile($cnt . ' of ' . $qCount . ' : ' . print_r($QualResults, true));
@@ -204,7 +204,7 @@ class SearchController extends Controller {
         $cnt_end = $cnt + $limit;
 
 //            Do Until cnt = cnt_end Or cnt = results->Count;
-        while ($cnt <= $cnt_end || $cnt == sizeof($results)) {
+        while ($cnt <= $cnt_end && $cnt < sizeof($results)) {
             $pageResults[] = ($results[$cnt]);
             $cnt += 1;
         }

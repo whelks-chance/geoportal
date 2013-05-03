@@ -1,8 +1,8 @@
 ﻿GeoPortal.Forms.MyMaps = Ext.extend(Ext.Panel, {
     title: 'My Maps',
     layout: 'border',
-    width: 795,
-    height: 700,
+//    width: 795,
+//    height: 700,
     initComponent: function () {        
         this.items = [
             {

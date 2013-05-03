@@ -1,6 +1,7 @@
 ﻿GeoPortal.Windows.Buffer = Ext.extend(Ext.Window, {
     title: 'Buffer Point',
-    id: 'winBuffer',
+//    id: 'winBuffer',
+    width: Ext.getBody().getViewSize().width * 0.3,
     evt: null,
     modal: true,
     resizable: false,
@@ -36,9 +37,9 @@
 
             map.zoomToExtent(new_geom.getBounds());
 
-            var loadMask = new Ext.LoadMask(Ext.getBody(), { msg: "Retrieving Spatial Search Results....", removeMask: false });
-            loadMask.show();
-            doSpatialSearch(new_geom, loadMask);
+//            var loadMask = new Ext.LoadMask(Ext.getBody(), { msg: "Retrieving Spatial Search Results....", removeMask: false });
+//            loadMask.show();
+            doSpatialSearch(new_geom);
             Ext.getCmp('winBuffer').close();
             
         }

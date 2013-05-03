@@ -194,13 +194,13 @@ class SpatialDataController extends Controller {
                 case "Quant":
                     $count = intval(Yii::app()->session["quantCount"]);
 
-                    Log::toFile("Return Quant : " . $count);
+//                    Log::toFile("Return Quant : " . $count);
 
                     break;
                 case "Qual":
                     $count = intval(Yii::app()->session["qualCount"]);
 
-                    Log::toFile("Return Qual : " . $count);
+//                    Log::toFile("Return Qual : " . $count);
 
                     break;
                 case "Grey":
@@ -224,7 +224,7 @@ class SpatialDataController extends Controller {
                     case "Quant":
                         $count = intval($res->quantCount);
 //                        Yii::app()->session["quantCount"] = $count;
-                        Log::toFile("Quant res : Quant session : " . $count . " : " . Yii::app()->session["quantCount"]);
+//                        Log::toFile("Quant res : Quant session : " . $count . " : " . Yii::app()->session["quantCount"]);
 
                         break;
                     case "Qual":

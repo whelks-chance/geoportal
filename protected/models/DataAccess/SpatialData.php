@@ -570,7 +570,7 @@ class SpatialData {
 
         $QselStr = ("SELECT * FROM qualdata.dc_info WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326), qualdata.dc_info.the_geom);");
 
-        Log::toFile('Intersects query : ' . $QselStr);
+//        Log::toFile('Intersects query : ' . $QselStr);
 
         $QDataAdapter = pg_query($qcnn, $QselStr);
 //        $QresultsTable = New DataTable();
@@ -645,7 +645,7 @@ class SpatialData {
 
         }
 
-        Log::toFile("Quant : Qual : " . $SS->quantCount . " : " . $SS->qualCount);
+//        Log::toFile("Quant : Qual : " . $SS->quantCount . " : " . $SS->qualCount);
 
         $results[] = ($SS);
 

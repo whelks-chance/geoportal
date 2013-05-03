@@ -2,7 +2,7 @@
 
 GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
     height: Ext.getBody().getViewSize().height * 0.8,
-    width: 850,
+    width: Ext.getBody().getViewSize().width * 0.8,
     frame: true,
     id: 'spatResWin',
     title: 'Spatial Search Results',
@@ -11,6 +11,11 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
     minimizable: true,
     animCollapse: true,
     constrainHeader: true,
+    listeners: {
+        'resize': function () {
+            Ext.getCmp('spatResWin').doLayout();
+        }
+    },
     min: function () {
         this.hide();
         Ext.getCmp('minSS').show();
@@ -446,7 +451,7 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                             xtype: 'grid',
 //                                            width: 780,
                                             id: 'grdQual',
-                                            frame: true,
+//                                            frame: true,
                                             stripeRows: true,
                                             view: this.qualgroup,
                                             store: this.qualStore,
@@ -727,9 +732,10 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                 },
                                 {
                                     xtype: 'form',
-                                    height: 240,
+                                    height: this.height * 0.4,
                                     id: 'details',
                                     padding: '2px',
+//                                    layout: 'fit',
                                     hideBorders: false,
                                     autoScroll: true,
                                     items: [
@@ -752,9 +758,10 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                         {
                                             xtype: 'textarea',
                                             id: 'gName',
-                                            height: 150,
+//                                            height: 150,
                                             anchor: '95%',
-                                            fieldLabel: 'Geographies'
+                                            fieldLabel: 'Geographies',
+                                            autoScroll: true
                                         }]
 //                                        }]
                                 }

@@ -10,7 +10,7 @@
 class AdvancedSearchController extends Controller {
 
     public function actionAdvancedSearch() {
-        Log::toFile("advanced post vars : " . print_r($_POST, true));
+//        Log::toFile("advanced post vars : " . print_r($_POST, true));
 
         $Keywords = '';
         if(isset($_POST['Keywords'])) {
