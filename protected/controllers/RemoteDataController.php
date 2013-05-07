@@ -168,6 +168,40 @@ class RemoteDataController extends Controller {
         echo json_encode($allFound);
     }
 
+    public function actionlinkRemoteQuestion() {
+        $wiserdID = '';
+        if(isset($_POST['wiserdID'])) {
+            $wiserdID = trim($_POST['wiserdID']);
+        }
+        $remoteID = '';
+        if(isset($_POST['remoteID'])) {
+            $remoteID = trim($_POST['remoteID']);
+        }
+        $remoteAPI = 'nomisweb';
+        if(isset($_POST['remoteAPI'])) {
+            $remoteAPI = $_POST['remoteAPI'];
+        }
+
+        $dataAdapter = new DataAdapter();
+
+        //The Survey titles as value, and surveyID for the key
+        $surveyNameQuery = 'insert into question_link(id, wiserd_id, remote_id, remote_api)';
+        $surveyNameQuery .= " values (default, '" . $wiserdID . "', '";
+        $surveyNameQuery .= $remoteID . "', '";
+        $surveyNameQuery .= $remoteAPI . "');";
+
+        Log::toFile($surveyNameQuery);
+
+        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
+
+        Log::toFile(print_r($surveyNameResults, true));
+
+        $returnArray['success'] = true;
+
+        echo json_encode($returnArray);
+
+    }
+
     public function actiondoKeywordSearch() {
 
         $keyword = $_POST['Keyword'];

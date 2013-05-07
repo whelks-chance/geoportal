@@ -85,6 +85,40 @@ class AdvancedSearchController extends Controller {
         echo $this::getSurveyNames();
     }
 
+    public function actiongetKeywordQuestions() {
+
+        $Keyword = '';
+        if(isset($_POST['Keyword'])) {
+            $Keyword = $_POST['Keyword'];
+        }
+
+        $dataAdapter = new DataAdapter();
+
+        //The Survey titles as value, and surveyID for the key
+        $surveyNameQuery = "Select qid, literal_question_text from questions WHERE qtext_index @@ to_tsquery('english','" . $Keyword . "')";
+
+        Log::toFile($surveyNameQuery);
+
+        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
+
+        Log::toFile(print_r($surveyNameResults, true));
+
+        $surveyDataArray = array();
+
+        foreach ($surveyNameResults as $surveyData) {
+//            Log::toFile("Survey : " . print_r($surveyData, true));
+            $surveyObject['id'] = trim($surveyData->qid);
+            $surveyObject['name'] = trim($surveyData->literal_question_text);
+            $surveyDataArray[] = $surveyObject;
+        }
+
+        $returnArray = array();
+        $returnArray['questionData'] = $surveyDataArray;
+        $returnArray['count'] = sizeof($surveyDataArray);
+
+        echo json_encode($returnArray);
+    }
+
     public function getSurveyNames() {
 
         $dataAdapter = new DataAdapter();

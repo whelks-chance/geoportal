@@ -4,6 +4,7 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
     height: 138,
     width: 400,
     padding: 10,
+//    layout: 'fit',
     id: 'frmLogin',
 
     initComponent: function () {
@@ -13,21 +14,32 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
                     xtype: 'textfield',
                     allowBlank: false,
                     id: 'txtUsername',
-//                    anchor: '100%',
+                    anchor: '100%',
                     fieldLabel: 'Username'
                 },
                 {
                     xtype: 'textfield',
                     allowBlank: false,
                     id: 'txtPassword',
-//                    anchor: '100%',
+                    anchor: '100%',
                     fieldLabel: 'Password',
                     inputType: 'password'
                 },
                 {
                     xtype: 'label',
+                    anchor: '100%',
                     text: 'WARNING: The WISERD DataPortal is not compatible with Internet Explorer 8 or lower'
-               }
+                },
+                {
+                    xtype: 'box',
+                    achor: '100%',
+                    autoEl: {
+                        tag: 'a',
+                        href: 'http://www.wiserd.ac.uk/',
+                        target: '_blank',   //  for open in new window
+                        cn: 'Click here to view DataPortal cookie policy'
+                    }
+                }
             ],
             fbar: {
 //                xtype: 'panel',

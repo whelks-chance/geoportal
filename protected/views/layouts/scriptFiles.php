@@ -32,6 +32,9 @@ include('variables.php')
     var remoteRegionURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRegionBreakdown';
     var remoteGetDataURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteData';
 
+    var getWiserdQuestions = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdvancedSearch/getKeywordQuestions';
+    var linkRemoteQuestion = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/linkRemoteQuestion';
+
     var BugUrl = '<? echo Yii::app()->baseUrl ?>/index.php?r=Message/submitAbug';
     var SpatialUnitsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialUnits';
     var SpatialSubUnitsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialSubUnit';

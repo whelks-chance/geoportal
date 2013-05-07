@@ -1,6 +1,6 @@
 ﻿GeoPortal.Forms.UserDetails = Ext.extend(Ext.form.FormPanel, {
-    width: 800,
-    height: 800,
+//    width: 800,
+//    height: 800,
     loadMask: true,
     loadMsg: 'loading.....',
     waitMsg: 'Loading........',
