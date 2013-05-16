@@ -74,6 +74,18 @@ Ext.onReady(function(){
                     title: 'Keywords',
                     items: [
                         {
+                            xtype: 'button',
+                            id: 'btnCookie',
+                            text: 'Cookie Policy',
+                            icon: 'images/silk/database_add.png',
+                            handler: function () {
+
+                                var cookieForm = new GeoPortal.Windows.Cookies();
+                                cookieForm.show()
+
+                            }
+                        },
+                        {
                             xtype: 'textfield',
                             id: 'txtAdvKeyword',
                             emptyText: 'Comma separated keywords....',

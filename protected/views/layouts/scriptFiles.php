@@ -17,6 +17,10 @@ include('variables.php')
     var captureURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Register/CaptureUserEvalDetails';
     var loginURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Account/LogOn';
     var regURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Register/Register';
+    var checkNameFreeURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Register/checkNameFree';
+
+    var blogRSSUrl = '<? echo Yii::app()->baseUrl ?>/index.php?r=Site/getBlogRSS';
+
     var accountURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Account/getMyDetails';
     var bioUpdateURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Account/UpdateMyDetails';
     var ChangePWURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Account/ChangePassword';

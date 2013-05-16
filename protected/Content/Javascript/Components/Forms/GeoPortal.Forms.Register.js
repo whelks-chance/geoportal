@@ -66,7 +66,37 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
                                         fieldLabel: 'UserName',
                                         allowBlank: false,
                                         anchor: '100%',
-                                        id: 'txtRegUserName'
+                                        id: 'txtRegUserName',
+                                        listeners: {
+                                            'change': function(){
+                                                var txtcmp = Ext.getCmp('txtRegUserName');
+                                                var username = txtcmp.getValue();
+                                                var registerBtn = Ext.getCmp('btnRegister');
+
+                                                Ext.Ajax.request({
+                                                    url: checkNameFreeURL,
+                                                    params : {UserName : username},
+                                                    method : 'POST',
+
+                                                    success: function(resp) {
+                                                        var responseData = Ext.decode(resp.responseText);
+                                                        console.log(responseData);
+
+                                                        if (responseData.success == true){
+                                                            registerBtn.enable();
+//                                                            alert("The username " + username + " is available.");
+                                                        } else {
+                                                            registerBtn.disable();
+                                                            txtcmp.markInvalid();
+                                                            alert("Unfortunatly, this username is already in use. Please try another");
+                                                        }
+                                                    },
+                                                    failure: function(resp) {
+
+                                                    }
+                                                });
+                                            }
+                                        }
                                     }
                                 ]
                             },

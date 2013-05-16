@@ -29,17 +29,17 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
                     xtype: 'label',
                     anchor: '100%',
                     text: 'WARNING: The WISERD DataPortal is not compatible with Internet Explorer 8 or lower'
-                },
-                {
-                    xtype: 'box',
-                    achor: '100%',
-                    autoEl: {
-                        tag: 'a',
-                        href: 'http://www.wiserd.ac.uk/',
-                        target: '_blank',   //  for open in new window
-                        cn: 'Click here to view DataPortal cookie policy'
-                    }
                 }
+//                {
+//                    xtype: 'box',
+//                    achor: '100%',
+//                    autoEl: {
+//                        tag: 'a',
+//                        href: 'http://www.wiserd.ac.uk/',
+//                        target: '_blank',   //  for open in new window
+//                        cn: 'Click here to view DataPortal cookie policy'
+//                    }
+//                }
             ],
             fbar: {
 //                xtype: 'panel',
@@ -49,9 +49,22 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
 //                labelSeparator: '',
 //                height:25,
                 items: [
-                    //{
-                      //  xtype: 'tbfill'
-                    //},
+                    {
+                        xtype: 'button',
+                        id: 'btnCookie',
+                        text: 'Cookie Policy',
+                        icon: 'images/silk/database_add.png',
+                        handler: function () {
+
+                            var cookieForm = new GeoPortal.Windows.Cookies();
+                            console.log(cookieForm);
+                            cookieForm.show()
+
+                        }
+                    },
+//                    {
+//                        xtype: 'tbfill'
+//                    },
                     {
                         xtype: 'button',
                         id: 'btnRegister',

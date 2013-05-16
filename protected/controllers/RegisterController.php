@@ -6,6 +6,30 @@
 //Namespace GeoPortal
 class RegisterController extends Controller {
 
+    public function actioncheckNameFree() {
+        $UserName = "";
+        if(isset($_POST['UserName'])) {
+            $UserName = $_POST['UserName'];
+        }
+
+        $dataAdapter = new DataAdapter();
+
+        $userNameQuery = "Select username From alphausersdetails where username='" . $UserName . "';";
+
+        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($userNameQuery, "Geoportal");
+
+        $toReturn = array();
+
+        if(sizeof($surveyNameResults) > 0 ){
+            $toReturn['success'] = false;
+        } else {
+            $toReturn['success'] = true;
+        }
+
+        echo json_encode($toReturn);
+
+    }
+
     // GET: /Register
     // <CompressFilter()>
     public function actionRegister() {
