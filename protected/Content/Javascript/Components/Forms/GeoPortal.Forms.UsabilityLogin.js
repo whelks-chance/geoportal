@@ -55,11 +55,8 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
                         text: 'Cookie Policy',
                         icon: 'images/silk/database_add.png',
                         handler: function () {
-
                             var cookieForm = new GeoPortal.Windows.Cookies();
-                            console.log(cookieForm);
                             cookieForm.show()
-
                         }
                     },
 //                    {

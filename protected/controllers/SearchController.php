@@ -12,16 +12,29 @@ class SearchController extends Controller {
         $Keywords = "";
         $Mappable = false;
 
+        //POST for panel submit
+
         if(isset($_POST['Keywords'])) {
             $Keywords = $_POST['Keywords'];
         }
+        $mappableString = "";
         if(isset($_POST['mappable'])) {
             $mappableString = $_POST['mappable'];
-            if( $mappableString == "true") {
-                $Mappable = true;
-            } else {
-                $Mappable = false;
-            }
+        }
+
+        //GET for API
+
+        if(isset($_GET['Keywords'])) {
+            $Keywords = $_GET['Keywords'];
+        }
+        if(isset($_GET['mappable'])) {
+            $mappableString = $_GET['mappable'];
+        }
+
+        if( $mappableString == "true") {
+            $Mappable = true;
+        } else {
+            $Mappable = false;
         }
 
 //        Log::toFile(PHP_EOL . PHP_EOL . "A search is requested" . PHP_EOL);
@@ -33,10 +46,8 @@ class SearchController extends Controller {
 
         If (sizeof($resultsExsist) == 0 && sizeof($qualResults) == 0) {
             $strVerify = '{"failure": true}';
-
         }Else{
             $strVerify = '{"success": true}';
-
         }
 
         echo $strVerify;
@@ -50,6 +61,8 @@ class SearchController extends Controller {
         $Mappable = false;
         $Keywords = "";
 
+    //POSTs for panel submit
+
         if(isset($_POST['start'])) {
             $start = $_POST['start'];
         }
@@ -61,6 +74,21 @@ class SearchController extends Controller {
         }
         if(isset($_POST['keywords'])) {
             $Keywords = $_POST['keywords'];
+        }
+
+    //GETs for API calls
+
+        if(isset($_GET['start'])) {
+            $start = $_GET['start'];
+        }
+        if(isset($_GET['limit'])) {
+            $limit = $_GET['limit'];
+        }
+        if(isset($_GET['Mappable'])) {
+            $Mappable = $_GET['Mappable'];
+        }
+        if(isset($_GET['keywords'])) {
+            $Keywords = $_GET['keywords'];
         }
 
         $count = 0;
@@ -116,6 +144,8 @@ class SearchController extends Controller {
         $limit = 15;
         $keywords = "";
 
+    //POST for panel submit
+
         if(isset($_POST['start'])) {
             $start = $_POST['start'];
         }
@@ -124,6 +154,18 @@ class SearchController extends Controller {
         }
         if(isset($_POST['keywords'])) {
             $keywords = $_POST['keywords'];
+        }
+
+    //GET for API
+
+        if(isset($_GET['start'])) {
+            $start = $_GET['start'];
+        }
+        if(isset($_GET['limit'])) {
+            $limit = $_GET['limit'];
+        }
+        if(isset($_GET['keywords'])) {
+            $keywords = $_GET['keywords'];
         }
 
         If ($keywords == "" ) {
@@ -138,7 +180,6 @@ class SearchController extends Controller {
             Yii::app()->session["QualresCount"] = $qCount;
 
         }
-
 
         $resultsset = New results();
 
@@ -161,13 +202,8 @@ class SearchController extends Controller {
             $cnt += 1;
         }
 
-
         $str = '{"totalCount":"' . $qCount . '", "results":' . json_encode($pageResults) . '}';
-
         echo $str;
-
-
-        // ' Return Json(res, JsonRequestBehavior.AllowGet)
     }
 
 
@@ -178,6 +214,8 @@ class SearchController extends Controller {
         $limit = 0;
         $SID = "";
 
+    //POST for panel submit
+
         if(isset($_POST['start'])) {
             $start = intval($_POST['start']);
         }
@@ -186,6 +224,18 @@ class SearchController extends Controller {
         }
         if(isset($_POST['SID'])) {
             $SID = $_POST['SID'];
+        }
+
+    //GET for API
+
+        if(isset($_GET['start'])) {
+            $start = intval($_GET['start']);
+        }
+        if(isset($_GET['limit'])) {
+            $limit = intval($_GET['limit']);
+        }
+        if(isset($_GET['SID'])) {
+            $SID = $_GET['SID'];
         }
 
         $res = New getResults();

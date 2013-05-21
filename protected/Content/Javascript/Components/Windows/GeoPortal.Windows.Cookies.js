@@ -9,7 +9,6 @@ GeoPortal.Windows.Cookies = Ext.extend(Ext.Window, {
     autoScroll: 'true',
 //    draggable: true,
     initComponent: function () {
-        console.log(this);
         this.items = [
             {
                 xtype: 'panel',

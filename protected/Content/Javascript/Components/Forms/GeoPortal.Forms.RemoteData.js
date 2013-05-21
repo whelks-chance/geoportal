@@ -59,7 +59,6 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
             url: remoteSourceURL,
             method : 'POST',
             success: function(resp) {
-                console.log('success!');
                 var responseData = Ext.decode(resp.responseText);
                 remoteStore.loadData(responseData);
             },

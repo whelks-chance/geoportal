@@ -82,13 +82,10 @@
             url: advancedSearchMetaURL,
             method : 'POST',
             success: function(resp) {
-                console.log('success!');
-                console.log( resp );
                 var responseData = Ext.decode(resp.responseText);
                 console.log(responseData);
                 surveyStore.loadData(responseData);
                 thematicStore.loadData(responseData);
-                console.log(surveyStore);
             },
             failure: function(resp) {
                 console.log('failure!');

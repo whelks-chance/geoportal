@@ -2,7 +2,7 @@
 GeoPortal.Windows.MyAccount = Ext.extend(Ext.Window, {
     title: 'My Account',
     id: 'myACWin',
-    layout: 'auto',
+    layout: 'fit',
     width: 800,
     height: Ext.getBody().getViewSize().height * 0.8,
 //    autoScroll: true,
