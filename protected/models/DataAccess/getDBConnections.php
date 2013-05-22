@@ -151,7 +151,7 @@ class getDBConnections {
     Public Function updateMyAccount( $user, $myAccount, $UID) {
 
 
-        $updateUserStr = "UPDATE alphausersdetails SET username='" . $user->UserName . "', firstname='" . $user->FirstName . "', lastname='" . $user->LastName . "', email='" . $user->Email;
+        $updateUserStr = "UPDATE alphausersdetails SET username='" . $user->UserName . "', firstname='" . $user->FirstName . "', lastname='" . $user->LastName . "', email='" . $user->Email . "'";
 
         $updateUserStr .= ", institution='" . $myAccount->Institution . "', Bio='" . $myAccount->Bio . "', Telephone='" . $myAccount->Telephone . "',  Address='" . $myAccount->Address . "';";
 
