@@ -39,25 +39,36 @@ class RegisterController extends Controller {
         $UserName = ""; $firstName = ""; $lastName = ""; $Email = ""; $Email2 = "";
         $Bio = ""; $Institution = ""; $Tel = ""; $Address = "";
 
+        if(isset($_POST['firstName'])) {
+            $firstName = $_POST['firstName'];
+        }
+        if(isset($_POST['lastName'])) {
+            $lastName = $_POST['lastName'];
+        }
+        if(isset($_POST['Bio'])) {
+            $Bio = $_POST['Bio'];
+        }
+        if(isset($_POST['Institution'])) {
+            $Institution = $_POST['Institution'];
+        }
+        if(isset($_POST['Tel'])) {
+            $Tel = $_POST['Tel'];
+        }
+        if(isset($_POST['Address'])) {
+            $Address = $_POST['Address'];
+        }
+
+
         if(isset($_POST['UserName'])) {
             $UserName = $_POST['UserName'];
         }
-
         if(isset($_POST['password'])) {
             $defaultPassword = $_POST['password'];
         }
         if(isset($_POST['Email'])) {
             $Email = $_POST['Email'];
         }
-        if(isset($_POST['Email2'])) {
-            $Email2 = $_POST['Email2'];
-        }
-        if(isset($_POST['password'])) {
-            $defaultPassword = $_POST['password'];
-        }
-        if(isset($_POST['password'])) {
-            $defaultPassword = $_POST['password'];
-        }
+
 
         $reg = New regUser();
 
@@ -66,6 +77,11 @@ class RegisterController extends Controller {
         $reg->LastName = $lastName;
         $reg->Email = $Email;
         $reg->Password = $defaultPassword;
+
+        $reg->Biography = $Bio;
+        $reg->Institution = $Institution;
+        $reg->Telephone = $Tel;
+        $reg->Address = $Address;
 
         $DBconn = New getDBConnections();
 
