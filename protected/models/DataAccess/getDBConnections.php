@@ -153,7 +153,7 @@ class getDBConnections {
 
         $updateUserStr = "UPDATE alphausersdetails SET username='" . $user->UserName . "', firstname='" . $user->FirstName . "', lastname='" . $user->LastName . "', email='" . $user->Email . "'";
 
-        $updateUserStr .= ", institution='" . $myAccount->Institution . "', 'Bio'='" . $myAccount->Bio . "', 'Telephone'='" . $myAccount->Telephone . "', 'Address'='" . $myAccount->Address . "';";
+        $updateUserStr .= ", institution='" . $myAccount->Institution . "', bio='" . $myAccount->Bio . "', telephone='" . $myAccount->Telephone . "', address='" . $myAccount->Address . "';";
 
 //        $command = New NpgsqlCommand($updateUserStr & $updateBio, $cnn);
 //
