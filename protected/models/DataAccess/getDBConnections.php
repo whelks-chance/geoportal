@@ -132,10 +132,10 @@ class getDBConnections {
             $DR = $DRs[0];
 
             //TODO is bio etc needed?
-//            $myACDetails->Bio = $DR->biotext;
+            $myACDetails->Bio = $DR->bio;
             $myACDetails->Email2 = $DR->email;
-//            $myACDetails->Telephone = $DR->telephone;
-//            $myACDetails->Address = $DR->browser . " " . $DR->os;
+            $myACDetails->Telephone = $DR->telephone;
+            $myACDetails->Address =  $DR->address; //$DR->browser . " " . $DR->os;
             $myACDetails->Institution = $DR->institution;
 
         }
@@ -153,7 +153,11 @@ class getDBConnections {
 
         $updateUserStr = "UPDATE alphausersdetails SET username='" . $user->UserName . "', firstname='" . $user->FirstName . "', lastname='" . $user->LastName . "', email='" . $user->Email . "'";
 
-        $updateUserStr .= ", institution='" . $myAccount->Institution . "', bio='" . $myAccount->Bio . "', telephone='" . $myAccount->Telephone . "', address='" . $myAccount->Address . "';";
+        $updateUserStr .= ", institution='" . $myAccount->Institution . "', bio='" . $myAccount->Bio . "', telephone='" . $myAccount->Telephone . "', address='" . $myAccount->Address . "'";
+
+        $updateUserStr .= " WHERE id='" . $UID . "';";
+
+        Log::toFile($updateUserStr);
 
 //        $command = New NpgsqlCommand($updateUserStr & $updateBio, $cnn);
 //
