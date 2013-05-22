@@ -131,6 +131,8 @@ class getDBConnections {
 
             $DR = $DRs[0];
 
+            Log::toFile(print_r($DR, true));
+            
             //TODO is bio etc needed?
             $myACDetails->Bio = $DR->bio;
             $myACDetails->Email2 = $DR->email;

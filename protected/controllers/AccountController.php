@@ -58,11 +58,11 @@ class AccountController extends Controller {
         }
         $firstName = "";
         if(isset($_POST['FirstName'])) {
-            $firstName = $_POST['firstName'];
+            $firstName = $_POST['FirstName'];
         }
         $lastName = "";
         if(isset($_POST['LastName'])) {
-            $lastName= $_POST['lastName'];
+            $lastName= $_POST['LastName'];
         }
         $Email= "";
         if(isset($_POST['Email'])) {
