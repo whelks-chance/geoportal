@@ -42,6 +42,8 @@ class subQuestionDetails {
     public $SurveyCollectionFrequency = "";
     public $Rank = "";
     Public $spatial;
+    public $surveyStart;
+    public $surveyEnd;
 
 //        Public Property RootQuestion = "";
 //            Get

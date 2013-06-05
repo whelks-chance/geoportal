@@ -111,6 +111,9 @@ class getResults {
                     $rootQ->SurveyName = Trim($surDRdr->survey_title);
                     $rootQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
                     $rootQ->spatial = ($surDRdr->spatialdata == 't');
+
+                    $rootQ->surveyStart = Trim($surDRdr->surveystartdate);
+                    $rootQ->surveyEnd = Trim($surDRdr->surveyenddate);
                 }
 
 //                cnn.Close();
@@ -118,6 +121,8 @@ class getResults {
                 $toFind = Trim($row->qid);
                 If (!array_key_exists($toFind, $results)) {
                     $results[$toFind] = $rootQ;
+
+                    Log::toFile("survey info " . print_r($toFind, true). " " . print_r($rootQ, true) );
                 }
 
 
@@ -158,6 +163,9 @@ class getResults {
                     $singleQ->SurveyName = Trim($surDRdr->survey_title);
                     $singleQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
                     $singleQ->spatial = ($surDRdr->spatialdata == 't');
+
+                    $singleQ->surveyStart = Trim($surDRdr->surveystartdate);
+                    $singleQ->surveyEnd = Trim($surDRdr->surveyenddate);
                 }
 //                cnn.Close();
                 $toFind = Trim($row->qid);
@@ -200,6 +208,9 @@ class getResults {
                     $subQ->SurveyName = Trim($surDRdr->survey_title);
                     $subQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
                     $subQ->spatial = ($surDRdr->spatialdata == 't');
+
+                    $subQ->surveyStart = Trim($surDRdr->surveystartdate);
+                    $subQ->surveyEnd = Trim($surDRdr->surveyenddate);
                 } Else {
 
                 }
@@ -244,6 +255,9 @@ class getResults {
                     $compoundQ->SurveyName = Trim($surDRdr->survey_title);
                     $compoundQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
                     $compoundQ->spatial = ($surDRdr->spatialdata == 't');
+
+                    $compoundQ->surveyStart = Trim($surDRdr->surveystartdate);
+                    $compoundQ->surveyEnd = Trim($surDRdr->surveyenddate);
                 }
 
                 $toFind = Trim($row->qid);
@@ -282,6 +296,9 @@ class getResults {
                     $subsubQ->SurveyName = Trim($surDRdr->survey_title);
                     $subsubQ->SurveyCollectionFrequency = Trim($surDRdr->surveyfrequency);
                     $subsubQ->spatial = ($surDRdr->spatialdata == 't');
+
+                    $subsubQ->surveyStart = Trim($surDRdr->surveystartdate);
+                    $subsubQ->surveyEnd = Trim($surDRdr->surveyenddate);
                 }
 //                cnn.Close();
 //                If (Not results.ContainsKey(Trim($row->qid")))) {

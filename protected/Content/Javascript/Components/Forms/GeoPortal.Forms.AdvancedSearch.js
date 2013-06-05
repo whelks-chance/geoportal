@@ -265,20 +265,20 @@
                     {
                         xtype: 'datefield',
                         id: 'dteFrom',
-                        emptyText: 'From...',
+                        emptyText: '',
                         format: 'Y/m/d',
                         columnWidth: 0.5,
                         name: 'dateFrom',
-                        fieldLabel : 'dateFrom'
+                        fieldLabel : 'Date From'
                     },
                     {
                         xtype: 'datefield',
                         id: 'dteTo',
-                        emptyText: 'To....',
+                        emptyText: '',
                         columnWidth: 0.5,
                         format: 'Y/m/d',
                         name: 'dateTo',
-                        fieldLabel : 'dateTo'
+                        fieldLabel : 'Date To'
                     }
                 ]
             },

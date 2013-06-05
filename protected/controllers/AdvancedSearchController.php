@@ -83,14 +83,49 @@ class AdvancedSearchController extends Controller {
         if($cbSurvey == 'on') {
             $results = $res->getQuestionnaireData(0, 30, $Keywords, False, True);
 
-//            Log::toFile($Survey);
-            foreach ($results as $surveyResult) {
+            if ($Survey != '') {
+                foreach ($results as $surveyResult) {
 //                Log::toFile(print_r($surveyResult, true));
 
-                if ($surveyResult->SurveyName === $Survey) {
-                    $resultsArray[] = $surveyResult;
+                    if ($surveyResult->SurveyName === $Survey) {
+                        $resultsArray[] = $surveyResult;
+                    }
+                }
+                $results = $resultsArray;
+            }
+
+            $resultsArray = array();
+
+            // Filter out survey dates which don't lay between users requested dates
+
+            if ($dateFrom != '' && $dateTo != '') {
+
+                Log::toFile("user dates " . $dateFrom . " - " . $dateTo);
+
+                $dateBegin = DateTime::createFromFormat('Y/m/d', $dateFrom);
+                $dateEnd = DateTime::createFromFormat('Y/m/d', $dateTo);
+
+//                Log::toFile($dateBegin . " " . $dateEnd->getTimestamp());
+
+                foreach ($results as $surveyResult) {
+
+//                    Log::toFile(print_r($surveyResult, true));
+
+                    $surveyStart = DateTime::createFromFormat('Y-m-d', $surveyResult->surveyStart);
+                    $surveyEnd = DateTime::createFromFormat('Y-m-d', $surveyResult->surveyEnd);
+
+                    Log::toFile("survey dates " . $surveyResult->surveyStart . " - " . $surveyResult->surveyEnd);
+
+//                    Log::toFile("res time " . $qualDate->getTimestamp());
+
+                    if (($surveyStart >= $dateBegin && $surveyStart <= $dateEnd) || ($surveyEnd >= $dateBegin && $surveyEnd <= $dateEnd) )
+                    {
+                        $resultsArray[] = $surveyResult;
+                    }
+
                 }
             }
+
             $count = count($resultsArray);
         }
 

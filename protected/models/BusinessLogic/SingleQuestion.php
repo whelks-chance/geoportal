@@ -40,6 +40,8 @@ class SingleQuestion {
     public $SurveyCollectionFrequency = "";
     public $Rank = "";
     Public $spatial;
+    public $surveyStart;
+    public $surveyEnd;
 
 //        Public Property RootQuestion As String
 //            Get
