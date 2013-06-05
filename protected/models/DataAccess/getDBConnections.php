@@ -89,24 +89,24 @@ class getDBConnections {
 
             $user = New UserDetails();
 
-                $user->FirstName = $DR->firstname;
-                $user->LastName = $DR->lastname;
-                $user->UserName = $DR->username;
-                $user->Email = $DR->email;
-                $user->UID = $DR->id;
-                $user->success = True;
-                $user->message = "Successfully Logged in as " . $userName . "!";
+            $user->FirstName = $DR->firstname;
+            $user->LastName = $DR->lastname;
+            $user->UserName = $DR->username;
+            $user->Email = $DR->email;
+            $user->UID = $DR->id;
+            $user->success = True;
+            $user->message = "Successfully Logged in as " . $userName . "!";
 
-                Yii::app()->session["User"] = $user;
+            Yii::app()->session["User"] = $user;
 
-                Return $user;
-            } Else {
-                $user = New UserDetails();
-                $user->success = False;
-                $user->message = "Incorrect Login Details. Please Try Again!";
+            Return $user;
+        } Else {
+            $user = New UserDetails();
+            $user->success = False;
+            $user->message = "Incorrect Login Details. Please Try Again!";
 
-                Return $user;
-            }
+            Return $user;
+        }
     }
 
 
@@ -180,33 +180,45 @@ class getDBConnections {
     }
 
 
-    Public Function ChangePassword( $UID, $oldPW, $newPW ) {
+    Public Function ChangePassword( $UID, $oldPW, $newPW , $CheckOldPW = true) {
 
+        $change = false;
+        if($CheckOldPW) {
             $checkoldPWstr = "Select id from alphausersdetails where id = '" . $UID . "' and  password = crypt('" . $oldPW . "', password)";
             $message = New jsonMsg();
             $cmd = pg_query($this::getDBConnection(), $checkoldPWstr);
 
             If (!pg_num_rows($cmd) == 0) {
-
-                $updatePWStr = "Update alphausersdetails set password = crypt('" . $newPW . "', gen_salt('bf')) where id = '" . $UID . "'";
-                $cmd = pg_query($this::getDBConnection(), $updatePWStr );
-
-//                $cmd = DataAdapter::DefaultExecuteAndRead($updatePWStr);
-
-                If (pg_affected_rows($cmd) == 1) {
-
-                    $message->success = True;
-                    $message->message = "Sucessfully changed password!";
-                } Else {
-
-                    $message->success = False;
-                    $message->message = "Error changing password! Please try again";
-                }
-            } Else {
-                $message->success = False;
-                $message->message = "Please check your old password and try again!";
+                $change = true;
             }
-            Return $message;
+
+        } else {
+            $change = true;
+        }
+
+        $message = new jsonMsg();
+
+        if ($change) {
+            $updatePWStr = "Update alphausersdetails set password = crypt('" . $newPW . "', gen_salt('bf')) where id = '" . $UID . "'";
+            $cmd = pg_query($this::getDBConnection(), $updatePWStr );
+
+
+            If (pg_affected_rows($cmd) == 1) {
+
+                $message->success = True;
+                $message->message = "Sucessfully changed password!";
+            } Else {
+
+                $message->success = False;
+                $message->message = "Error changing password! Please try again";
+            }
+        } else {
+
+            $message->success = False;
+            $message->message = "Please check your old password and try again!";
+        }
+        Log::toFile("update db msg " . print_r($message, true));
+        Return $message;
 
     }
 

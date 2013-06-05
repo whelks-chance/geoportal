@@ -78,6 +78,7 @@
                                 anchor: '100%',
                                 fieldLabel: 'Problem Encountered',
                                 name: 'message',
+
                                 height: this.height * 0.4,
                                 allowBlank: false
                             },

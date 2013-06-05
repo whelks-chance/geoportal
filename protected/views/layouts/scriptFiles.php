@@ -16,6 +16,7 @@ include('variables.php')
 
     var captureURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Register/CaptureUserEvalDetails';
     var loginURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Account/LogOn';
+    var ResetPWURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Account/ResetPW';
     var regURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Register/Register';
     var checkNameFreeURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Register/checkNameFree';
 

@@ -58,6 +58,15 @@ class sendEmail{
         sendEmail::SendAnEmail(variables::$MailFromEmail, $UserName, $subject, $content);
     }
 
+    public static function SendPasswordReset($Email, $Username, $newPW)
+    {
+        $subject = "Password Reset";
+        $content = "User " . $Username . " has had their password automatically set to " . $newPW . " .";
+        $content .= "<br><br>Please login and change this password to something more memorable using 'Change Password' feature in the 'My Account' panel.";
+
+        sendEmail::SendAnEmail($Email, $Username, $subject, $content);
+    }
+
 //        require_once "Mail.php";
 //
 //        $from = "<from.gmail.com>";

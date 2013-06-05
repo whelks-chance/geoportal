@@ -386,26 +386,26 @@
                         ]
                     }
                 ]
-            },
-            {
-                xtype: 'container',
-                id: 'geography',
-                layout: {
-                    defaultAnchor: '100%',
-                    type: 'form'
-                },
-                items: [
-                    {
-                        fieldLabel      : 'geographyarea',
-                        id              : 'geoarea',
-                        name            : 'csv',
-                        xtype           : 'textarea',
-                        autoScroll      : true,
-                        height          : 60,
-                        anchor: '100%'
-                    }
-                ]
             }
+//            {
+//                xtype: 'container',
+//                id: 'geography',
+//                layout: {
+//                    defaultAnchor: '100%',
+//                    type: 'form'
+//                },
+//                items: [
+//                    {
+//                        fieldLabel      : 'geographyarea',
+//                        id              : 'geoarea',
+//                        name            : 'csv',
+//                        xtype           : 'textarea',
+//                        autoScroll      : true,
+//                        height          : 60,
+//                        anchor: '100%'
+//                    }
+//                ]
+//            }
         ];
         console.log(this.geographyRegion);
         GeoPortal.Forms.AdvancedSearch.superclass.initComponent.call(this);

@@ -89,7 +89,8 @@ $javascriptFiles = array(
 
     "Components/Windows/GeoPortal.Windows.SpatialSearchResults.js",
     "Components/Windows/GeoPortal.Windows.WMS.js",
-    "Components/Forms/GeoPortal.Forms.UsabilityLogin.js"
+    "Components/Forms/GeoPortal.Forms.UsabilityLogin.js",
+    "Components/Windows/GeoPortal.Windows.ResetPassword.js"
 
 );
 

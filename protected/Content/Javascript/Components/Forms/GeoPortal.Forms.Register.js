@@ -142,6 +142,7 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
                             {
                                 xtype: 'textfield',
                                 fieldLabel: 'First Name',
+                                allowBlank: false,
                                 anchor: '100%',
                                 id: 'txtRegFName'
                             },
@@ -149,6 +150,7 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
                                 xtype: 'textfield',
                                 anchor: '100%',
                                 fieldLabel: 'LastName',
+                                allowBlank: false,
                                 id: 'txtRegLName'
                             }
                         ]
@@ -161,6 +163,7 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
                             {
                                 xtype: 'textfield',
                                 fieldLabel: 'Email',
+                                allowBlank: false,
                                 anchor: '100%',
                                 id: 'txtRegEmail'
                             }

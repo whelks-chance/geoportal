@@ -51,6 +51,15 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
                 items: [
                     {
                         xtype: 'button',
+                        id: 'btnResetPW',
+                        text: 'Reset Password',
+                        handler: function () {
+                            var resetPwForm = new GeoPortal.Windows.ResetPassword();
+                            resetPwForm.show();
+                        }
+                    },
+                    {
+                        xtype: 'button',
                         id: 'btnCookie',
                         text: 'Cookie Policy',
                         icon: 'images/silk/database_add.png',

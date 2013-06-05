@@ -6,6 +6,43 @@ class AccountController extends Controller {
 //        $Db = new getDBConnections();
 
 
+    Function actionresetPW() {
+        $Email = "";
+        if(isset($_POST['txtEmail'])) {
+            $Email = $_POST['txtEmail'];
+        }
+        $Username = "";
+        if(isset($_POST['txtUsername'])) {
+            $Username = $_POST['txtUsername'];
+        }
+
+        if ($Email && $Email != "") {
+
+            $findUserStr = "Select id, username from alphausersdetails where email='" . $Email . "';";
+
+            $idSet = DataAdapter::DefaultExecuteAndRead($findUserStr);
+
+            Log::toFile('ids ' . print_r($idSet, true));
+
+            if(sizeof($idSet) == 1) {
+
+                $ID = $idSet[0]->id;
+                $Username = $idSet[0]->username;
+
+                $newPW = Users::randomPassword();
+
+                $Db = new getDBConnections();
+                $msg = $Db->ChangePassword($ID, "", $newPW, false);
+
+                sendEmail::SendPasswordReset($Email, $Username, $newPW);
+
+                echo json_encode($msg);
+
+            } Else {
+                echo json_encode(false);
+            }
+        }
+    }
 
     Function actionLogOn() {
         $Username = "";
