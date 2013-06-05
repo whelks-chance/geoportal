@@ -11,7 +11,6 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
     RegisterMe: function () {
         var regPanel = Ext.getCmp('frmRegister');
 
-
         regPanel.getForm().submit({
             url: regURL,
             method: 'post',
@@ -33,7 +32,19 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
             },
             failure: function (form, action) {
                 console.log(action);
-                Ext.Msg.alert("Error", action.result.message);
+                switch (action.failureType) {
+                    case Ext.form.Action.CLIENT_INVALID:
+                        Ext.Msg.alert('Failure', 'Form contains invalid values. Check your username and password');
+                        break;
+                    case Ext.form.Action.CONNECT_FAILURE:
+                        Ext.Msg.alert('Failure', 'Communication failure - please try again');
+                        break;
+                    case Ext.form.Action.SERVER_INVALID:
+                        Ext.Msg.alert('Failure', 'Error with servers response, please check input fields for possible errors');
+                        break;
+                    default :
+                        Ext.Msg.alert("Error", "An error occured during registration. Please check the information fields and try again");
+                }
             }
         })
 
@@ -136,9 +147,9 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
                             },
                             {
                                 xtype: 'textfield',
-                                fieldLabel: 'Email',
                                 anchor: '100%',
-                                id: 'txtRegEmail'
+                                fieldLabel: 'LastName',
+                                id: 'txtRegLName'
                             }
                         ]
                     },
@@ -149,9 +160,9 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
                         items: [
                             {
                                 xtype: 'textfield',
+                                fieldLabel: 'Email',
                                 anchor: '100%',
-                                fieldLabel: 'LastName',
-                                id: 'txtRegLName'
+                                id: 'txtRegEmail'
                             }
 //                            {
 //                                xtype: 'textfield',

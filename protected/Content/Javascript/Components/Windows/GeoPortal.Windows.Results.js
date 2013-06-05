@@ -43,9 +43,9 @@
 		this.qualStore = new Ext.data.GroupingStore({
 			reader: new Ext.data.JsonReader({
 				fields: ['id', 'title', 'thematicgroup', 'creator', 'qdate', 'pages'],
-				root: 'results',
+				root: 'qualResults',
 				id: 'dsQualData',
-				totalProperty: 'totalCount'
+				totalProperty: 'qualTotalCount'
 			}),
 			proxy: this.qualProxy,
 			groupField: 'thematicgroup'

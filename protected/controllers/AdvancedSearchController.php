@@ -13,8 +13,17 @@ class AdvancedSearchController extends Controller {
 //        Log::toFile("advanced post vars : " . print_r($_POST, true));
 
         $Keywords = '';
-        if(isset($_POST['Keywords'])) {
-            $Keywords = $_POST['Keywords'];
+        if(isset($_POST['keywords'])) {
+            $Keywords = $_POST['keywords'];
+        }
+        if(isset($_POST['start'])) {
+            $start = $_POST['start'];
+        }
+        if(isset($_POST['limit'])) {
+            $limit = $_POST['limit'];
+        }
+        if(isset($_POST['Mappable'])) {
+            $Mappable = $_POST['Mappable'];
         }
         $dateFrom = '';
         if(isset($_POST['dateFrom'])) {
@@ -24,13 +33,9 @@ class AdvancedSearchController extends Controller {
         if(isset($_POST['dateTo'])) {
             $dateTo = $_POST['dateTo'];
         } // => 04/12/2013
-        $Keywords = '';
-        if(isset($_POST['Keywords'])) {
-            $Keywords = $_POST['Keywords'];
-        } // => word words wordy
         $Survey = '';
-        if(isset($_POST['Survey'])) {
-            $Survey = $_POST['Survey'];
+        if(isset($_POST['SurveysId'])) {
+            $Survey = $_POST['SurveysId'];
         } // => ffasdfd
         $Thematic = '';
         if(isset($_POST['Thematic'])) {
@@ -67,16 +72,68 @@ class AdvancedSearchController extends Controller {
 
         $res = New getResults();
 
-        $resultsExsist = $res->getQuestionnaireData(0, 1, $Keywords, True, false);
-
-        $qualResults = $res->getQualData($Keywords);
-
         $results = array();
+        $qualResults = array();
 
-        $results[] = $resultsExsist;
-        $results[] = $qualResults;
+        $resultsArray = array();
+        $qualResultsArray = array();
+        $count = 0;
+        $qualCount = 0;
 
-        $str = '{"success":"' . true . '", "data":' . json_encode($results) . "}";
+        if($cbSurvey == 'on') {
+            $results = $res->getQuestionnaireData(0, 30, $Keywords, False, True);
+
+//            Log::toFile($Survey);
+            foreach ($results as $surveyResult) {
+//                Log::toFile(print_r($surveyResult, true));
+
+                if ($surveyResult->SurveyName === $Survey) {
+                    $resultsArray[] = $surveyResult;
+                }
+            }
+            $count = count($resultsArray);
+        }
+
+        if($cbQual == 'on') {
+            $qualResults = $res->getQualData($Keywords);
+
+            if ($dateFrom != '' && $dateTo != '') {
+
+                Log::toFile($dateFrom . " " . $dateTo);
+
+                $dateBegin = DateTime::createFromFormat('Y/m/d', $dateFrom);
+                $dateEnd = DateTime::createFromFormat('Y/m/d', $dateTo);
+
+//                Log::toFile($dateBegin . " " . $dateEnd->getTimestamp());
+
+                foreach ($qualResults as $qualResult) {
+
+                    Log::toFile(print_r($qualResult, true));
+
+                    $qualDate = DateTime::createFromFormat('Y-m-d', $qualResult->qdate);
+
+//                    Log::toFile("res time " . $qualDate->getTimestamp());
+
+                    if ($qualDate >= $dateBegin && $qualDate <= $dateEnd)
+                    {
+                        $qualResultsArray[] = $qualResult;
+                    }
+
+                }
+            }
+
+            $qualCount = count($qualResultsArray);
+        }
+
+//        $resultsset = New results();
+//        $resultsset->totalCount = $count;
+//        $resultsset->questions = json_encode($results);
+//
+//        $resultsset = New results();
+//        $resultsset->totalCount = $count;
+//        $resultsset->questions = json_encode($results);
+
+        $str = '{"success":"' . true . '", "results":' . json_encode($resultsArray) . ', "totalCount":"' . $count . '", "qualTotalCount":"' . $qualCount . '", "qualResults":' . json_encode($qualResultsArray) . '}';
 
         echo $str;
     }

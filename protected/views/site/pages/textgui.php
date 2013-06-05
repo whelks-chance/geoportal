@@ -167,6 +167,7 @@ Ext.onReady(function(){
 //                        border: false,
                 activeTab: 0,
                 items: [
+                    new GeoPortal.Forms.AdvancedSearch(),
                     new GeoPortal.Forms.QuestionMatching(),
                     inner,
                     new GeoPortal.Forms.RemoteData(),

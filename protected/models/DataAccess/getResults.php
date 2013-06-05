@@ -16,7 +16,10 @@ class getResults {
 
         //    Log::toFile(var_export($keywordsArray));
 
-        If (sizeof($keywordsArray) > 1) {
+        If (sizeof($keywordsArray) == 0){
+            $SSearch.=("SELECT qid, questionnumber as qnumber, link_from, thematic_groups, thematic_tags, ts_headline('english',literal_question_text, plainto_tsquery('english','" . $multiKeyword . "')) as original_text, notes as q_notes, subof as subof, type as q_type, link_from as parent_q, ts_rank_cd(to_tsvector(literal_question_text), plainto_tsquery('english','" . $multiKeyword . "'),0) AS rank");
+            $SSearch.=(" FROM questions ");
+        } ElseIf (sizeof($keywordsArray) > 1) {
 
             $multiKeyword = "";
 

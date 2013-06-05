@@ -261,7 +261,7 @@ function createPlaceAction() {
                                     map.zoomToExtent(new_geom.getBounds());
 //                                    var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:"Retrieving Spatial Search Results...."});
 //                                    loadMask.show();
-                                    doSpatialSearch(new_geom, loadMask);
+                                    doSpatialSearch(new_geom);
                                     action.control.deactivate();
                                 }
                             }
@@ -339,16 +339,19 @@ function doSpatialSearch(geography) {
         function (btn, text) {
             if (btn == 'yes') {
                 var advSearch = Ext.getCmp('advSearch');
-                if (advSearch == null) {
-                    var advSearchPanel = new GeoPortal.Forms.AdvancedSearch();
-                    advSearch = new Ext.Window({
-//                        title: 'Advanced Search',
-                        id: 'advSearch',
-//                        resizable: false,
-                        animateTarget: Ext.getCmp("btnAdvSearch").el,
-                        items: [advSearchPanel]
-                    });
+
+                if (advSearch != null) {
+                    advSearch.close();
                 }
+                var advSearchPanel = new GeoPortal.Forms.AdvancedSearch({geographyRegion: geography});
+                advSearch = new Ext.Window({
+//                        title: 'Advanced Search',
+                    id: 'advSearch',
+//                        resizable: false,
+                    animateTarget: Ext.getCmp("btnAdvSearch").el,
+                    items: [advSearchPanel]
+                });
+
                 advSearch.show();
             } else {
 
@@ -368,13 +371,11 @@ function doSpatialSearch(geography) {
                     }
                 );
 
-                console.log(searchResults);
-
                 var grdqual = Ext.getCmp('grdQual');
                 var grid = Ext.getCmp('grdSurvey');
 
-                console.log(grdqual);
-                console.log(grid);
+                //    console.log(grdqual);
+                //    console.log(grid);
 
                 searchResults.doLayout();
                 grdqual.store.load(

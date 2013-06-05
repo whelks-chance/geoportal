@@ -813,12 +813,12 @@
                                     {
                                         xtype: 'menuitem',
                                         text: 'to PDF',
-                                        icon: 'images/silk/page_white_acrobat.png',
+                                        icon: 'images/silk/page_white_acrobat.png'
                                     },
                                     {
                                         xtype: 'menuitem',
                                         text: 'to Account',
-                                        icon: 'images/silk/folder_user.png',
+                                        icon: 'images/silk/folder_user.png'
                                     }
                                 ]
                             }

@@ -45,7 +45,8 @@
                                 fieldLabel: 'User Name',
                                 name: 'UserName',
                                 anchor: '95%',
-                                id: 'txtUserName'
+                                id: 'txtUserName',
+                                readOnly: true
                             }],
                         buttons: [{
                             xtype: 'button',

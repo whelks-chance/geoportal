@@ -343,7 +343,7 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
                                 activeTab: 0,
                                 items: [
                                     advSearchPanel,
-                                    new GeoPortal.Forms.RemoteData(),
+                                    new GeoPortal.Forms.RemoteData()
                                 ]
                             }
                         ],
@@ -356,7 +356,7 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
                         hideAnimDuration: 0.25
                     });
                 }
-                console.log(advSearch);
+//                console.log(advSearch);
                 advSearch.show();
             }
         };

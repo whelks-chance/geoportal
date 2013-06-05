@@ -113,9 +113,9 @@ class getDBConnections {
     Public Function getMyAccount($user) {
         $myACDetails = New myAccountDetails();
 
-        $myACDetails->FirstName = $user->FirstName;
-        $myACDetails->LastName = $user->LastName;
-        $myACDetails->Email = $user->Email;
+//        $myACDetails->FirstName = $user->FirstName;
+//        $myACDetails->LastName = $user->LastName;
+//        $myACDetails->Email = $user->Email;
         $myACDetails->UserName = $user->UserName;
 
         $myACDetailscStr = "SELECT * FROM alphausersdetails WHERE id = " . $user->UID;
@@ -131,9 +131,12 @@ class getDBConnections {
 
             $DR = $DRs[0];
 
-            Log::toFile(print_r($DR, true));
-            
-            //TODO is bio etc needed?
+//            Log::toFile(print_r($DR, true));
+
+            $myACDetails->FirstName = $DR->firstname;
+            $myACDetails->LastName = $DR->lastname;
+            $myACDetails->Email = $DR->email;
+
             $myACDetails->Bio = $DR->bio;
             $myACDetails->Email2 = $DR->email;
             $myACDetails->Telephone = $DR->telephone;

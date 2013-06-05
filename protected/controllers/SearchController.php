@@ -202,7 +202,7 @@ class SearchController extends Controller {
             $cnt += 1;
         }
 
-        $str = '{"totalCount":"' . $qCount . '", "results":' . json_encode($pageResults) . '}';
+        $str = '{"totalCount":"' . $qCount . '", "qualResults":' . json_encode($pageResults) . '}';
         echo $str;
     }
 
