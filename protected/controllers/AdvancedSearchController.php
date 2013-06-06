@@ -120,6 +120,7 @@ class AdvancedSearchController extends Controller {
 
                     if (($surveyStart >= $dateBegin && $surveyStart <= $dateEnd) || ($surveyEnd >= $dateBegin && $surveyEnd <= $dateEnd) )
                     {
+                        Log::toFile('Dates are within the range.');
                         $resultsArray[] = $surveyResult;
                     }
 

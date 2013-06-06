@@ -25,7 +25,12 @@ class MessageController extends Controller {
 //            $msg = New sendEmail();
             $result = New jsonMsg;
 
+            $user = Yii::app()->session["User"];
+
+
             $msgbody = "";
+            $msgbody .= ("Timestamp: " . date("Y-m-d H:i:s") . "<br><br>");
+            $msgbody .= "User login details: " . print_r($user, true) . "<br><br>";
             $msgbody .= ("From: " . $name . "<br><br>");
             $msgbody .= ("Email: " . $email . "<br><br>");
             $msgbody .= ("Report:" . "<br>");

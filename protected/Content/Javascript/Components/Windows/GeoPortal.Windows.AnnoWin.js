@@ -27,6 +27,8 @@ GeoPortal.Windows.AnnoWin = Ext.extend(Ext.Window, {
     bodyStyle: 'padding: 5px;',
     defaultButton: 'Save',
     evt: null,
+    width: Ext.getBody().getViewSize().width * 0.7,
+    height: Ext.getBody().getViewSize().height * 0.5,
     modal: true,
     resizeable: false,
     maximisable: false,

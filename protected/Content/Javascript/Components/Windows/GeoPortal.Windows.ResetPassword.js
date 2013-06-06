@@ -42,20 +42,37 @@ GeoPortal.Windows.ResetPassword = Ext.extend(Ext.Window, {
                 id: 'resetPasswordForm',
                 checkValid: true,
                 bodyStyle: 'padding: 5px',
+//                layout: 'column',
+
                 items: [
                     {
-                        xtype: 'textfield',
-                        allowBlank: false,
-                        id: 'txtUsername',
-                        anchor: '100%',
-                        fieldLabel: 'Username:'
+                        xtype: 'label',
+                        name: 'resetLabel1',
+                        id: 'resetLabel1',
+                        bodyStyle: 'padding: 5px',
+                        text: 'Please input the email address you registered your account with.',
+                        cls: 'x-form-item-label x-form-item'
                     },
+                    {
+                        xtype: 'label',
+                        name: 'resetLabel1',
+                        id: 'resetLabel2',
+                        text: 'A new password will be generated and emailed to you.',
+                        cls: 'x-form-item-label x-form-item'
+                    },
+//                    {
+//                        xtype: 'textfield',
+//                        allowBlank: false,
+//                        id: 'txtUsername',
+//                        anchor: '100%',
+//                        fieldLabel: 'Username:'
+//                    },
                     {
                         xtype: 'textfield',
                         allowBlank: false,
                         id: 'txtEmail',
                         anchor: '100%',
-                        fieldLabel: 'Email:'
+                        fieldLabel: 'Email'
                     }
                 ]
             }

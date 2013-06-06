@@ -122,7 +122,7 @@ class getResults {
                 If (!array_key_exists($toFind, $results)) {
                     $results[$toFind] = $rootQ;
 
-                    Log::toFile("survey info " . print_r($toFind, true). " " . print_r($rootQ, true) );
+//                    Log::toFile("survey info " . print_r($toFind, true). " " . print_r($rootQ, true) );
                 }
 
 

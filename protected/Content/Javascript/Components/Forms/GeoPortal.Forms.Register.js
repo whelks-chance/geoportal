@@ -55,7 +55,7 @@ GeoPortal.Forms.Register = Ext.extend(Ext.form.FormPanel, {
         regPanel.getForm().reset();
     },
     Info : function(){
-        Ext.Msg.alert("Why Register?", "The WISERD programme will use the details you provide for the purpose of [insert purpose i,e why you need the information]. As a collaborative programme, the information you provide will be shared between Aberystwyth, Bangor, Cardiff, Glamorgan and Swansea Universities all of whom are registered under the Data Protection Act with the Information Commissioners Office. Your information will be kept securely and will not be provided to third parties outside of the collaboration without your permission.");
+        Ext.Msg.alert("Why Register?", "The WISERD programme will use the details you provide for the purpose of monitoring and user support. As a collaborative programme, the information you provide will be shared between Aberystwyth, Bangor, Cardiff, Glamorgan and Swansea Universities all of whom are registered under the Data Protection Act with the Information Commissioners Office. Your information will be kept securely and will not be provided to third parties outside of the collaboration without your permission.");
     },
     initComponent: function () {
         this.items = [

@@ -26,6 +26,20 @@
         }
     }],
     initComponent: function () {
+
+        var nameField = new Ext.form.TextField(
+            {
+                xtype: 'textfield',
+                fieldLabel: 'From',
+                id: 'bugFromField',
+                anchor: '75%',
+                name: 'name'
+//                allowBlank: false,
+//                readOnly: true
+            }
+        );
+
+
         this.items = [
             {
                 xtype: 'form',
@@ -42,13 +56,15 @@
                             defaultAnchor: 75
                         },
                         items: [
-                            {
-                                xtype: 'textfield',
-                                fieldLabel: 'From',
-                                anchor: '75%',
-                                name: 'name',
-                                allowBlank: false
-                            },
+//                            {
+//                                xtype: 'textfield',
+//                                fieldLabel: 'From',
+//                                id: 'bugFromField',
+//                                anchor: '75%',
+//                                name: 'name',
+//                                allowBlank: false
+//                            },
+                            nameField,
                             {
                                 xtype: 'textfield',
                                 fieldLabel: 'Email Address',
@@ -95,6 +111,13 @@
                 ]
             }
         ];
+
+        var usernameField = Ext.getCmp('txtSBUser');
+        console.log(usernameField.el.dom.innerHTML);
+        console.log(usernameField.el);
+        console.log(usernameField.el.innerText);
+        nameField.setValue(usernameField.el.innerText);
+
         GeoPortal.Windows.BugReport.superclass.initComponent.call(this);
     }
 });
