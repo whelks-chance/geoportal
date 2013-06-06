@@ -38,8 +38,8 @@ class AdvancedSearchController extends Controller {
             $Survey = $_POST['SurveysId'];
         } // => ffasdfd
         $Thematic = '';
-        if(isset($_POST['Thematic'])) {
-            $Thematic = $_POST['Thematic'];
+        if(isset($_POST['ThematicID'])) {
+            $Thematic = $_POST['ThematicID'];
         } // => fEFWefSFD
         $cbSurvey = '';
         if(isset($_POST['cbSurvey'])) {
@@ -75,13 +75,35 @@ class AdvancedSearchController extends Controller {
         $results = array();
         $qualResults = array();
 
-        $resultsArray = array();
-        $qualResultsArray = array();
         $count = 0;
         $qualCount = 0;
 
         if($cbSurvey == 'on') {
+
+            // Get standard simple search results, then filter by user inputs
             $results = $res->getQuestionnaireData(0, 30, $Keywords, False, True);
+
+            // Temp array for filtered results
+            $resultsArray = array();
+
+            if ($Thematic != '') {
+
+                // For each result, add those with desired theme to temp array
+
+                foreach ($results as $surveyResult) {
+                Log::toFile(print_r($surveyResult, true));
+
+                    if ($surveyResult->QuestionThematicGroup === $Thematic) {
+                        $resultsArray[] = $surveyResult;
+                    }
+                }
+
+                // Copy temp array to results array
+                $results = $resultsArray;
+            }
+
+            // Clear temp array
+            $resultsArray = array();
 
             if ($Survey != '') {
                 foreach ($results as $surveyResult) {
@@ -91,9 +113,11 @@ class AdvancedSearchController extends Controller {
                         $resultsArray[] = $surveyResult;
                     }
                 }
+                // Copy temp array to results
                 $results = $resultsArray;
             }
 
+            //Clear temp array
             $resultsArray = array();
 
             // Filter out survey dates which don't lay between users requested dates
@@ -102,21 +126,25 @@ class AdvancedSearchController extends Controller {
 
                 Log::toFile("user dates " . $dateFrom . " - " . $dateTo);
 
+                // Create date objects from users input field values
                 $dateBegin = DateTime::createFromFormat('Y/m/d', $dateFrom);
                 $dateEnd = DateTime::createFromFormat('Y/m/d', $dateTo);
-
-//                Log::toFile($dateBegin . " " . $dateEnd->getTimestamp());
 
                 foreach ($results as $surveyResult) {
 
 //                    Log::toFile(print_r($surveyResult, true));
 
+                    // Create date objects from database survey record
+
                     $surveyStart = DateTime::createFromFormat('Y-m-d', $surveyResult->surveyStart);
                     $surveyEnd = DateTime::createFromFormat('Y-m-d', $surveyResult->surveyEnd);
 
-                    Log::toFile("survey dates " . $surveyResult->surveyStart . " - " . $surveyResult->surveyEnd);
+//                    Log::toFile("survey dates " . $surveyResult->surveyStart . " - " . $surveyResult->surveyEnd);
 
-//                    Log::toFile("res time " . $qualDate->getTimestamp());
+                    // If Survey start date is between user dates,
+                    // or if survey end date is between user dates,
+                    // then the survey overlaps the desired time period,
+                    // so add it to the temp array
 
                     if (($surveyStart >= $dateBegin && $surveyStart <= $dateEnd) || ($surveyEnd >= $dateBegin && $surveyEnd <= $dateEnd) )
                     {
@@ -125,30 +153,51 @@ class AdvancedSearchController extends Controller {
                     }
 
                 }
+                // copy temp array to results
+                $results = $resultsArray;
             }
 
-            $count = count($resultsArray);
+            $count = count($results);
         }
+
+        // Qual searches
 
         if($cbQual == 'on') {
             $qualResults = $res->getQualData($Keywords);
 
+            // Temp array for filtered results
+            $resultsArray = array();
+
+            if ($Thematic != '') {
+
+                // For each result, add those with desired theme to temp array
+                foreach ($qualResults as $qualResult) {
+//                    Log::toFile(print_r($surveyResult, true));
+
+                    if ($qualResult->thematicgroup === $Thematic) {
+                        $resultsArray[] = $qualResult;
+                    }
+                }
+
+                // Copy temp array to results array
+                $qualResults = $resultsArray;
+            }
+
+            // Temp array for date matching of qual results
+            $qualResultsArray = array();
             if ($dateFrom != '' && $dateTo != '') {
 
-                Log::toFile($dateFrom . " " . $dateTo);
-
+                // Create date objects from users input field values
                 $dateBegin = DateTime::createFromFormat('Y/m/d', $dateFrom);
                 $dateEnd = DateTime::createFromFormat('Y/m/d', $dateTo);
-
-//                Log::toFile($dateBegin . " " . $dateEnd->getTimestamp());
 
                 foreach ($qualResults as $qualResult) {
 
                     Log::toFile(print_r($qualResult, true));
 
+                    // Create date object for db qual result
+                    // check if it lays between user specified dates
                     $qualDate = DateTime::createFromFormat('Y-m-d', $qualResult->qdate);
-
-//                    Log::toFile("res time " . $qualDate->getTimestamp());
 
                     if ($qualDate >= $dateBegin && $qualDate <= $dateEnd)
                     {
@@ -156,9 +205,11 @@ class AdvancedSearchController extends Controller {
                     }
 
                 }
+                // Copy temp array to qual results
+                $qualResults = $qualResultsArray;
             }
 
-            $qualCount = count($qualResultsArray);
+            $qualCount = count($qualResults);
         }
 
 //        $resultsset = New results();
@@ -169,7 +220,7 @@ class AdvancedSearchController extends Controller {
 //        $resultsset->totalCount = $count;
 //        $resultsset->questions = json_encode($results);
 
-        $str = '{"success":"' . true . '", "results":' . json_encode($resultsArray) . ', "totalCount":"' . $count . '", "qualTotalCount":"' . $qualCount . '", "qualResults":' . json_encode($qualResultsArray) . '}';
+        $str = '{"success":"' . true . '", "results":' . json_encode($results) . ', "totalCount":"' . $count . '", "qualTotalCount":"' . $qualCount . '", "qualResults":' . json_encode($qualResults) . '}';
 
         echo $str;
     }
@@ -233,7 +284,7 @@ class AdvancedSearchController extends Controller {
         }
 
         //Thematic group name and ID
-        $thematicQuery = "Select tgroupid, grouptitle From thematic_groups";
+        $thematicQuery = "Select tgroupid, grouptitle, groupdescription From thematic_groups";
 
         $thematicQueryResults = $dataAdapter->DefaultExecuteAndRead($thematicQuery, "Survey_Data");
 
@@ -245,6 +296,7 @@ class AdvancedSearchController extends Controller {
 //            Log::toFile("Survey : " . print_r($thematicData, true));
             $thematicObject['tgroupid'] = trim($thematicData->tgroupid);
             $thematicObject['grouptitle'] = trim($thematicData->grouptitle);
+            $thematicObject['groupdescription'] = trim($thematicData->groupdescription);
             $thematicDataArray[] = $thematicObject;
         }
 

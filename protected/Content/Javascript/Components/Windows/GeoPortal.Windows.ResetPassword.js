@@ -9,8 +9,8 @@
 GeoPortal.Windows.ResetPassword = Ext.extend(Ext.Window, {
     id: 'resetPasswordWindow',
     title: 'Reset Password',
-    width: Ext.getBody().getViewSize().width * 0.5,
-    height: Ext.getBody().getViewSize().height * 0.5,
+    width: Ext.getBody().getViewSize().width * 0.4,
+//    height: Ext.getBody().getViewSize().height * 0.3,
     resizable: true,
     modal: true,
 
@@ -55,24 +55,27 @@ GeoPortal.Windows.ResetPassword = Ext.extend(Ext.Window, {
                     },
                     {
                         xtype: 'label',
-                        name: 'resetLabel1',
+                        name: 'resetLabel2',
                         id: 'resetLabel2',
+                        bodyStyle: 'padding: 5px',
                         text: 'A new password will be generated and emailed to you.',
                         cls: 'x-form-item-label x-form-item'
                     },
-//                    {
-//                        xtype: 'textfield',
-//                        allowBlank: false,
-//                        id: 'txtUsername',
-//                        anchor: '100%',
-//                        fieldLabel: 'Username:'
-//                    },
+                    {
+                        xtype: 'label',
+                        name: 'resetLabel3',
+                        id: 'resetLabel3',
+                        bodyStyle: 'padding: 5px',
+                        text: 'Please then login with the new password, and change it in the "User Account" panel',
+                        cls: 'x-form-item-label x-form-item'
+                    },
                     {
                         xtype: 'textfield',
                         allowBlank: false,
                         id: 'txtEmail',
                         anchor: '100%',
-                        fieldLabel: 'Email'
+                        fieldLabel: 'Email',
+                        bodyStyle: 'padding: 15px'
                     }
                 ]
             }

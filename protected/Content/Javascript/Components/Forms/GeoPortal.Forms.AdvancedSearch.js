@@ -141,7 +141,9 @@
         var thematicStore = new Ext.data.JsonStore ({
             fields: [
                 {name: 'theme', mapping: 'grouptitle'},
-                {name: 'ID',  mapping: 'tgroupid'}],
+                {name: 'ID',  mapping: 'tgroupid'},
+                {name: 'description', mapping: 'groupdescription'}
+            ],
             id: "thematicStore",
             root : "thematicData"
         });
@@ -303,13 +305,13 @@
                         store : surveyStore
                     }, {
                         xtype: 'combo',
-                        tpl: '<tpl for="."><div ext:qtip="{theme} - {ID}" class="x-combo-list-item">{theme}</div></tpl>',
+                        tpl: '<tpl for="."><div ext:qtip="{theme} - {ID}" class="x-combo-list-item">{description}</div></tpl>',
                         id: 'cmboThematic',
                         anchor: '100%',
                         fieldLabel: 'Thematic Group',
                         name: 'Thematic',
                         hiddenName: 'ThematicID',
-                        displayField: 'theme',
+                        displayField: 'description',
                         valueField: 'theme',
                         mode: 'local',
                         triggerAction: 'all',
