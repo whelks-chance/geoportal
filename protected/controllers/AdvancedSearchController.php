@@ -16,9 +16,11 @@ class AdvancedSearchController extends Controller {
         if(isset($_POST['keywords'])) {
             $Keywords = $_POST['keywords'];
         }
+        $start = 0;
         if(isset($_POST['start'])) {
             $start = $_POST['start'];
         }
+        $limit = 15;
         if(isset($_POST['limit'])) {
             $limit = $_POST['limit'];
         }
@@ -53,6 +55,16 @@ class AdvancedSearchController extends Controller {
         if(isset($_POST['cbQual'])) {
             $cbQual = $_POST['cbQual'];
         } // => on
+
+        if(isset($_POST['searchType'])) {
+            if($_POST['searchType'] === 'qual') {
+                $cbQual = 'on';
+            }
+            if($_POST['searchType'] === 'survey') {
+                $cbSurvey = 'on';
+            }
+        }
+
         $cbAdmin = '';
         if(isset($_POST['cbAdmin'])) {
             $cbAdmin = $_POST['cbAdmin'];
@@ -80,145 +92,182 @@ class AdvancedSearchController extends Controller {
 
         if($cbSurvey == 'on') {
 
-            // Get standard simple search results, then filter by user inputs
-            $results = $res->getQuestionnaireData(0, 30, $Keywords, False, True);
+            if ($Keywords == '') {
 
-            // Temp array for filtered results
-            $resultsArray = array();
+                $results = Yii::app()->session["results"];
+                $count = Yii::app()->session["resCount"];
 
-            if ($Thematic != '') {
+            } else {
 
-                // For each result, add those with desired theme to temp array
+                // Get standard simple search results, then filter by user inputs
+                $results = $res->getQuestionnaireData(0, 30, $Keywords, False, True);
 
-                foreach ($results as $surveyResult) {
-                Log::toFile(print_r($surveyResult, true));
+                // Temp array for filtered results
+                $resultsArray = array();
 
-                    if ($surveyResult->QuestionThematicGroup === $Thematic) {
-                        $resultsArray[] = $surveyResult;
+                if ($Thematic != '') {
+
+                    // For each result, add those with desired theme to temp array
+
+                    foreach ($results as $surveyResult) {
+                        Log::toFile(print_r($surveyResult, true));
+
+                        if ($surveyResult->QuestionThematicGroup === $Thematic) {
+                            $resultsArray[] = $surveyResult;
+                        }
                     }
+
+                    // Copy temp array to results array
+                    $results = $resultsArray;
                 }
 
-                // Copy temp array to results array
-                $results = $resultsArray;
-            }
+                // Clear temp array
+                $resultsArray = array();
 
-            // Clear temp array
-            $resultsArray = array();
-
-            if ($Survey != '') {
-                foreach ($results as $surveyResult) {
+                if ($Survey != '') {
+                    foreach ($results as $surveyResult) {
 //                Log::toFile(print_r($surveyResult, true));
 
-                    if ($surveyResult->SurveyName === $Survey) {
-                        $resultsArray[] = $surveyResult;
+                        if ($surveyResult->SurveyName === $Survey) {
+                            $resultsArray[] = $surveyResult;
+                        }
                     }
+                    // Copy temp array to results
+                    $results = $resultsArray;
                 }
-                // Copy temp array to results
-                $results = $resultsArray;
-            }
 
-            //Clear temp array
-            $resultsArray = array();
+                //Clear temp array
+                $resultsArray = array();
 
-            // Filter out survey dates which don't lay between users requested dates
+                // Filter out survey dates which don't lay between users requested dates
 
-            if ($dateFrom != '' && $dateTo != '') {
+                if ($dateFrom != '' && $dateTo != '') {
 
-                Log::toFile("user dates " . $dateFrom . " - " . $dateTo);
+                    Log::toFile("user dates " . $dateFrom . " - " . $dateTo);
 
-                // Create date objects from users input field values
-                $dateBegin = DateTime::createFromFormat('Y/m/d', $dateFrom);
-                $dateEnd = DateTime::createFromFormat('Y/m/d', $dateTo);
+                    // Create date objects from users input field values
+                    $dateBegin = DateTime::createFromFormat('Y/m/d', $dateFrom);
+                    $dateEnd = DateTime::createFromFormat('Y/m/d', $dateTo);
 
-                foreach ($results as $surveyResult) {
+                    foreach ($results as $surveyResult) {
 
 //                    Log::toFile(print_r($surveyResult, true));
 
-                    // Create date objects from database survey record
+                        // Create date objects from database survey record
 
-                    $surveyStart = DateTime::createFromFormat('Y-m-d', $surveyResult->surveyStart);
-                    $surveyEnd = DateTime::createFromFormat('Y-m-d', $surveyResult->surveyEnd);
+                        $surveyStart = DateTime::createFromFormat('Y-m-d', $surveyResult->surveyStart);
+                        $surveyEnd = DateTime::createFromFormat('Y-m-d', $surveyResult->surveyEnd);
 
 //                    Log::toFile("survey dates " . $surveyResult->surveyStart . " - " . $surveyResult->surveyEnd);
 
-                    // If Survey start date is between user dates,
-                    // or if survey end date is between user dates,
-                    // then the survey overlaps the desired time period,
-                    // so add it to the temp array
+                        // If Survey start date is between user dates,
+                        // or if survey end date is between user dates,
+                        // then the survey overlaps the desired time period,
+                        // so add it to the temp array
 
-                    if (($surveyStart >= $dateBegin && $surveyStart <= $dateEnd) || ($surveyEnd >= $dateBegin && $surveyEnd <= $dateEnd) )
-                    {
-                        Log::toFile('Dates are within the range.');
-                        $resultsArray[] = $surveyResult;
+                        if (($surveyStart >= $dateBegin && $surveyStart <= $dateEnd) || ($surveyEnd >= $dateBegin && $surveyEnd <= $dateEnd) )
+                        {
+                            Log::toFile('Dates are within the range.');
+                            $resultsArray[] = $surveyResult;
+                        }
+
                     }
-
+                    // copy temp array to results
+                    $results = $resultsArray;
                 }
-                // copy temp array to results
-                $results = $resultsArray;
+
+                $count = count($results);
+
+                Yii::app()->session["results"] = $results;
+                Yii::app()->session["resCount"] = $count;
             }
 
-            $count = count($results);
+            $pageResults = array();
+            $cnt = $start;
+            $cnt_end = $cnt + $limit;
+            while( $cnt <= $cnt_end && $cnt < sizeof($results)){
+                $pageResults[] = ($results[$cnt]);
+                $cnt += 1;
+            }
+
+            $results = $pageResults;
         }
 
         // Qual searches
 
         if($cbQual == 'on') {
-            $qualResults = $res->getQualData($Keywords);
 
-            // Temp array for filtered results
-            $resultsArray = array();
+            if ($Keywords == '') {
 
-            if ($Thematic != '') {
+                $qualResults = Yii::app()->session["qualResults"];
+                $qualCount = Yii::app()->session["qualResCount"];
 
-                // For each result, add those with desired theme to temp array
-                foreach ($qualResults as $qualResult) {
+            } else {
+
+
+                $qualResults = $res->getQualData($Keywords);
+
+                // Temp array for filtered results
+                $resultsArray = array();
+
+                if ($Thematic != '') {
+
+                    // For each result, add those with desired theme to temp array
+                    foreach ($qualResults as $qualResult) {
 //                    Log::toFile(print_r($surveyResult, true));
 
-                    if ($qualResult->thematicgroup === $Thematic) {
-                        $resultsArray[] = $qualResult;
-                    }
-                }
-
-                // Copy temp array to results array
-                $qualResults = $resultsArray;
-            }
-
-            // Temp array for date matching of qual results
-            $qualResultsArray = array();
-            if ($dateFrom != '' && $dateTo != '') {
-
-                // Create date objects from users input field values
-                $dateBegin = DateTime::createFromFormat('Y/m/d', $dateFrom);
-                $dateEnd = DateTime::createFromFormat('Y/m/d', $dateTo);
-
-                foreach ($qualResults as $qualResult) {
-
-                    Log::toFile(print_r($qualResult, true));
-
-                    // Create date object for db qual result
-                    // check if it lays between user specified dates
-                    $qualDate = DateTime::createFromFormat('Y-m-d', $qualResult->qdate);
-
-                    if ($qualDate >= $dateBegin && $qualDate <= $dateEnd)
-                    {
-                        $qualResultsArray[] = $qualResult;
+                        if ($qualResult->thematicgroup === $Thematic) {
+                            $resultsArray[] = $qualResult;
+                        }
                     }
 
+                    // Copy temp array to results array
+                    $qualResults = $resultsArray;
                 }
-                // Copy temp array to qual results
-                $qualResults = $qualResultsArray;
+
+                // Temp array for date matching of qual results
+                $qualResultsArray = array();
+                if ($dateFrom != '' && $dateTo != '') {
+
+                    // Create date objects from users input field values
+                    $dateBegin = DateTime::createFromFormat('Y/m/d', $dateFrom);
+                    $dateEnd = DateTime::createFromFormat('Y/m/d', $dateTo);
+
+                    foreach ($qualResults as $qualResult) {
+
+                        Log::toFile(print_r($qualResult, true));
+
+                        // Create date object for db qual result
+                        // check if it lays between user specified dates
+                        $qualDate = DateTime::createFromFormat('Y-m-d', $qualResult->qdate);
+
+                        if ($qualDate >= $dateBegin && $qualDate <= $dateEnd)
+                        {
+                            $qualResultsArray[] = $qualResult;
+                        }
+
+                    }
+                    // Copy temp array to qual results
+                    $qualResults = $qualResultsArray;
+                }
+
+                $qualCount = count($qualResults);
+
+                Yii::app()->session["qualResults"] = $qualResults;
+                Yii::app()->session["qualResCount"] = $qualCount;
             }
 
-            $qualCount = count($qualResults);
+            $pageResults = array();
+            $cnt = $start;
+            $cnt_end = $cnt + $limit;
+            while( $cnt <= $cnt_end && $cnt < sizeof($qualResults)){
+                $pageResults[] = ($qualResults[$cnt]);
+                $cnt += 1;
+            }
+
+            $qualResults = $pageResults;
         }
 
-//        $resultsset = New results();
-//        $resultsset->totalCount = $count;
-//        $resultsset->questions = json_encode($results);
-//
-//        $resultsset = New results();
-//        $resultsset->totalCount = $count;
-//        $resultsset->questions = json_encode($results);
 
         $str = '{"success":"' . true . '", "results":' . json_encode($results) . ', "totalCount":"' . $count . '", "qualTotalCount":"' . $qualCount . '", "qualResults":' . json_encode($qualResults) . '}';
 

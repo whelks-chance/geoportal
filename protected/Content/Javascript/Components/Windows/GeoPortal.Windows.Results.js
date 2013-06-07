@@ -37,7 +37,8 @@
 			proxy: this.resProxy,
 			groupField: 'SurveyName',
 			baseParams: {
-				mappable: false
+				mappable: false,
+                searchType: 'survey'
 			}
 		});
 		this.qualStore = new Ext.data.GroupingStore({
@@ -48,7 +49,10 @@
 				totalProperty: 'qualTotalCount'
 			}),
 			proxy: this.qualProxy,
-			groupField: 'thematicgroup'
+			groupField: 'thematicgroup',
+            baseParams: {
+                searchType: 'qual'
+            }
 		});
 		this.group = new Ext.grid.GroupingView({ forceFit: true, groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})' });
 		this.qualgroup = new Ext.grid.GroupingView({ forceFit: true, groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})' });
