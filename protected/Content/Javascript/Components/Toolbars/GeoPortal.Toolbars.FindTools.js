@@ -351,7 +351,8 @@ function doSpatialSearch(geography) {
                     animateTarget: Ext.getCmp("btnAdvSearch").el,
                     items: [advSearchPanel]
                 });
-
+                var spatialCheck = Ext.getCmp('cbSpatial');
+                var spatialVal = spatialCheck.setValue(true);
                 advSearch.show();
             } else {
 

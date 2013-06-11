@@ -292,7 +292,7 @@ class SpatialDataController extends Controller {
                 }
 //                Log::toFile('quantResults ' . print_r($pageResults, true));
 
-                $Str = '{"totalCount":' . $count . ',"qualData":' . json_encode($pageResults) . '}';
+                $Str = '{"qualTotalCount":' . $count . ',"qualData":' . json_encode($pageResults) . '}';
                 break;
             case "Grey":
 

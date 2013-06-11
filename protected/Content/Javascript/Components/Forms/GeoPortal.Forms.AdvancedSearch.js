@@ -1,6 +1,6 @@
 ﻿GeoPortal.Forms.AdvancedSearch = Ext.extend(Ext.form.FormPanel, {
     width: Ext.getBody().getViewSize().width * 0.8,
-    height: Ext.getBody().getViewSize().height * 0.8,
+    height: Ext.getBody().getViewSize().height * 0.9,
 //    closable: true,
 //    height: '100%',
 //    padding: 10,
@@ -11,6 +11,8 @@
     id: 'advPanel',
     geographyRegion: null,
     doAdvancedSearch: function () {
+        console.log('geog1 ' + this.geographyRegion);
+
         this.on({
             'minimize': {
                 fn: this.min
@@ -21,26 +23,29 @@
         var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:"Retrieving Search Results...."});
         loadMask.show();
 
-        advPanel.getForm().submit({
-            url: advancedSearchURL,
-            timeout: 120,
-            method: 'post',
-            params: {
-                dateFrom: advPanel.getForm().getValues().dteFrom,
-                dateTo: advPanel.getForm().getValues().dteTo
-            },
-            success: function (form, action) {
-                Ext.getCmp("advSearch").hide();
+        var spatialCheck = Ext.getCmp('cbSpatial');
+        var spatialVal = spatialCheck.getValue();
 
-                var textBox = Ext.getCmp('txtAdvKeyword');
-                var val = textBox.getValue();
+        var geographyField = Ext.getCmp('geographyText');
+        var geographyValue = geographyField.getValue();
 
-                if (this.geographyRegion) {
-                    console.log('geography');
+        console.log('spatial' + spatialVal)
 
-//                    var loadMask = new Ext.LoadMask(Ext.getBody(), { msg: "Retrieving Spatial Search Results....", removeMask: false });
-//                    loadMask.show();
+        if (spatialVal === true) {
 
+            console.log('geography');
+
+            advPanel.getForm().submit({
+                url: advancedSpatialSearchURL,
+                timeout: 120,
+                method: 'post',
+                scope: this,
+                params: {
+                    dateFrom: advPanel.getForm().getValues().dteFrom,
+                    dateTo: advPanel.getForm().getValues().dteTo
+//                    geography: geographyValue
+                },
+                success: function (form, action) {
                     if (Ext.getCmp('spatResWin') != null) {
 
                         Ext.getCmp('spatResWin').close();
@@ -52,42 +57,80 @@
                         }
                     );
 
-                    var grdqual = Ext.getCmp('grdQual');
-                    var grid = Ext.getCmp('grdSurvey');
-
                     searchResults.doLayout();
-                    grdqual.store.load(
-                        {
-                            params:{
-                                geography:this.geographyRegion,
-                                start:0,
-                                limit:15,
-                                type:'Qual'
-                            },
-                            scope:this,
-                            callback:function () {
-                                searchResults.doLayout();
-                                grid.store.load(
-                                    {
-                                        params:{
-                                            start:0,
-                                            limit:15,
-                                            type:'Quant'
-                                        },
-                                        scope:this,
-                                        callback:function () {
-                                            console.log(searchResults);
-                                            searchResults.doLayout();
-                                            searchResults.show();
-                                            loadMask.hide();
-                                        }
-                                    }
-                                );
+                    searchResults.qualStore.proxy = new Ext.data.HttpProxy({ api:{
+                        read:advancedSpatialSearchURL
+                    }
+                    });
+                    searchResults.resStore.proxy = new Ext.data.HttpProxy({ api:{
+                        read:advancedSpatialSearchURL
+                    }
+                    });
+                    var responseData = Ext.decode(action.response.responseText);
 
-                            }
-                        }
-                    );
-                } else {
+                    searchResults.qualStore.loadData(responseData);
+                    searchResults.resStore.loadData(responseData);
+                    searchResults.show();
+                    loadMask.hide();
+
+//                    searchResults.qualStore.load(
+//                        {
+//                            params:{
+////                                geography: geographyValue,
+//                                start:0,
+//                                limit:15,
+//                                type:'Qual'
+//                            },
+//                            scope:this,
+//                            callback:function () {
+//                                searchResults.doLayout();
+//                                searchResults.resStore.load(
+//                                    {
+//                                        params:{
+//                                            start:0,
+//                                            limit:15,
+//                                            type:'Quant'
+//                                        },
+//                                        scope:this,
+//                                        callback:function () {
+//                                            console.log(searchResults);
+//                                            searchResults.doLayout();
+//                                            searchResults.show();
+//                                            loadMask.hide();
+//                                        }
+//                                    }
+//                                );
+//
+//                            }
+//                        }
+//                    );
+                },
+                failure: function (form, action) {
+                    console.log(action);
+                    Ext.Msg.alert("Error", action.result.message);
+                }
+            })
+
+
+        } else {
+            console.log('no geog');
+
+            advPanel.getForm().submit({
+                url: advancedSearchURL,
+                timeout: 120,
+                method: 'post',
+                scope: this,
+                params: {
+                    dateFrom: advPanel.getForm().getValues().dteFrom,
+                    dateTo: advPanel.getForm().getValues().dteTo
+//                geography: this.geographyRegion
+                },
+                success: function (form, action) {
+                    Ext.getCmp("advSearch").hide();
+
+                    var textBox = Ext.getCmp('txtAdvKeyword');
+                    var val = textBox.getValue();
+
                     var resWin = new GeoPortal.Windows.Results({ title:'Results - Search terms "' + val + '"' });
                     resWin.qualStore.removeAll();
                     resWin.resStore.removeAll();
@@ -103,27 +146,18 @@
 
                     var responseData = Ext.decode(action.response.responseText);
 
-                    console.log('adv response : ' + responseData);
-
                     resWin.qualStore.loadData(responseData);
                     resWin.resStore.loadData(responseData);
                     resWin.show();
                     loadMask.hide();
 
-//                    resWin.qualStore.load({params:{keywords:val, start:0, limit:15, cbQual:'on'}});
-//                    resWin.resStore.load({ url:advancedSearchURL, params:{ keywords:val, start:0, limit:15, mappable:false, cbSurvey:'on' }, callback:function () {
-//                        resWin.show();
-//                        loadMask.hide();
-//                    }
-//                    });
+                },
+                failure: function (form, action) {
+                    console.log(action);
+                    Ext.Msg.alert("Error", action.result.message);
                 }
-            },
-            failure: function (form, action) {
-                console.log(action);
-                Ext.Msg.alert("Error", action.result.message);
-            }
-        })
-
+            })
+        }
     },
     FormReset : function() {
         var advPanel = Ext.getCmp('advPanel');
@@ -186,6 +220,7 @@
                     icon: 'images/silk/magnifier.png',
                     text: 'Search',
                     tooltip: 'Submit Search',
+                    scope: this,
                     handler: this.doAdvancedSearch
                 },
                 {
@@ -250,6 +285,54 @@
                                         checked : true,
                                         anchor: '100%',
                                         fieldLabel: 'Tags'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                xtype: 'fieldset',
+                title: 'Spatial',
+                items: [
+                    {
+                        xtype: 'container',
+                        layout: {
+                            type: 'column'
+                        },
+                        items: [
+                            {
+                                xtype: 'container',
+                                layout: {
+                                    type: 'form'
+                                },
+                                columnWidth: 0.2,
+                                items: [
+                                    {
+                                        xtype: 'checkbox',
+                                        id: 'cbSpatial',
+                                        checked : false,
+                                        anchor: '100%',
+                                        fieldLabel: 'Limit search within area'
+                                    }
+                                ]
+                            },
+                            {
+                                xtype: 'container',
+                                layout: {
+                                    type: 'form'
+                                },
+                                columnWidth: 0.8,
+                                items: [
+                                    {
+                                        xtype: 'textfield',
+                                        id: 'geographyText',
+                                        emptyText: 'Spatial description (Advanced)',
+                                        anchor: '100%',
+                                        value: this.geographyRegion,
+//                                        fieldLabel: 'Spatial description',
+                                        name: 'geography'
                                     }
                                 ]
                             }
@@ -389,27 +472,8 @@
                     }
                 ]
             }
-//            {
-//                xtype: 'container',
-//                id: 'geography',
-//                layout: {
-//                    defaultAnchor: '100%',
-//                    type: 'form'
-//                },
-//                items: [
-//                    {
-//                        fieldLabel      : 'geographyarea',
-//                        id              : 'geoarea',
-//                        name            : 'csv',
-//                        xtype           : 'textarea',
-//                        autoScroll      : true,
-//                        height          : 60,
-//                        anchor: '100%'
-//                    }
-//                ]
-//            }
         ];
-        console.log(this.geographyRegion);
+        console.log('geog init ' + this.geographyRegion);
         GeoPortal.Forms.AdvancedSearch.superclass.initComponent.call(this);
     }
 });

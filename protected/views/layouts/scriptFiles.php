@@ -30,6 +30,8 @@ include('variables.php')
     var simpleSearchURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Search/SimpleSearch';
     var qualSearchURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Search/QualSimpleSearch';
     var advancedSearchURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdvancedSearch/AdvancedSearch';
+    var advancedSpatialSearchURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdvancedSearch/AdvancedSpatialSearch';
+
     var advancedSearchMetaURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdvancedSearch/AdvancedSearchMeta';
     var remoteSourceURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteSources';
     var remoteDataKeywordSearchURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/doKeywordSearch';

@@ -212,7 +212,7 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                 fields: ['sName', 'name', 'thematic', 'creator', 'recorddate', 'gName', 'Added'],
                 root: 'qualData',
                 id: 'dsQualData',
-                totalProperty: 'totalCount'
+                totalProperty: 'qualTotalCount'
             }),
             baseParams: {
                 type: 'Qual'
