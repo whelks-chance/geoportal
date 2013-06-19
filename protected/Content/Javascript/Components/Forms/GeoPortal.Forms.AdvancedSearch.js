@@ -73,45 +73,23 @@
                     searchResults.show();
                     loadMask.hide();
 
-//                    searchResults.qualStore.load(
-//                        {
-//                            params:{
-////                                geography: geographyValue,
-//                                start:0,
-//                                limit:15,
-//                                type:'Qual'
-//                            },
-//                            scope:this,
-//                            callback:function () {
-//                                searchResults.doLayout();
-//                                searchResults.resStore.load(
-//                                    {
-//                                        params:{
-//                                            start:0,
-//                                            limit:15,
-//                                            type:'Quant'
-//                                        },
-//                                        scope:this,
-//                                        callback:function () {
-//                                            console.log(searchResults);
-//                                            searchResults.doLayout();
-//                                            searchResults.show();
-//                                            loadMask.hide();
-//                                        }
-//                                    }
-//                                );
-//
-//                            }
-//                        }
-//                    );
                 },
                 failure: function (form, action) {
-                    console.log(action);
-                    Ext.Msg.alert("Error", action.result.message);
+                    switch (action.failureType) {
+                        case Ext.form.Action.CLIENT_INVALID:
+                            Ext.Msg.alert('Failure', 'Form contains invalid values.');
+                            break;
+                        case Ext.form.Action.CONNECT_FAILURE:
+                            Ext.Msg.alert('Failure', 'Communication failure - please try again');
+                            break;
+                        case Ext.form.Action.SERVER_INVALID:
+                            Ext.Msg.alert('Failure', 'Error with username or password, please check and try again.');
+                            break;
+                        default:
+                            Ext.Msg.alert("Error", 'Service failure, please consider posting a bug report');
+                    }
                 }
             })
-
-
         } else {
             console.log('no geog');
 

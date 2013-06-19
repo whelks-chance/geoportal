@@ -62,10 +62,10 @@ GeoPortal.Panels.TreePanel = Ext.extend(Ext.Panel, {
                             title: 'Legend for ' + selNode.attributes.text,
                             width: 250,
                             x:10,
-                            y: 450,
+                            y: 430,
                             resizable: false,
                             items:[new Ext.BoxComponent({
-                                html: '<div style="background-color: #FFFFFF; width: 300, height: 400"><p>Successful</p><img src="' + selNode.attributes.legendURL + '" /></div>'
+                                html: '<div style="background-color: #FFFFFF; width: 300, height: 400"><img src="' + selNode.attributes.legendURL + '" /></div>'
                             })]
                         });
 

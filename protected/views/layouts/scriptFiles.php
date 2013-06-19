@@ -48,6 +48,9 @@ include('variables.php')
     var SpatialRefSubUnitsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialRefSubUnit';
     var SpatialRefIndSubUnitsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getRefSpatialIndivudalUnits';
     var SpatialLabelsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialLabel';
+    var createLegendURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/createLegend';
+    var createLayerLogoURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/createLayerLogo';
+
     var SpatialSearch = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/SpatialSearch';
     var VerifySpatialSearch = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/VerifySpatialSearch';
     var DynamicSLD = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/DynamicSLD';
@@ -69,7 +72,7 @@ include('variables.php')
     var getSpatialDataSets = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialDataSets';
 
     var geoserverWMS = '<? echo variables::$geoserverRoot ?>';
-    var geoportalAddr = '<? echo variables::$geoportalAddr ?>';
+    var geoportalAddr = '<? echo variables::geoportalAddr() ?>';
 
 
 </script>

@@ -111,7 +111,7 @@ class AdvancedSearchController extends Controller {
             } else {
 
                 $results = $allSpatialResults->quantData;
-//                Log::toFile('quant ' . print_r($results, true));
+                Log::toFile('quant ' . print_r($results, true));
 
                 // Temp array for filtered results
                 $resultsArray = array();
@@ -121,7 +121,6 @@ class AdvancedSearchController extends Controller {
                     // For each result, add those with desired theme to temp array
 
                     foreach ($results as $surveyResult) {
-                        Log::toFile(print_r($surveyResult, true));
 
                         if ($surveyResult->QuestionThematicGroup === $Thematic) {
                             $resultsArray[] = $surveyResult;
@@ -220,6 +219,8 @@ class AdvancedSearchController extends Controller {
             } else {
 
                 $qualResults = $allSpatialResults->qualData;
+                Log::toFile(print_r($qualResults, true));
+
 
                 // Temp array for filtered results
                 $resultsArray = array();
@@ -230,7 +231,7 @@ class AdvancedSearchController extends Controller {
                     foreach ($qualResults as $qualResult) {
 //                    Log::toFile(print_r($surveyResult, true));
 
-                        if ($qualResult->thematicgroup === $Thematic) {
+                        if ($qualResult->thematic === $Thematic) {
                             $resultsArray[] = $qualResult;
                         }
                     }

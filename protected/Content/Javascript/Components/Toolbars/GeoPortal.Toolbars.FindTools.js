@@ -399,7 +399,6 @@ function doSpatialSearch(geography) {
                                     },
                                     scope: this,
                                     callback: function () {
-                                        console.log(searchResults);
                                         searchResults.doLayout();
                                         searchResults.show();
                                         loadMask.hide();

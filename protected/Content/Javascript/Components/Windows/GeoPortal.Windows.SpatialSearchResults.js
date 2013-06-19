@@ -871,12 +871,16 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                         icon: 'images/silk/add.png',
                         text: 'Add to Map',
                         handler: function () {
-                            var root = Ext.getCmp('layers2add').getRootNode();
-                            var LayerType = "Proportional";
 
+                            var rootCMP = Ext.getCmp('layers2add');
+
+                            var root = rootCMP.getRootNode();
+
+                            var LayerType = "Proportional";
 
                             for (var i = 0; i < root.childNodes.length; i++) {
                                 var node = root.childNodes[i];
+
                                 if (node.attributes.text == 'Survey Data') {
                                     for (var q = 0; q < node.childNodes.length; q++) {
                                         var layer = node.childNodes[q];
@@ -889,31 +893,27 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
                                         showResults(layer.attributes.geographies, layer.attributes.text, fromColour, layer.attributes.colourName, false, layer.attributes.unit, 'Survey Data', layer.attributes.SID, layer.attributes.id, layer.attributes.tName, min, max);
 
 
-
                                     }
 
                                 } else if (node.attributes.text == 'Qualitative Data') {
+
                                     for (var p = 0; p < node.childNodes.length; p++) {
                                         var quallayer = node.childNodes[p];
 
-
-
-
                                         var id = buildQualMapLayer(quallayer.attributes.text, "Qualitative Data", "Transcripts", quallayer.attributes.SID, quallayer.attributes.text, LayerType, quallayer.attributes.colourName);
 
-                                        for (var i = 0; i < quallayer.attributes.geographies.length; i++) {
-                                            var lat = quallayer.attributes.geographies[i].lat;
-                                            var lon = quallayer.attributes.geographies[i].lon
+                                        for (var geogs = 0; geogs < quallayer.attributes.geographies.length; geogs++) {
+                                            var lat = quallayer.attributes.geographies[geogs].lat;
+                                            var lon = quallayer.attributes.geographies[geogs].lon
 
 
                                             var feature = new Object();
                                             feature.lat = lat;
                                             feature.lon = lon;
                                             feature.colour = quallayer.attributes.colourName;
-                                            feature.counts = (quallayer.attributes.geographies[i].counts * 2);
-                                            feature.title = quallayer.attributes.geographies[i].name;
+                                            feature.counts = (quallayer.attributes.geographies[geogs].counts * 2);
+                                            feature.title = quallayer.attributes.geographies[geogs].name;
                                             feature.QID = quallayer.attributes.SID;
-
 
                                             addQualFeature(feature, id, LayerType)
 
@@ -922,19 +922,21 @@ GeoPortal.Windows.SpatialResults = Ext.extend(Ext.Window, {
 
                                     }
                                 } else {
+                                    console.log('else')
+
                                     var id = buildQualMapLayer(quallayer.attributes.text, "Qualitative Data", "Transcripts", quallayer.attributes.SID, quallayer.attributes.text, LayerType);
 
-                                    for (var i = 0; i < quallayer.attributes.geographies.length; i++) {
-                                        var lat = quallayer.attributes.geographies[i].lat;
-                                        var lon = quallayer.attributes.geographies[i].lon
+                                    for (var geo = 0; geo < quallayer.attributes.geographies.length; geo++) {
+                                        var lat = quallayer.attributes.geographies[geo].lat;
+                                        var lon = quallayer.attributes.geographies[geo].lon
 
 
                                         var feature = new Object();
                                         feature.lat = lat;
                                         feature.lon = lon;
                                         feature.colour = quallayer.attributes.colourName;
-                                        feature.counts = (quallayer.attributes.geographies[i].counts * 2);
-                                        feature.title = quallayer.attributes.geographies[i].name;
+                                        feature.counts = (quallayer.attributes.geographies[geo].counts * 2);
+                                        feature.title = quallayer.attributes.geographies[geo].name;
                                         feature.QID = quallayer.attributes.SID;
                                         addQualFeature(feature, id, LayerType)
 

@@ -432,6 +432,8 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
 
             maxLength += SLD.conn.responseText.length;
 
+            fromColour = fromColour.replace(/#/g, '');
+            toColour = toColour.replace(/#/g, '');
 
 
             //"http://23.21.162.107/geoportal/services/SLDProvider.ashx?json=";
@@ -439,9 +441,15 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
             var startUrl = geoportalAddr + 'r=SpatialData/DynamicSLD';
 
 //            var params = encodeURIComponent('{"fromColour":"' + fromColour + '","toColour":"' + toColour + '","fieldName":"successful","min":' + min + ',"max": ' + max + ',"classes":' + 5 + ',"layer": "' + layerName + '"}');
-            var params = encodeURIComponent('&fromColour=' + fromColour + '&toColour=' + toColour + 'fieldName=successful' + '&min=' + min + '&max=' + max + '&classes=' + 5 + '&layer=' + layerName);
+//            var params = encodeURIComponent('&fromColour=' + fromColour + '&toColour=' + toColour + '&fieldName=successful' + '&min=' + min + '&max=' + max + '&classes=' + 5 + '&layer=' + layerName);
+            var params = '&fromColour=' + fromColour + '&toColour=' + toColour + '&fieldName=successful' + '&min=' + min + '&max=' + max + '&classes=' + 5 + '&layer=' + layerName;
 
-            var fullURL = startUrl + params;
+//            console.log('url + params: ' + startUrl + params);
+
+            var fullURL = startUrl + encodeURIComponent(params);
+//            var fullURL = startUrl + params;
+
+//            console.log('url + enc params: ' + fullURL);
             var new_layer;
 
             if (CQL_Filter == false) {
@@ -510,8 +518,19 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
 //            var icon = encodeURI("http://131.251.172.95:7000/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:SQL&sld=" + fullURL);
 //            var LegendURL = encodeURI("http://131.251.172.95:7000/geoserver/WISERD/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=WISERD:SQL&sld=" + fullURL);
 
-            var icon = encodeURI(geoserverWMS + "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:SQL&sld=" + fullURL);
-            var LegendURL = encodeURI(geoserverWMS + "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=WISERD:SQL&sld=" + fullURL);
+
+//            var icon = encodeURI(geoserverWMS + "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:SQL&sld=" + startUrl + params);
+            var icon = encodeURI(geoserverWMS + "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=30&LAYER=WISERD:SQL&sld=") + encodeURIComponent(startUrl + params);
+
+//            var LegendURL = encodeURI(geoserverWMS + "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=WISERD:SQL&sld=") + encodeURIComponent(startUrl + params);
+//            var LegendURL = encodeURI(geoserverWMS + "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=WISERD:SQL&sld=" + fullURL);
+
+            var LegendURL = geoportalAddr + 'r=SpatialData/createLegend' + params;
+
+            var icon = geoportalAddr + 'r=SpatialData/createLayerLogo' + '&toColour=' + toColour;
+
+            console.log('icon url: ' + icon);
+            console.log('legend url: ' + LegendURL);
 
             var mp = Ext.getCmp('mappanel');
 
@@ -565,6 +584,7 @@ function showResults(layers, layerName, fromColour, toColour, Choropleth, unit, 
                             infoLayers.push(newNode);
                             subNodes.childNodes[i].appendChild(newNode);
 
+                            console.log(newNode);
                         }
                     }
                 }

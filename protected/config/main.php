@@ -5,6 +5,14 @@
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
+ob_start('My_OB');
+function My_OB($str, $flags)
+{
+    //remove UTF-8 BOM
+    $str = preg_replace("/\xef\xbb\xbf/","",$str);
+
+    return $str;
+}
 return array(
     'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
     'name'=>'WISERD',

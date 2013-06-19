@@ -396,11 +396,102 @@ class SpatialDataController extends Controller {
         $minMax[0] = $min;
         $minMax[1] = $max;
 
-        echo json_encode($minMax);
+        echo json_encode($minMax, JSON_NUMERIC_CHECK);
 
     }
 
-    // <CompressFilter()>
+    Public Function actioncreateLayerLogo() {
+        $toColour = "";
+        if(isset($_GET['toColour'])) {
+            $toColour = $_GET['toColour'];
+        }
+
+        $LegendBuilder = New LegendBuilder();
+
+        $LegendBuilder->CreateLayerLogo($toColour);
+
+    }
+
+        Public Function actioncreateLegend() {
+        $type = "";
+        if(isset($_POST['type'])) {
+            $type = $_POST['type'];
+        }
+        $fromColour = "";
+        if(isset($_POST['fromColour'])) {
+            $fromColour = $_POST['fromColour'];
+        }
+        $toColour = "";
+        if(isset($_POST['toColour'])) {
+            $toColour = $_POST['toColour'];
+        }
+        $fieldName = "";
+        if(isset($_POST['fieldName'])) {
+            $fieldName = $_POST['fieldName'];
+        }
+        $min = "";
+        if(isset($_POST['min'])) {
+            $min = $_POST['min'];
+        }
+        $max = "";
+        if(isset($_POST['max'])) {
+            $max = $_POST['max'];
+        }
+        $classes = "";
+        if(isset($_POST['classes'])) {
+            $classes = $_POST['classes'];
+        }
+        $layer = "";
+        if(isset($_POST['layer'])) {
+            $layer = $_POST['layer'];
+        }
+        $labelName = "";
+        if(isset($_POST['labelName'])) {
+            $labelName = $_POST['labelName'];
+        }
+
+        if(isset($_GET['type'])) {
+            $type = $_GET['type'];
+        }
+        if(isset($_GET['fromColour'])) {
+            $fromColour = $_GET['fromColour'];
+        }
+        if(isset($_GET['toColour'])) {
+            $toColour = $_GET['toColour'];
+        }
+        if(isset($_GET['fieldName'])) {
+            $fieldName = $_GET['fieldName'];
+        }
+        if(isset($_GET['min'])) {
+            $min = $_GET['min'];
+        }
+        if(isset($_GET['max'])) {
+            $max = $_GET['max'];
+        }
+        if(isset($_GET['classes'])) {
+            $classes = $_GET['classes'];
+        }
+        if(isset($_GET['layer'])) {
+            $layer = $_GET['layer'];
+        }
+        if(isset($_GET['labelName'])) {
+            $labelName = $_GET['labelName'];
+        }
+
+
+        $pattern = '/[^0-9]*/';
+        $min = preg_replace($pattern,'', $min);
+        $max = preg_replace($pattern,'', $max);
+
+        $LegendBuilder = New LegendBuilder();
+
+        Log::toFile('legend POST ' . print_r($_POST, true));
+        Log::toFile('legend GET ' . print_r($_GET, true));
+
+        $LegendBuilder->BuildLegend($type, $fromColour, $toColour, $fieldName, intval($min), intval($max), intval($classes), $layer, $labelName);
+
+    }
+
     Public Function actionDynamicSLD() {
         $type = "";
         if(isset($_POST['type'])) {
@@ -439,11 +530,43 @@ class SpatialDataController extends Controller {
             $labelName = $_POST['labelName'];
         }
 
+        if(isset($_GET['type'])) {
+            $type = $_GET['type'];
+        }
+        if(isset($_GET['fromColour'])) {
+            $fromColour = $_GET['fromColour'];
+        }
+        if(isset($_GET['toColour'])) {
+            $toColour = $_GET['toColour'];
+        }
+        if(isset($_GET['fieldName'])) {
+            $fieldName = $_GET['fieldName'];
+        }
+        if(isset($_GET['min'])) {
+            $min = $_GET['min'];
+        }
+        if(isset($_GET['max'])) {
+            $max = $_GET['max'];
+        }
+        if(isset($_GET['classes'])) {
+            $classes = $_GET['classes'];
+        }
+        if(isset($_GET['layer'])) {
+            $layer = $_GET['layer'];
+        }
+        if(isset($_GET['labelName'])) {
+            $labelName = $_GET['labelName'];
+        }
+
+
         $pattern = '/[^0-9]*/';
         $min = preg_replace($pattern,'', $min);
         $max = preg_replace($pattern,'', $max);
 
         $SLD = New SLD();
+
+        Log::toFile('POST ' . print_r($_POST, true));
+        Log::toFile('GET ' . print_r($_GET, true));
 
         $xmlDoc = $SLD->DynamicSLD2($type, $fromColour, $toColour, $fieldName, intval($min), intval($max), intval($classes), $layer, $labelName);
 //

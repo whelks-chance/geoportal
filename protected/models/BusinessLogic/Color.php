@@ -17,5 +17,9 @@ class Color {
     public $G = "";
     public $B = "";
 
+    public function toString(){
+        return $this->R . '-' . $this->G . '-' . $this->B;
+    }
+
 
 }

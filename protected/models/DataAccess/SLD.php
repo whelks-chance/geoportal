@@ -22,9 +22,9 @@ class SLD {
 
         $writer->openMemory();
 
-        $writer->startDocument('1.0', 'utf-8');
+        $writer->startDocument('1.0', 'UTF-8');
 
-//        $writer->setIndent(true);
+        $writer->setIndent(true);
 
 
         // '$writer->WriteStartDocument();
@@ -374,7 +374,7 @@ class SLD {
 
 //        $xD = $this->rmBOM($xD);
 
-//        Log::toFile($xD, "/var/www/logging/sld.xml", false, false);
+        Log::toFile($xD, "/var/www/logging/sld.xml", false, false);
 
         Return $xD;
     }
@@ -388,7 +388,7 @@ class SLD {
 //    }
 
 
-    Private Function generateColourRange($fromColour, $ToColour, $intervalRange, $intervalCount, $min) {
+    public static Function generateColourRange($fromColour, $ToColour, $intervalRange, $intervalCount, $min) {
 
 
         $classInterval = $min;
@@ -430,7 +430,7 @@ class SLD {
     }
 
 
-    Private Function generateEqualInterval($Total, $intervals) {
+    public static Function generateEqualInterval($Total, $intervals) {
 
         // ' Dim
 
