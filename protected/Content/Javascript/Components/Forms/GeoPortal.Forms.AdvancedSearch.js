@@ -104,7 +104,7 @@
 //                geography: this.geographyRegion
                 },
                 success: function (form, action) {
-                    Ext.getCmp("advSearch").hide();
+//                    Ext.getCmp("advSearch").hide();
 
                     var textBox = Ext.getCmp('txtAdvKeyword');
                     var val = textBox.getValue();
@@ -451,7 +451,6 @@
                 ]
             }
         ];
-        console.log('geog init ' + this.geographyRegion);
         GeoPortal.Forms.AdvancedSearch.superclass.initComponent.call(this);
     }
 });

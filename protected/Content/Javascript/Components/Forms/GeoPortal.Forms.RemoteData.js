@@ -26,7 +26,9 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
         var keywordStore = new Ext.data.JsonStore ({
             fields: [
                 {name: 'name', mapping: 'name'},
-                {name: 'id',  mapping: 'id'}],
+                {name: 'id',  mapping: 'id'},
+                {name: 'wiserd', mapping: 'wiserd'},
+                {name: 'wiserd_survey', mapping: 'wiserd_survey'}],
             id: "foundKeywordStore"
 //            root : ""
         });
@@ -139,6 +141,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                                     Ext.getCmp('txtRemoteKeyword').enable();
                                     keywordStore.loadData(responseData);
 //                                    loadMask.hide()
+
                                 },
                                 failure: function(resp) {
                                     console.log('failure!');
@@ -162,6 +165,17 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
 
                         xtype: 'combo',
                         id: 'cmboDataset',
+//                        tpl: '<tpl for="."><div ext:qtip="{name}" class="x-combo-list-item">{name}</div></tpl>',
+                        tpl: new Ext.XTemplate(
+                            '<tpl for=".">',
+                            '<tpl if="wiserd.length == 0"> ',
+                            '<div class="x-combo-list-item" style="color:#000000">{name}</div>',
+                            '</tpl>',
+                            '<tpl if="wiserd.length &gt; 0"> ',
+                            '<div ext:qtip="MetaData available!" class="x-combo-list-item" style="color:#ff0000">{name}</div>',
+                            '</tpl>',
+                            '</tpl>'
+                        ),
                         anchor: '100%',
                         fieldLabel: 'Select Remote DataSet',
                         name: 'Dataset',
@@ -173,6 +187,35 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                             'select': function(t){
                                 var cmboDataset = Ext.getCmp('cmboDataset');
                                 datasetID = cmboDataset.getValue();
+
+                                var index = keywordStore.find("id", datasetID);
+
+                                var record = keywordStore.getAt(index);
+
+                                var QID = record.get('wiserd');
+                                var SID = record.get('wiserd_survey');
+
+                                if(QID.length > 0) {
+
+                                    Ext.MessageBox.confirm('MetaData Available', 'Would you like to view the WISERD MetaData for this dataset?',
+                                        function (btn, text) {
+                                            if (btn == 'yes') {
+
+                                                var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:"Retrieving Search Results...."});
+                                                loadMask.show();
+
+                                                var metaWindow = new GeoPortal.Windows.MetaData({ SID: SID });
+                                                Ext.getCmp("frmQuestion").getForm().load({ url: QmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { ID: QID} });
+                                                Ext.getCmp("frmSurvey").getForm().load({ url: SmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { SID: SID} });
+                                                Ext.getCmp("frmResponse").getForm().load({ url: RmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { QID: QID} });
+                                                Ext.getCmp("frmDC").getForm().load({ url: DCmetaURL, waitMsg: 'Loading.......', method: 'POST', sucess: metaWindow.show(), params: { SID: SID} });
+
+                                                loadMask.hide();
+                                            }
+
+                                        }
+                                    );
+                                }
 
                                 Ext.Ajax.request({
                                     url: remoteDataSetURL,

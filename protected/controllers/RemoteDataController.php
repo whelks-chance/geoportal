@@ -168,6 +168,8 @@ class RemoteDataController extends Controller {
         echo json_encode($allFound);
     }
 
+
+
     public function actionlinkRemoteQuestion() {
         $wiserdID = '';
         if(isset($_POST['wiserdID'])) {
@@ -223,6 +225,24 @@ class RemoteDataController extends Controller {
                 $foundWord["id"] = $family->id;
                 $foundWord["name"] = $family->name->value;
 
+                $dataAdapter = new DataAdapter();
+                $findQuery = "select id, wiserd_id from question_link where remote_id='" . $family->id . "';";
+
+                $results = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
+
+                $foundWord["wiserd"] = "";
+                $foundWord["wiserd_survey"] = "";
+                forEach($results as $DR) {
+                    $foundWord["wiserd"] = $DR->wiserd_id;
+                    $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . strtolower($DR->wiserd_id) . "');";
+
+                    $results = $dataAdapter->DefaultExecuteAndRead($survey_details, "Survey_Data");
+
+                    if(sizeof($results) > 0 ){
+                        $foundWord["wiserd_survey"] = $results[0]->surveyid;
+                    }
+                }
+
                 $allFound[] = $foundWord;
             }
         }
@@ -230,4 +250,18 @@ class RemoteDataController extends Controller {
         echo json_encode($allFound);
     }
 
+    public function actionfindQuestionLinks() {
+        $remoteID = '';
+        if(isset($_POST['remoteID'])) {
+            $remoteID = trim($_POST['remoteID']);
+        }
+
+        $dataAdapter = new DataAdapter();
+
+        $findQuery = 'select id, wiserd_id from question_link where remote_id="' . $remoteID . '";';
+
+        $questionResults = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
+
+        echo json_encode($questionResults);
+    }
 }

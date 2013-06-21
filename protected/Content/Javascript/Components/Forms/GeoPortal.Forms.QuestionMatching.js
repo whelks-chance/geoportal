@@ -90,6 +90,7 @@ GeoPortal.Forms.QuestionMatching = Ext.extend(Ext.form.FormPanel, {
                                 // Returns the regions available for the data
 
                                 xtype: 'combo',
+                                tpl: '<tpl for="."><div ext:qtip="{name}" class="x-combo-list-item">{name}</div></tpl>',
                                 id: 'cmboWISERDq',
                                 anchor: '100%',
                                 fieldLabel: 'Select WISERD question',
@@ -183,6 +184,7 @@ GeoPortal.Forms.QuestionMatching = Ext.extend(Ext.form.FormPanel, {
                                 // Returns the regions available for the data
 
                                 xtype: 'combo',
+                                tpl: '<tpl for="."><div ext:qtip="{name}" class="x-combo-list-item">{name}</div></tpl>',
                                 id: 'cmboRemoteq',
                                 anchor: '100%',
                                 fieldLabel: 'Select Remote DataSet',

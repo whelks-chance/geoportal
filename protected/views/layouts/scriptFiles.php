@@ -38,6 +38,7 @@ include('variables.php')
     var remoteDataSetURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteDataset';
     var remoteRegionURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRegionBreakdown';
     var remoteGetDataURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteData';
+    var findQuestionLinkURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/findQuestionLinks';
 
     var getWiserdQuestions = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdvancedSearch/getKeywordQuestions';
     var linkRemoteQuestion = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/linkRemoteQuestion';
