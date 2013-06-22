@@ -28,6 +28,7 @@ return array(
         'application.models.BusinessLogic.*',
         'application.models.DataAccess.*',
         'application.models.util.*',
+        'application.models.DataFeedReaders.*',
         'application.views.layouts.*'
     ),
 

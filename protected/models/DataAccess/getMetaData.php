@@ -165,11 +165,15 @@ class getMetaData {
 
         $selectStr = "Select * from dc_info WHERE identifier ='wi" . $SID . "';";
 
+        Log::toFile($selectStr);
+
         $cmd = pg_query($cnn, $selectStr);
 
         $DA = new DataAdapter();
 
         $resultRows = $DA->Read($cmd);
+
+        Log::toFile(print_r($resultRows, true));
 
         If (count($resultRows) > 0) {
 
@@ -306,7 +310,7 @@ class getMetaData {
 
         $selStr = "Select * from qualdata.dc_info WHERE identifier ='" . $SID . "';";
 
-//        Log::toFile("DC query : " . $selStr);
+        Log::toFile("DC query : " . $selStr);
 
         $cmd = pg_query($cnn, $selStr);
 

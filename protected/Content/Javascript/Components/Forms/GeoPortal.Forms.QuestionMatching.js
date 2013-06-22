@@ -19,11 +19,31 @@ GeoPortal.Forms.QuestionMatching = Ext.extend(Ext.form.FormPanel, {
         var remoteStore = new Ext.data.JsonStore ({
             fields: [
                 {name: 'name', mapping: 'name'},
+                {name: 'url',  mapping: 'url'}],
+//                {name:'wordsearch', mapping: 'wordsearch'}],
+            id: "remoteSourceStore"
+//            root : ""
+        });
+
+        var remoteKeywordStore = new Ext.data.JsonStore ({
+            fields: [
+                {name: 'name', mapping: 'name'},
                 {name: 'id',  mapping: 'id'}],
             id: "remoteMatchStore"
 //            root : ""
         });
 
+        Ext.Ajax.request({
+            url: remoteSourceURL,
+            method : 'POST',
+            success: function(resp) {
+                var responseData = Ext.decode(resp.responseText);
+                remoteStore.loadData(responseData);
+            },
+            failure: function(resp) {
+                console.log('failure!');
+            }
+        });
 
         this.items = [
             {
@@ -139,6 +159,32 @@ GeoPortal.Forms.QuestionMatching = Ext.extend(Ext.form.FormPanel, {
                         items: [
                             {
 
+                                // The combo box which allows selection of a remote API from the list.
+                                // List data retrieved from RemoteData/getRemoteSources
+
+                                xtype: 'combo',
+                                id: 'cmboDataSource',
+                                anchor: '100%',
+                                fieldLabel: 'Select Remote Data Source',
+                                name: 'Source',
+                                triggerAction: 'all',
+                                displayField: 'name',
+                                hiddenName: 'hiddenURL',
+                                valueField: 'name',
+                                listeners: {
+                                    'select': function(t){
+//                                alert(t.value);
+                                    },
+                                    afterrender: function(combo) {
+                                        var recordSelected = combo.getStore().getAt(0);
+                                        combo.setValue(recordSelected.get('field1'));
+                                    }
+                                },
+                                mode: 'local',
+                                store : remoteStore
+                            },
+                            {
+
                                 xtype: 'textfield',
                                 id: 'txtRemoteQuestionMatchKeyword',
                                 emptyText: 'Keywords...',
@@ -160,9 +206,12 @@ GeoPortal.Forms.QuestionMatching = Ext.extend(Ext.form.FormPanel, {
                                     var txtcmp = Ext.getCmp('txtRemoteQuestionMatchKeyword');
                                     var keyword = txtcmp.getValue();
 
+                                    var cmbSource = Ext.getCmp('cmboDataSource');
+                                    var name = cmbSource.getValue();
+
                                     Ext.Ajax.request({
                                         url: remoteDataKeywordSearchURL,
-                                        params : {Keyword : keyword},
+                                        params : {Keyword : keyword, name : name},
                                         method : 'POST',
 
                                         success: function(resp) {
@@ -170,7 +219,7 @@ GeoPortal.Forms.QuestionMatching = Ext.extend(Ext.form.FormPanel, {
                                             var responseData = Ext.decode(resp.responseText);
                                             console.log(responseData);
 
-                                            remoteStore.loadData(responseData);
+                                            remoteKeywordStore.loadData(responseData);
                                         },
                                         failure: function(resp) {
                                             console.log('failure!');
@@ -207,7 +256,7 @@ GeoPortal.Forms.QuestionMatching = Ext.extend(Ext.form.FormPanel, {
                                     }
                                 },
                                 mode: 'local',
-                                store : remoteStore
+                                store : remoteKeywordStore
                             },
                             {
                                 fieldLabel      : 'csvarea',

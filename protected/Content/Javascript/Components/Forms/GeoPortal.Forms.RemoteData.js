@@ -19,6 +19,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
             fields: [
                 {name: 'name', mapping: 'name'},
                 {name: 'url',  mapping: 'url'}],
+//                {name:'wordsearch', mapping: 'wordsearch'}],
             id: "remoteSourceStore"
 //            root : ""
         });
@@ -89,7 +90,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         triggerAction: 'all',
                         displayField: 'name',
                         hiddenName: 'hiddenURL',
-                        valueField: 'url',
+                        valueField: 'name',
                         listeners: {
                             'select': function(t){
 //                                alert(t.value);
@@ -125,12 +126,16 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         handler: function() {
                             var txtcmp = Ext.getCmp('txtRemoteKeyword');
                             var keyword = txtcmp.getValue();
+
+                            var cmbSource = Ext.getCmp('cmboSource');
+                            var name = cmbSource.getValue();
+
 //                            var loadMask = new Ext.LoadMask(this.getBody(), {msg:"Retrieving Search Results...."});
 //                            loadMask.show();
 
                             Ext.Ajax.request({
                                 url: remoteDataKeywordSearchURL,
-                                params : {Keyword : keyword},
+                                params : {Keyword : keyword, name : name},
                                 method : 'POST',
 
                                 success: function(resp) {
@@ -140,6 +145,9 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
 
                                     Ext.getCmp('txtRemoteKeyword').enable();
                                     keywordStore.loadData(responseData);
+
+                                    var csvarea = Ext.getCmp('jsonarea');
+                                    csvarea.setValue(resp.responseText);
 //                                    loadMask.hide()
 
                                 },

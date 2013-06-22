@@ -31,12 +31,19 @@ class RemoteDataController extends Controller {
     public function actiongetRemoteSources() {
         $remoteSources = array();
 
-        $source = array();
-        $source['name'] = "nomisweb";
-        $source['url'] = "http://www.nomisweb.co.uk/api/v01/";
-        $source['wordsearch'] = "http://www.nomisweb.co.uk/api/v01/dataset/def.sdmx.json?search=*wiserd_dataportal_replace_me*";
+        $sourceNomis = array();
+        $sourceNomis['name'] = "nomisweb";
+        $sourceNomis['url'] = "http://www.nomisweb.co.uk/api/v01/";
+//        $sourceNomis['wordsearch'] = "http://www.nomisweb.co.uk/api/v01/dataset/def.sdmx.json?search=*wiserd_dataportal_replace_me*";
 
-        $remoteSources[] = $source;
+        $remoteSources[] = $sourceNomis;
+
+        $sourceNHood = array();
+        $sourceNHood['name'] = "neighbourhood.statistics";
+        $sourceNHood['url'] = "http://www.neighbourhood.statistics.gov.uk/";
+//        $sourceNHood['wordsearch'] = "http://www.neighbourhood.statistics.gov.uk/NDE2/Disco/FindDatasets?Metadata=wiserd_dataportal_replace_me";
+
+        $remoteSources[] = $sourceNHood;
 
         echo json_encode($remoteSources);
     }
@@ -112,60 +119,26 @@ class RemoteDataController extends Controller {
 
         $dataset = $_POST['Dataset'];
 
-        $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $dataset . "/geography.def.sdmx.json";
-
-        $output = RemoteDataController::curlURL($url);
-
-        $decoded = json_decode($output, false);
-
-        $regions = array();
-
-        if($decoded->structure->codelists != null){
-
-            foreach($decoded->structure->codelists->codelist as $codelist) {
-                foreach($codelist->code as $code) {
-
-                    $regionName = $code->description->value;
-
-                    $foundRegion = array();
-                    $foundRegion["id"] = $code->value;
-                    $foundRegion["name"] = $regionName;
-
-                    $regions[] = $foundRegion;
-                }
-            }
+        $feedReader = "";
+        if(isset($_POST['name'])) {
+            $feedReader = $_POST['name'];
         }
 
-        //variables info
+        $jsonEncodedResults = "";
 
-        $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $dataset . "/measures.def.sdmx.json";
+        if ($feedReader === "nomisweb") {
+            $nomisReader = new NomiswebReader();
 
-        $output = RemoteDataController::curlURL($url);
-
-        $decoded = json_decode($output, false);
-
-        $measures = array();
-
-        if($decoded->structure->codelists != null){
-
-            foreach($decoded->structure->codelists->codelist as $codelist) {
-                foreach($codelist->code as $code) {
-
-                    $measureName = $code->description->value;
-
-                    $foundMeasure = array();
-                    $foundMeasure["id"] = $code->value;
-                    $foundMeasure["name"] = $measureName;
-
-                    $measures[] = $foundMeasure;
-                }
-            }
+            $jsonEncodedResults = $nomisReader->getRemoteDataset($dataset);
         }
 
-        $allFound['regions'] = $regions;
-        $allFound['measures'] = $measures;
+        if ($feedReader === "neighbourhood.statistics") {
+            $nomisReader = new NHoodReader();
 
-        echo json_encode($allFound);
+            $jsonEncodedResults = $nomisReader->getRemoteDataset($dataset);
+        }
+
+        echo $jsonEncodedResults;
     }
 
 
@@ -192,11 +165,11 @@ class RemoteDataController extends Controller {
         $surveyNameQuery .= $remoteID . "', '";
         $surveyNameQuery .= $remoteAPI . "');";
 
-        Log::toFile($surveyNameQuery);
+//        Log::toFile($surveyNameQuery);
 
         $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
 
-        Log::toFile(print_r($surveyNameResults, true));
+//        Log::toFile(print_r($surveyNameResults, true));
 
         $returnArray['success'] = true;
 
@@ -208,46 +181,26 @@ class RemoteDataController extends Controller {
 
         $keyword = $_POST['Keyword'];
 
-        $url = "http://www.nomisweb.co.uk/api/v01/dataset/def.sdmx.json?search=*" . $keyword . "*";
-
-        $output = RemoteDataController::curlURL($url);
-
-        $decoded = json_decode($output, false);
-
-//        Log::toFile(print_r($decoded, true));
-
-        $allFound = array();
-
-        if($decoded->structure->keyfamilies != null){
-
-            foreach($decoded->structure->keyfamilies->keyfamily as $family) {
-                $foundWord = array();
-                $foundWord["id"] = $family->id;
-                $foundWord["name"] = $family->name->value;
-
-                $dataAdapter = new DataAdapter();
-                $findQuery = "select id, wiserd_id from question_link where remote_id='" . $family->id . "';";
-
-                $results = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
-
-                $foundWord["wiserd"] = "";
-                $foundWord["wiserd_survey"] = "";
-                forEach($results as $DR) {
-                    $foundWord["wiserd"] = $DR->wiserd_id;
-                    $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . strtolower($DR->wiserd_id) . "');";
-
-                    $results = $dataAdapter->DefaultExecuteAndRead($survey_details, "Survey_Data");
-
-                    if(sizeof($results) > 0 ){
-                        $foundWord["wiserd_survey"] = $results[0]->surveyid;
-                    }
-                }
-
-                $allFound[] = $foundWord;
-            }
+        $feedReader = "";
+        if(isset($_POST['name'])) {
+            $feedReader = $_POST['name'];
         }
 
-        echo json_encode($allFound);
+        $jsonEncodedResults = "";
+
+        if ($feedReader === "nomisweb") {
+            $nomisReader = new NomiswebReader();
+
+             $jsonEncodedResults = $nomisReader->keywordSearch($keyword);
+        }
+
+        if ($feedReader === "neighbourhood.statistics") {
+            $nomisReader = new NHoodReader();
+
+            $jsonEncodedResults = $nomisReader->keywordSearch($keyword);
+        }
+
+        echo $jsonEncodedResults;
     }
 
     public function actionfindQuestionLinks() {
