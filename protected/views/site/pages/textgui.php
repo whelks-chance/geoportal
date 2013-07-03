@@ -13,6 +13,8 @@ $this->pageTitle=Yii::app()->name . ' - About';
 $this->breadcrumbs=array(
     'About',
 );
+phpinfo();
+
 ?>
 <h1>textgui testing</h1>
 

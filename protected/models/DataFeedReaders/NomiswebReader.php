@@ -65,23 +65,48 @@ class NomiswebReader implements FeedReaderInterface{
             }
         }
 
+        $tempKeys = array();
+        foreach( $allFound as $toCheck) {
+            $tempKeys[$toCheck['id']] = $toCheck;
+        }
+
+        $allFound = array();
+        foreach( $tempKeys as $toAdd ) {
+            $allFound[] = $toAdd;
+        }
+
         return json_encode($allFound);
     }
 
-    public function getRemoteDataset($dataset)
+
+
+    public function getRegionBreakdown($datasetID, $regionID)
     {
-        $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $dataset . "/geography.def.sdmx.json";
+        $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $datasetID . "/geography/" . $regionID . ".def.sdmx.json";
 
         $output = RemoteDataController::curlURL($url);
 
         $decoded = json_decode($output, false);
 
-        $regions = array();
+        Log::toFile($url);
+        Log::toFile(print_r($decoded, true));
+
+        $allFound = array();
 
         if($decoded->structure->codelists != null){
 
             foreach($decoded->structure->codelists->codelist as $codelist) {
                 foreach($codelist->code as $code) {
+
+//                    $typeID = "";
+//
+//                    foreach($code->annotations->annotation as $region) {
+//
+//                        if ( $region->annotationtitle == "TypeCode") {
+//                            $typeID = $region->annotationtext;
+//                        }
+//
+//                    }
 
                     $regionName = $code->description->value;
 
@@ -89,18 +114,22 @@ class NomiswebReader implements FeedReaderInterface{
                     $foundRegion["id"] = $code->value;
                     $foundRegion["name"] = $regionName;
 
-                    $regions[] = $foundRegion;
+                    $allFound[] = $foundRegion;
                 }
             }
         }
+        return json_encode($allFound);
+    }
 
-        //variables info
-
-        $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $dataset . "/measures.def.sdmx.json";
+    public function getRemoteVariables($datasetID)
+    {
+        $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $datasetID . "/measures.def.sdmx.json";
 
         $output = RemoteDataController::curlURL($url);
 
         $decoded = json_decode($output, false);
+
+        Log::toFile(print_r($url, true));
 
         $measures = array();
 
@@ -120,9 +149,76 @@ class NomiswebReader implements FeedReaderInterface{
             }
         }
 
-        $allFound['regions'] = $regions;
         $allFound['measures'] = $measures;
 
         return json_encode($allFound);
+    }
+
+    public function getRemoteGeographies($datasetID, $topGeography)
+    {
+        $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $datasetID . "/geography.def.sdmx.json";
+
+        Log::toFile($url);
+
+        $output = RemoteDataController::curlURL($url);
+
+        $decoded = json_decode($output, false);
+
+        Log::toFile(print_r($decoded, true));
+
+        $regions = array();
+
+        if($decoded->structure->codelists != null){
+
+            foreach($decoded->structure->codelists->codelist as $codelist) {
+                foreach($codelist->code as $code) {
+
+                    $regionName = $code->description->value;
+
+                    $foundRegion = array();
+                    $foundRegion["id"] = $code->value;
+                    $foundRegion["name"] = $regionName;
+
+                    $regions[] = $foundRegion;
+                }
+            }
+        }
+
+        $allFound['regions'] = $regions;
+
+        return json_encode($allFound);
+    }
+
+    public function getRemoteDataset($datasetID, $boundaryID, $measuresID)
+    {
+        $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $datasetID . ".data.json?";
+        $url .= "geography=" . $boundaryID;
+        $url .= "&&measures" . $measuresID;
+
+        $output = RemoteDataController::curlURL($url);
+
+        $decoded = json_decode($output, false);
+
+        $dataSets = array();
+
+        if($decoded->obs != null){
+
+            foreach($decoded->obs as $ob) {
+                if( $ob->measures->value == $measuresID) {
+                    $foundData = array();
+
+                    $foundData['value'] = $ob->obs_value->value;
+                    $foundData['description'] = $ob->obs_value->description;
+
+                    $dataSets[] = $foundData;
+                }
+            }
+
+        }
+
+        $data['length'] = sizeof($dataSets);
+        $data['data'] = $dataSets;
+
+        return json_encode($data);
     }
 }

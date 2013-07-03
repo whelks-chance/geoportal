@@ -53,19 +53,61 @@ class RemoteDataController extends Controller {
         $datasetID = $_POST['DatasetID'];
         $measuresID = $_POST['MeasuresID'];
 
+        $feedReader = "";
+        if(isset($_POST['apiName'])) {
+            $feedReader = $_POST['apiName'];
+        }
 
-        $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $datasetID . ".data.json?";
-        $url .= "geography=" . $boundaryID;
-        $url .= "&&measures" . $measuresID;
+        $jsonEncodedResults = "";
 
-//        Log::toFile($url);
+        if ($feedReader === "nomisweb") {
+            $nomisReader = new NomiswebReader();
 
-        $output = RemoteDataController::curlURL($url);
+            $jsonEncodedResults = $nomisReader->getRemoteDataset($datasetID, $boundaryID, $measuresID);
+        }
 
-        $decoded = json_decode($output, false);
+        if ($feedReader === "neighbourhood.statistics") {
+            $nhoodReader = new NHoodReader();
 
-        echo json_encode($decoded);
+            $jsonEncodedResults = $nhoodReader->getRemoteDataset($datasetID, $boundaryID, $measuresID);
+        }
 
+        echo $jsonEncodedResults;
+
+    }
+
+    public function actiongetRemoteDatasetGeographies() {
+
+        $regionID = "";
+        if(isset($_POST['RegionID'])) {
+            $regionID = $_POST['RegionID'];
+        }
+
+        $datasetID = "";
+        if(isset($_POST['DatasetID'])) {
+            $datasetID = $_POST['DatasetID'];
+        }
+
+        $feedReader = "";
+        if(isset($_POST['apiName'])) {
+            $feedReader = $_POST['apiName'];
+        }
+
+        $jsonEncodedResults = "";
+
+        if ($feedReader === "nomisweb") {
+            $nomisReader = new NomiswebReader();
+
+            $jsonEncodedResults = $nomisReader->getRemoteGeographies($datasetID, $regionID);
+        }
+
+        if ($feedReader === "neighbourhood.statistics") {
+            $nhoodReader = new NHoodReader();
+
+            $jsonEncodedResults = $nhoodReader->getRemoteGeographies($datasetID, $regionID);
+        }
+
+        echo $jsonEncodedResults;
     }
 
     public function actiongetRegionBreakdown() {
@@ -74,54 +116,9 @@ class RemoteDataController extends Controller {
         $regionID = $_POST['RegionID'];
         $datasetID = $_POST['DatasetID'];
 
-        $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $datasetID . "/geography/" . $regionID . ".def.sdmx.json";
-
-//        Log::toFile($url);
-
-        $output = RemoteDataController::curlURL($url);
-
-        $decoded = json_decode($output, false);
-
-//        Log::toFile(print_r($decoded, true));
-
-        $allFound = array();
-
-        if($decoded->structure->codelists != null){
-
-            foreach($decoded->structure->codelists->codelist as $codelist) {
-                foreach($codelist->code as $code) {
-
-//                    $typeID = "";
-//
-//                    foreach($code->annotations->annotation as $region) {
-//
-//                        if ( $region->annotationtitle == "TypeCode") {
-//                            $typeID = $region->annotationtext;
-//                        }
-//
-//                    }
-
-                    $regionName = $code->description->value;
-
-                    $foundRegion = array();
-                    $foundRegion["id"] = $code->value;
-                    $foundRegion["name"] = $regionName;
-
-                    $allFound[] = $foundRegion;
-                }
-            }
-        }
-
-        echo json_encode($allFound);
-    }
-
-    public function actiongetRemoteDataset() {
-
-        $dataset = $_POST['Dataset'];
-
         $feedReader = "";
-        if(isset($_POST['name'])) {
-            $feedReader = $_POST['name'];
+        if(isset($_POST['apiName'])) {
+            $feedReader = $_POST['apiName'];
         }
 
         $jsonEncodedResults = "";
@@ -129,16 +126,43 @@ class RemoteDataController extends Controller {
         if ($feedReader === "nomisweb") {
             $nomisReader = new NomiswebReader();
 
-            $jsonEncodedResults = $nomisReader->getRemoteDataset($dataset);
+            $jsonEncodedResults = $nomisReader->getRegionBreakdown($datasetID, $regionID);
         }
 
         if ($feedReader === "neighbourhood.statistics") {
-            $nomisReader = new NHoodReader();
+            $nhoodReader = new NHoodReader();
 
-            $jsonEncodedResults = $nomisReader->getRemoteDataset($dataset);
+            $jsonEncodedResults = $nhoodReader->getRegionBreakdown($datasetID, $regionID);
         }
 
         echo $jsonEncodedResults;
+    }
+
+    public function actiongetRemoteVariables() {
+
+        $dataset = $_POST['DatasetID'];
+
+        $feedReader = "";
+        if(isset($_POST['apiName'])) {
+            $feedReader = $_POST['apiName'];
+        }
+
+        $jsonEncodedResults = "";
+
+        if ($feedReader === "nomisweb") {
+            $nomisReader = new NomiswebReader();
+
+            $jsonEncodedResults = $nomisReader->getRemoteVariables($dataset);
+        }
+
+        if ($feedReader === "neighbourhood.statistics") {
+            $nhoodReader = new NHoodReader();
+
+            $jsonEncodedResults = $nhoodReader->getRemoteVariables($dataset);
+        }
+
+        echo $jsonEncodedResults;
+
     }
 
 
@@ -182,8 +206,8 @@ class RemoteDataController extends Controller {
         $keyword = $_POST['Keyword'];
 
         $feedReader = "";
-        if(isset($_POST['name'])) {
-            $feedReader = $_POST['name'];
+        if(isset($_POST['apiName'])) {
+            $feedReader = $_POST['apiName'];
         }
 
         $jsonEncodedResults = "";
@@ -195,9 +219,9 @@ class RemoteDataController extends Controller {
         }
 
         if ($feedReader === "neighbourhood.statistics") {
-            $nomisReader = new NHoodReader();
+            $nhoodReader = new NHoodReader();
 
-            $jsonEncodedResults = $nomisReader->keywordSearch($keyword);
+            $jsonEncodedResults = $nhoodReader->keywordSearch($keyword);
         }
 
         echo $jsonEncodedResults;

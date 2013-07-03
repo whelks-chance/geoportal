@@ -38,6 +38,8 @@ $javascriptFiles = array(
     "Components/Forms/GeoPortal.Forms.AdvancedSearch.js",
     "Components/Forms/GeoPortal.Forms.QuestionMatching.js",
     "Components/Forms/GeoPortal.Forms.RemoteData.js",
+    "Components/Windows/GeoPortal.Windows.RemoteDataResults.js",
+
     "Components/Forms/GeoPortal.Forms.Register.js",
     "Components/Map/GeoLocate.js",
     "Components/Forms/GeoPortal.Forms.ChangePassword.js",

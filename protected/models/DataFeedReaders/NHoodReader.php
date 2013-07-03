@@ -61,7 +61,7 @@ class NHoodReader implements FeedReaderInterface {
                         $foundWord["wiserd_survey"] = "";
                         forEach($results as $DR) {
                             $foundWord["wiserd"] = $DR->wiserd_id;
-                            $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . strtolower($id) . "');";
+                            $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . strtolower($DR->wiserd_id) . "');";
 
                             $results = $dataAdapter->DefaultExecuteAndRead($survey_details, "Survey_Data");
 
@@ -78,14 +78,108 @@ class NHoodReader implements FeedReaderInterface {
             }
         }
 
-        Log::toFile(print_r($allFound, true));
+        $tempKeys = array();
+        foreach( $allFound as $toCheck) {
+            $tempKeys[$toCheck['id']] = $toCheck;
+        }
+
+        $allFound = array();
+        foreach( $tempKeys as $toAdd ) {
+            $allFound[] = $toAdd;
+        }
 
         return json_encode($allFound);
     }
 
-    public function getRemoteDataset($dataset)
+    public function getRemoteDataset($datasetID, $boundaryID, $measuresID)
     {
-        return "";
-        // TODO: Implement getRemoteDataset() method.
+
+        $wsdlDoc = "http://neighbourhood.statistics.gov.uk/NDE2/Deli?wsdl";
+
+        $soapclient = new SoapClient($wsdlDoc);
+
+        $functions = $soapclient->__getFunctions();
+
+
+        Log::toFile(print_r($functions, true));
+//
+//        $result = $soapclient->__soapCall("getTables", null);
+//
+//        Log::toFile(print_r($result, true));
+
+    }
+
+    public function getRegionBreakdown($datasetId, $regionId)
+    {
+        return NeSS::getNeSSareas();
+        // TODO: Match this to data areas
+    }
+
+    public function getRemoteVariables($datasetID)
+    {
+        $url = "http://www.neighbourhood.statistics.gov.uk/NDE2/Disco/GetVariables?DSFamilyId=" . $datasetID;
+
+        $output = RemoteDataController::curlURL($url);
+
+        $nhoodXML = simplexml_load_string($output);
+
+        $measures = array();
+
+        if($nhoodXML->VarFamilies->VarFamily != null){
+
+            foreach($nhoodXML->VarFamilies->VarFamily as $variableType) {
+
+                $foundMeasure = array();
+                $foundMeasure["id"] = (string) $variableType->VarFamilyId;
+
+                $displayName = (string) $variableType->Name;
+                $displayUnit = (string) $variableType->MeasurementUnit->Name;
+
+                $foundMeasure["name"] = $displayName . " - " . $displayUnit;
+
+                $measures[] = $foundMeasure;
+
+            }
+        }
+        $allFound['measures'] = $measures;
+
+        return json_encode($allFound);
+
+    }
+
+    public function getRemoteGeographies($datasetID, $topGeography)
+    {
+        if ($topGeography === "") {
+            $topGeography = "6274990"; //England and Wales from NeSS, good luck in future dealing with that mess
+        }
+
+        $url = "http://www.neighbourhood.statistics.gov.uk/NDE2/Disco/GetAreaChildren?AreaId=" . $topGeography;
+
+        $output = RemoteDataController::curlURL($url);
+
+        $regionXML = simplexml_load_string($output);
+
+        $regions = array();
+
+        if($regionXML->Areas != null){
+
+            foreach($regionXML->Areas->Area as $area) {
+
+                $foundMeasure = array();
+                $foundMeasure["id"] = (string) $area->AreaId;
+
+//                $displayName = (string) $variableType->Name;
+//                $displayUnit = (string) $variableType->MeasurementUnit->Name;
+
+                $foundMeasure["name"] = (string) $area->Name;
+
+                $regions[] = $foundMeasure;
+
+            }
+        }
+
+        $allFound['regions'] = $regions;
+
+        return json_encode($allFound);
     }
 }

@@ -209,9 +209,9 @@ GeoPortal.Forms.QuestionMatching = Ext.extend(Ext.form.FormPanel, {
                                     var cmbSource = Ext.getCmp('cmboDataSource');
                                     var name = cmbSource.getValue();
 
-                                    Ext.Ajax.request({
+                                         Ext.Ajax.request({
                                         url: remoteDataKeywordSearchURL,
-                                        params : {Keyword : keyword, name : name},
+                                        params : {Keyword : keyword, apiName : name},
                                         method : 'POST',
 
                                         success: function(resp) {

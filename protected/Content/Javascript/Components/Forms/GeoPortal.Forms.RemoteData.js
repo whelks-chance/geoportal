@@ -14,6 +14,8 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
 
         var datasetID = "";
         var measuresID = "";
+        var apiName = "";
+        var boundaryID = "";
 
         var remoteStore = new Ext.data.JsonStore ({
             fields: [
@@ -93,7 +95,8 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         valueField: 'name',
                         listeners: {
                             'select': function(t){
-//                                alert(t.value);
+                                var cmbSource = Ext.getCmp('cmboSource');
+                                apiName = cmbSource.getValue();
                             },
                             afterrender: function(combo) {
                                 var recordSelected = combo.getStore().getAt(0);
@@ -127,15 +130,15 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                             var txtcmp = Ext.getCmp('txtRemoteKeyword');
                             var keyword = txtcmp.getValue();
 
-                            var cmbSource = Ext.getCmp('cmboSource');
-                            var name = cmbSource.getValue();
+//                            var cmbSource = Ext.getCmp('cmboSource');
+//                            var name = cmbSource.getValue();
 
 //                            var loadMask = new Ext.LoadMask(this.getBody(), {msg:"Retrieving Search Results...."});
 //                            loadMask.show();
 
                             Ext.Ajax.request({
                                 url: remoteDataKeywordSearchURL,
-                                params : {Keyword : keyword, name : name},
+                                params : {Keyword : keyword, apiName : apiName},
                                 method : 'POST',
 
                                 success: function(resp) {
@@ -158,14 +161,6 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                             });
                         }
                     },
-//                ]
-//            },
-//            {
-//                xtype: 'fieldset',
-//                id: 'fielddata',
-//                title: 'Data Resource',
-//                items: [
-
                     {
                         // Drop down for the dataset
                         // Lets user select a survey, sends the id to RemoteData/getRemoteDataset
@@ -226,8 +221,34 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                                 }
 
                                 Ext.Ajax.request({
-                                    url: remoteDataSetURL,
-                                    params : {Dataset : datasetID},
+                                    url: remoteGetVariablesURL,
+                                    params : {
+                                        DatasetID : datasetID,
+                                        apiName : apiName
+                                    },
+                                    method : 'POST',
+                                    success: function(resp) {
+                                        console.log('success!');
+                                        var responseData = Ext.decode(resp.responseText);
+                                        console.log(responseData);
+
+                                        variableStore.loadData(responseData);
+
+                                        var csvarea = Ext.getCmp('jsonarea');
+                                        csvarea.setValue(resp.responseText);
+
+                                    },
+                                    failure: function(resp) {
+                                        console.log('failure!');
+                                    }
+                                });
+
+                                Ext.Ajax.request({
+                                    url: remoteGetGeographiesURL,
+                                    params : {
+                                        DatasetID : datasetID,
+                                        apiName : apiName
+                                    },
                                     method : 'POST',
                                     success: function(resp) {
                                         console.log('success!');
@@ -235,7 +256,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                                         console.log(responseData);
 
                                         regionStore.loadData(responseData);
-                                        variableStore.loadData(responseData);
+//                                        variableStore.loadData(responseData);
 
                                         var csvarea = Ext.getCmp('jsonarea');
                                         csvarea.setValue(resp.responseText);
@@ -290,44 +311,155 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         store : variableStore
                     },
                     {
-                        xtype: 'combo',
-                        id: 'cmboRegion',
-                        anchor: '100%',
-                        fieldLabel: 'Select Region',
-                        name: 'Region',
-                        triggerAction: 'all',
-                        displayField: 'name',
-                        hiddenName: 'hiddenRegion',
-                        valueField: 'id',
-                        listeners: {
-                            'select': function(t){
+                        xtype: 'container',
+                        layout: 'column',
+                        items: [
+                            {
 
-                                var cmboRegion = Ext.getCmp('cmboRegion');
-                                var regionID = cmboRegion.getValue();
+//
+                                xtype: 'container',
+                                columnWidth: 0.5,
+                                layout: 'form',
+//                                style: 'margin:10px;',
+                                items: [ {
 
-                                Ext.Ajax.request({
-                                    url: remoteRegionURL,
-                                    params : {RegionID : regionID, DatasetID: datasetID},
-                                    method : 'POST',
-                                    success: function(resp) {
-                                        console.log('success!');
-                                        var responseData = Ext.decode(resp.responseText);
-                                        console.log(responseData);
 
-                                        boundaryStore.loadData(responseData);
+                                    xtype: 'combo',
+                                    id: 'cmboRegion',
+                                    anchor: '100%',
+                                    fieldLabel: 'Select Region',
+                                    name: 'Region',
+                                    triggerAction: 'all',
+                                    displayField: 'name',
+                                    hiddenName: 'hiddenRegion',
+                                    valueField: 'id',
+                                    listeners: {
+                                        'select': function(t){
 
-                                        var csvarea = Ext.getCmp('jsonarea');
-                                        csvarea.setValue(resp.responseText);
+                                            var cmboRegion = Ext.getCmp('cmboRegion');
+                                            var regionID = cmboRegion.getValue();
 
+// Get the name from the selected region and put it in the text box
+                                            var index = regionStore.find("id", regionID);
+                                            var record = regionStore.getAt(index);
+                                            var regionName = record.get('name');
+                                            var csvarea = Ext.getCmp('txtChosenArea');
+                                            csvarea.setValue(regionName);
+
+                                            Ext.Ajax.request({
+                                                url: remoteGetGeographiesURL,
+                                                params : {
+                                                    DatasetID : datasetID,
+                                                    RegionID : regionID,
+                                                    apiName : apiName
+                                                },
+                                                method : 'POST',
+                                                success: function(resp) {
+                                                    console.log('success!');
+                                                    var responseData = Ext.decode(resp.responseText);
+                                                    console.log(responseData);
+
+                                                    regionStore.loadData(responseData);
+
+                                                    var csvarea = Ext.getCmp('jsonarea');
+                                                    csvarea.setValue(resp.responseText);
+
+                                                },
+                                                failure: function(resp) {
+                                                    console.log('failure!');
+                                                }
+                                            });
+
+//                                            var cmboRegion = Ext.getCmp('cmboRegion');
+//                                            regionID = cmboRegion.getValue();
+
+                                            Ext.Ajax.request({
+                                                url: remoteRegionURL,
+                                                params : {
+                                                    RegionID : regionID,
+                                                    DatasetID: datasetID,
+                                                    apiName : apiName
+                                                },
+                                                method : 'POST',
+                                                success: function(resp) {
+                                                    console.log('success!');
+                                                    var responseData = Ext.decode(resp.responseText);
+                                                    console.log(responseData);
+
+                                                    boundaryStore.loadData(responseData);
+                                                },
+                                                failure: function(resp) {
+                                                    console.log('failure!');
+                                                }
+                                            });
+                                        }
                                     },
-                                    failure: function(resp) {
-                                        console.log('failure!');
+                                    mode: 'local',
+                                    store : regionStore
+                                }
+                                ]
+                            },
+                            {
+
+//
+                                xtype: 'container',
+                                columnWidth: 0.1,
+                                layout: 'form',
+//                                style: 'margin:10px;',
+                                items: [
+                                    {
+                                        xtype: 'button',
+                                        id: 'btnResetGeography',
+                                        icon: 'images/silk/magnifier.png',
+                                        text: 'Reset',
+                                        tooltip: 'Reset Geography',
+                                        handler: function() {
+                                            Ext.Ajax.request({
+                                                url: remoteGetGeographiesURL,
+                                                params : {
+//                                                    RegionID : regionID,
+                                                    DatasetID: datasetID,
+                                                    apiName : apiName
+                                                },
+                                                method : 'POST',
+                                                success: function(resp) {
+                                                    var responseData = Ext.decode(resp.responseText);
+                                                    console.log(responseData);
+
+                                                    regionStore.loadData(responseData);
+
+                                                    var csvarea = Ext.getCmp('txtChosenArea');
+                                                    csvarea.setValue("");
+
+                                                },
+                                                failure: function(resp) {
+                                                    console.log('failure!');
+                                                }
+                                            });
+                                        }
                                     }
-                                });
+                                ]
+                            },
+                            {
+
+//
+                                xtype: 'container',
+                                columnWidth: 0.4,
+                                layout: 'form',
+//                                style: 'margin:10px;',
+                                items: [
+                                    {
+                                        xtype: 'textfield',
+                                        id: 'txtChosenArea',
+//                                        emptyText: 'Area...',
+                                        anchor: '100%',
+                                        fieldLabel: 'Area',
+                                        editable:  false,
+                                        name: 'Area'
+                                    }
+                                ]
                             }
-                        },
-                        mode: 'local',
-                        store : regionStore
+                        ]
                     },
                     {
                         xtype: 'combo',
@@ -342,31 +474,58 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         listeners: {
                             'select': function(t){
                                 var cmboDataset = Ext.getCmp('cmboBoundary');
-                                var boundaryID = cmboDataset.getValue();
+                                boundaryID = cmboDataset.getValue();
 
-                                Ext.Ajax.request({
-                                    url: remoteGetDataURL,
-                                    params : {DatasetID : datasetID, BoundaryID : boundaryID, MeasuresID : measuresID},
-                                    method : 'POST',
-                                    success: function(resp) {
-                                        console.log('success!');
-                                        var responseData = Ext.decode(resp.responseText);
-                                        console.log(responseData);
+//                                Ext.Ajax.request({
+//                                    url: remoteGetDataURL,
+//                                    params : {
+//                                        apiName : apiName,
+//                                        DatasetID : datasetID,
+//                                        BoundaryID : boundaryID,
+//                                        MeasuresID : measuresID
+//                                    },
+//                                    method : 'POST',
+//                                    success: function(resp) {
+//                                        console.log('success!');
+//                                        var responseData = Ext.decode(resp.responseText);
+//                                        console.log(responseData);
+//
+//                                        var csvarea = Ext.getCmp('jsonarea');
+//                                        csvarea.setValue(resp.responseText);
+//
+//                                    },
+//                                    failure: function(resp) {
+//                                        console.log('failure!');
+//                                    }
+//                                });
 
-//                                        regionStore.loadData(responseData);
 
-                                        var csvarea = Ext.getCmp('jsonarea');
-                                        csvarea.setValue(resp.responseText);
-
-                                    },
-                                    failure: function(resp) {
-                                        console.log('failure!');
-                                    }
-                                });
                             }
                         },
                         mode: 'local',
                         store : boundaryStore
+                    },
+                    {
+                        xtype: 'button',
+                        id: 'btnGetData',
+                        icon: 'images/silk/magnifier.png',
+                        text: 'Get Data',
+                        tooltip: 'Get Data',
+                        handler: function() {
+//                            var loadMask = new Ext.LoadMask(this.getBody(), {msg:"Retrieving Search Results...."});
+//                            loadMask.show();
+                            var remoteDataWindow = new GeoPortal.Windows.RemoteDataResults(
+                                {
+                                    apiName : apiName,
+                                    DatasetID : datasetID,
+                                    BoundaryID : boundaryID,
+                                    MeasuresID : measuresID
+                                }
+                            );
+                            remoteDataWindow.show();
+//                            loadMask.hide();
+                        }
+
                     },
                     {
                         fieldLabel      : 'csvarea',
@@ -376,7 +535,6 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         autoScroll      : true,
                         height          : 260,
                         anchor: '100%'
-
                     }
                 ]
             }

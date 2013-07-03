@@ -11,7 +11,7 @@ class Log {
 
     // Disable this when not debugging with logs frequently,
     // as it's a major performance and security hit.
-    public static $loggingOn = true;
+//    public static function isLoggingOn() { return !variables::debug(); }
 
     // Make this location writable by apache, either chown www-data or chmod 777
     // THINK  SECURITY !!!!
@@ -26,7 +26,7 @@ class Log {
             $file = Log::$logFile;
         }
 
-        if(Log::$loggingOn) {
+        if(variables::debug()) {
 
             if ($timestamp) {
 

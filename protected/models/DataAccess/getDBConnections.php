@@ -29,7 +29,8 @@ class getDBConnections {
         If ($debug == False) {
             //            $connString = "Server=localhost;Port=5433;Database=" . $DBName . ";User Id=postgres;Password=January1981" .
             //          '"Server=localhost;Port=5433;Database=" + DBName + ";User Id=rfry;Password=January1981"';
-            $connString = "host=192.168.56.102 port=7007 dbname=" . $DBName . " user=" . variables::$databaseUsername . " password=" . variables::$databasePassword;
+//            $connString = "host=192.168.56.102 port=7007 dbname=" . $DBName . " user=" . variables::$databaseUsername . " password=" . variables::$databasePassword;
+            $connString = "host=" . variables::$databaseAddr . " port=". variables::$databasePort . " dbname=" . $DBName . " user=" . variables::$databaseUsername . " password=" . variables::$databasePassword;
 
         }Else {
             // 'change this string according to whether target build is for Glam server or Amazon server
