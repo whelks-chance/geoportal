@@ -88,7 +88,7 @@ class NHoodReader implements FeedReaderInterface {
             $allFound[] = $toAdd;
         }
 
-        return json_encode($allFound);
+        return $allFound;
     }
 
     public function getRemoteDataset($datasetID, $boundaryID, $measuresID)
@@ -106,6 +106,8 @@ class NHoodReader implements FeedReaderInterface {
 //        $result = $soapclient->__soapCall("getTables", null);
 //
 //        Log::toFile(print_r($result, true));
+
+        return array();
 
     }
 
@@ -143,7 +145,7 @@ class NHoodReader implements FeedReaderInterface {
         }
         $allFound['measures'] = $measures;
 
-        return json_encode($allFound);
+        return $allFound;
 
     }
 
@@ -180,6 +182,11 @@ class NHoodReader implements FeedReaderInterface {
 
         $allFound['regions'] = $regions;
 
-        return json_encode($allFound);
+        return $allFound;
+    }
+
+    public function getFeedName()
+    {
+        return 'neighbourhood.statistics';
     }
 }

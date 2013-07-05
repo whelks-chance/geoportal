@@ -10,6 +10,8 @@
 interface FeedReaderInterface
 {
 
+    public function getFeedName();
+
     public function keywordSearch($keyword);
 
     public function getRemoteDataset($datasetID, $boundaryID, $measuresID);

@@ -28,22 +28,137 @@ class RemoteDataController extends Controller {
         return $output;
     }
 
+    /**
+     * @return FeedReaderInterface[]
+     */
+    public static function getFeedReaderClasses() {
+        $modelPath = Yii::getPathOfAlias('application.models');
+
+        Yii::setPathOfAlias('application.models.DataFeedReaders', $modelPath . '/DataFeedReaders');
+
+        $declaredClasses = get_declared_classes();
+        foreach (glob(Yii::getPathOfAlias('application.models.DataFeedReaders') . "/*.php") as $controller){
+            $class = basename($controller, ".php");
+            Log::toFile($class . ' ' . $controller);
+            if (!in_array($class, $declaredClasses)) {
+                Yii::import("application.models.DataFeedReaders." . $class, true);
+            }
+        }
+
+        $readers = array();
+        foreach(get_declared_classes() as $className) {
+            if( in_array('FeedReaderInterface', class_implements($className)) ) {
+                $readers[] = new $className();
+            }
+        }
+        return $readers;
+    }
+
+    /**
+     * @param $name
+     * @return FeedReaderInterface
+     */
+
+    public static function getFeedReaderClassByName( $name ) {
+        $feedReaderClasses = RemoteDataController::getFeedReaderClasses();
+
+        foreach($feedReaderClasses as $class ) {
+
+//            $reflectionMethod = new ReflectionMethod($className, 'getFeedName');
+//            $feedName = $reflectionMethod->invoke(new $className());
+
+            $feedName = $class->getFeedName();
+
+            if ($feedName === $name ) {
+                return $class;
+            }
+        }
+        return new Exception("No Feed Reader Found with name " . $name);
+    }
+
     public function actiongetRemoteSources() {
+//        $remoteSources = array();
+
+//        $sourceNomis = array();
+//        $sourceNomis['name'] = "nomisweb";
+//        $sourceNomis['url'] = "http://www.nomisweb.co.uk/api/v01/";
+////        $sourceNomis['wordsearch'] = "http://www.nomisweb.co.uk/api/v01/dataset/def.sdmx.json?search=*wiserd_dataportal_replace_me*";
+//
+//        $remoteSources[] = $sourceNomis;
+//
+//        $sourceNHood = array();
+//        $sourceNHood['name'] = "neighbourhood.statistics";
+//        $sourceNHood['url'] = "http://www.neighbourhood.statistics.gov.uk/";
+////        $sourceNHood['wordsearch'] = "http://www.neighbourhood.statistics.gov.uk/NDE2/Disco/FindDatasets?Metadata=wiserd_dataportal_replace_me";
+//
+//        $remoteSources[] = $sourceNHood;
+
+
+//you should see a list of all Controllers/Models
+//        Log::toFile( print_r(get_declared_classes(), true));
+
+//        $modelPath = Yii::getPathOfAlias('application.models');
+
+//        Log::toFile('models ' . $modelPath);
+
+//        Yii::setPathOfAlias('application.models.DataFeedReaders', $modelPath . '/DataFeedReaders');
+
+//        $feedPath = Yii::getPathOfAlias('application.models.DataFeedReaders');
+
+//        Log::toFile('feeds ' . $feedPath);
+
+//        Yii::import("application.models.feedreaders.*", true);
+
+//
+//        $declaredClasses = get_declared_classes();
+//        foreach (glob(Yii::getPathOfAlias('application.models.DataFeedReaders') . "/*.php") as $controller){
+//            $class = basename($controller, ".php");
+//            Log::toFile($class . ' ' . $controller);
+//            if (!in_array($class, $declaredClasses)) {
+//                Yii::import("application.models.DataFeedReaders." . $class, true);
+//            }
+//        }
+
+//
+//        $readers = array();
+//        $feedNames = array();
+//        $remoteSources = array();
+//        foreach(get_declared_classes() as $className) {
+//            if( in_array('FeedReaderInterface', class_implements($className)) ) {
+//                $readers[] = $className;
+//                Log::toFile($className);
+//
+//
+//                $reflectionMethod = new ReflectionMethod($className, 'getFeedName');
+//                $feedName = $reflectionMethod->invoke(new $className());
+//
+//                $feedNames[] = $feedName;
+//                $reflectedInfo['name'] = $feedName;
+//
+//                $remoteSources[] = $reflectedInfo;
+//            }
+////            Log::toFile($className);
+//        }
+
+//        Log::toFile( print_r(get_declared_classes(), true));
+
+        $feedReaderClasses = RemoteDataController::getFeedReaderClasses();
+
         $remoteSources = array();
+        foreach($feedReaderClasses as $feedClass ) {
+//            $reflectionMethod = new ReflectionMethod($className, 'getFeedName');
+//            $feedName = $reflectionMethod->invoke(new $className());
 
-        $sourceNomis = array();
-        $sourceNomis['name'] = "nomisweb";
-        $sourceNomis['url'] = "http://www.nomisweb.co.uk/api/v01/";
-//        $sourceNomis['wordsearch'] = "http://www.nomisweb.co.uk/api/v01/dataset/def.sdmx.json?search=*wiserd_dataportal_replace_me*";
+//            $feedNames[] = $feedClass->getFeedName();
+            $reflectedInfo['name'] = $feedClass->getFeedName();
 
-        $remoteSources[] = $sourceNomis;
+            $remoteSources[] = $reflectedInfo;
+        }
 
-        $sourceNHood = array();
-        $sourceNHood['name'] = "neighbourhood.statistics";
-        $sourceNHood['url'] = "http://www.neighbourhood.statistics.gov.uk/";
-//        $sourceNHood['wordsearch'] = "http://www.neighbourhood.statistics.gov.uk/NDE2/Disco/FindDatasets?Metadata=wiserd_dataportal_replace_me";
+//        Log::toFile('feeds : ' . print_r($feedNames, true));
 
-        $remoteSources[] = $sourceNHood;
+//        Log::toFile('readers : ' . print_r($readers, true));
+
 
         echo json_encode($remoteSources);
     }
@@ -53,26 +168,56 @@ class RemoteDataController extends Controller {
         $datasetID = $_POST['DatasetID'];
         $measuresID = $_POST['MeasuresID'];
 
+        $start = 0;
+        if(isset($_POST['start'])) {
+            $start = $_POST['start'];
+        }
+        $limit = 30;
+        if(isset($_POST['limit'])) {
+            $limit = $_POST['limit'];
+        }
+
         $feedReader = "";
         if(isset($_POST['apiName'])) {
             $feedReader = $_POST['apiName'];
         }
 
-        $jsonEncodedResults = "";
+//        $dataResults = array();
+//
+//        if ($feedReader === "nomisweb") {
+//            $nomisReader = new NomiswebReader();
+//
+//            $dataResults = $nomisReader->getRemoteDataset($datasetID, $boundaryID, $measuresID);
+//        }
+//
+//        if ($feedReader === "neighbourhood.statistics") {
+//            $nhoodReader = new NHoodReader();
+//
+//            $dataResults = $nhoodReader->getRemoteDataset($datasetID, $boundaryID, $measuresID);
+//        }
 
-        if ($feedReader === "nomisweb") {
-            $nomisReader = new NomiswebReader();
+        $readerClass = RemoteDataController::getFeedReaderClassByName($feedReader);
 
-            $jsonEncodedResults = $nomisReader->getRemoteDataset($datasetID, $boundaryID, $measuresID);
+        $dataResults = $readerClass->getRemoteDataset($datasetID, $boundaryID, $measuresID);
+
+
+//        $dataResults['fullset'] = $dataResults;
+        $totalCount = sizeof($dataResults['data']);
+
+        $pageResults = array();
+        $cnt = $start;
+        $cnt_end = $cnt + $limit;
+//        $keys = array_keys($dataResults['data']);
+
+        while ( $cnt < $cnt_end && $cnt < sizeof($dataResults['data'])) {
+            $pageResults[] = $dataResults['data'][$cnt];
+            $cnt ++;
         }
 
-        if ($feedReader === "neighbourhood.statistics") {
-            $nhoodReader = new NHoodReader();
+        $dataResults['data'] = $pageResults;
+        $dataResults['totalCount'] = $totalCount;
 
-            $jsonEncodedResults = $nhoodReader->getRemoteDataset($datasetID, $boundaryID, $measuresID);
-        }
-
-        echo $jsonEncodedResults;
+        echo json_encode($dataResults);
 
     }
 
@@ -93,21 +238,25 @@ class RemoteDataController extends Controller {
             $feedReader = $_POST['apiName'];
         }
 
-        $jsonEncodedResults = "";
+//        $results = "";
+//
+//        if ($feedReader === "nomisweb") {
+//            $nomisReader = new NomiswebReader();
+//
+//            $results = $nomisReader->getRemoteGeographies($datasetID, $regionID);
+//        }
+//
+//        if ($feedReader === "neighbourhood.statistics") {
+//            $nhoodReader = new NHoodReader();
+//
+//            $results = $nhoodReader->getRemoteGeographies($datasetID, $regionID);
+//        }
 
-        if ($feedReader === "nomisweb") {
-            $nomisReader = new NomiswebReader();
+        $readerClass = RemoteDataController::getFeedReaderClassByName($feedReader);
 
-            $jsonEncodedResults = $nomisReader->getRemoteGeographies($datasetID, $regionID);
-        }
+        $results = $readerClass->getRemoteGeographies($datasetID, $regionID);
 
-        if ($feedReader === "neighbourhood.statistics") {
-            $nhoodReader = new NHoodReader();
-
-            $jsonEncodedResults = $nhoodReader->getRemoteGeographies($datasetID, $regionID);
-        }
-
-        echo $jsonEncodedResults;
+        echo json_encode($results);
     }
 
     public function actiongetRegionBreakdown() {
@@ -121,21 +270,26 @@ class RemoteDataController extends Controller {
             $feedReader = $_POST['apiName'];
         }
 
-        $jsonEncodedResults = "";
+//        $regionResults = "";
 
-        if ($feedReader === "nomisweb") {
-            $nomisReader = new NomiswebReader();
+//        if ($feedReader === "nomisweb") {
+//            $nomisReader = new NomiswebReader();
+//
+//            $regionResults = $nomisReader->getRegionBreakdown($datasetID, $regionID);
+//        }
+//
+//        if ($feedReader === "neighbourhood.statistics") {
+//            $nhoodReader = new NHoodReader();
+//
+//            $regionResults = $nhoodReader->getRegionBreakdown($datasetID, $regionID);
+//        }
 
-            $jsonEncodedResults = $nomisReader->getRegionBreakdown($datasetID, $regionID);
-        }
+        $readerClass = RemoteDataController::getFeedReaderClassByName($feedReader);
 
-        if ($feedReader === "neighbourhood.statistics") {
-            $nhoodReader = new NHoodReader();
+        $regionResults = $readerClass->getRegionBreakdown($datasetID, $regionID);
 
-            $jsonEncodedResults = $nhoodReader->getRegionBreakdown($datasetID, $regionID);
-        }
 
-        echo $jsonEncodedResults;
+        echo json_encode($regionResults);
     }
 
     public function actiongetRemoteVariables() {
@@ -147,21 +301,25 @@ class RemoteDataController extends Controller {
             $feedReader = $_POST['apiName'];
         }
 
-        $jsonEncodedResults = "";
+//        $variableResults = "";
+//
+//        if ($feedReader === "nomisweb") {
+//            $nomisReader = new NomiswebReader();
+//
+//            $variableResults = $nomisReader->getRemoteVariables($dataset);
+//        }
+//
+//        if ($feedReader === "neighbourhood.statistics") {
+//            $nhoodReader = new NHoodReader();
+//
+//            $variableResults = $nhoodReader->getRemoteVariables($dataset);
+//        }
 
-        if ($feedReader === "nomisweb") {
-            $nomisReader = new NomiswebReader();
+        $readerClass = RemoteDataController::getFeedReaderClassByName($feedReader);
 
-            $jsonEncodedResults = $nomisReader->getRemoteVariables($dataset);
-        }
+        $variableResults = $readerClass->getRemoteVariables($dataset);
 
-        if ($feedReader === "neighbourhood.statistics") {
-            $nhoodReader = new NHoodReader();
-
-            $jsonEncodedResults = $nhoodReader->getRemoteVariables($dataset);
-        }
-
-        echo $jsonEncodedResults;
+        echo json_encode($variableResults);
 
     }
 
@@ -210,21 +368,25 @@ class RemoteDataController extends Controller {
             $feedReader = $_POST['apiName'];
         }
 
-        $jsonEncodedResults = "";
+//        $keywordResults = "";
+//
+//        if ($feedReader === "nomisweb") {
+//            $nomisReader = new NomiswebReader();
+//
+//            $keywordResults = $nomisReader->keywordSearch($keyword);
+//        }
+//
+//        if ($feedReader === "neighbourhood.statistics") {
+//            $nhoodReader = new NHoodReader();
+//
+//            $keywordResults = $nhoodReader->keywordSearch($keyword);
+//        }
 
-        if ($feedReader === "nomisweb") {
-            $nomisReader = new NomiswebReader();
+        $readerClass = RemoteDataController::getFeedReaderClassByName($feedReader);
 
-             $jsonEncodedResults = $nomisReader->keywordSearch($keyword);
-        }
+        $keywordResults = $readerClass->keywordSearch($keyword);
 
-        if ($feedReader === "neighbourhood.statistics") {
-            $nhoodReader = new NHoodReader();
-
-            $jsonEncodedResults = $nhoodReader->keywordSearch($keyword);
-        }
-
-        echo $jsonEncodedResults;
+        echo json_encode($keywordResults);
     }
 
     public function actionfindQuestionLinks() {

@@ -16,7 +16,7 @@ class NomiswebReader implements FeedReaderInterface{
 
         $urlArray = explode('wiserd_dataportal_replace_me', $url);
 
-        Log::toFile(print_r($urlArray, true));
+//        Log::toFile(print_r($urlArray, true));
 
         $searchURL = $urlArray[0] . $keyword;
 
@@ -24,15 +24,15 @@ class NomiswebReader implements FeedReaderInterface{
             $searchURL .= $urlArray[1];
         }
 
-        Log::toFile(print_r($searchURL, true));
+//        Log::toFile(print_r($searchURL, true));
 
         $output = RemoteDataController::curlURL($searchURL);
 
-        Log::toFile(print_r($output, true));
+//        Log::toFile(print_r($output, true));
 
         $decoded = json_decode($output, false);
 
-        Log::toFile(print_r($decoded, true));
+//        Log::toFile(print_r($decoded, true));
 
         $allFound = array();
 
@@ -75,7 +75,7 @@ class NomiswebReader implements FeedReaderInterface{
             $allFound[] = $toAdd;
         }
 
-        return json_encode($allFound);
+        return $allFound;
     }
 
 
@@ -89,7 +89,7 @@ class NomiswebReader implements FeedReaderInterface{
         $decoded = json_decode($output, false);
 
         Log::toFile($url);
-        Log::toFile(print_r($decoded, true));
+//        Log::toFile(print_r($decoded, true));
 
         $allFound = array();
 
@@ -118,7 +118,7 @@ class NomiswebReader implements FeedReaderInterface{
                 }
             }
         }
-        return json_encode($allFound);
+        return $allFound;
     }
 
     public function getRemoteVariables($datasetID)
@@ -129,7 +129,7 @@ class NomiswebReader implements FeedReaderInterface{
 
         $decoded = json_decode($output, false);
 
-        Log::toFile(print_r($url, true));
+//        Log::toFile(print_r($url, true));
 
         $measures = array();
 
@@ -151,7 +151,7 @@ class NomiswebReader implements FeedReaderInterface{
 
         $allFound['measures'] = $measures;
 
-        return json_encode($allFound);
+        return $allFound;
     }
 
     public function getRemoteGeographies($datasetID, $topGeography)
@@ -164,7 +164,7 @@ class NomiswebReader implements FeedReaderInterface{
 
         $decoded = json_decode($output, false);
 
-        Log::toFile(print_r($decoded, true));
+//        Log::toFile(print_r($decoded, true));
 
         $regions = array();
 
@@ -186,7 +186,7 @@ class NomiswebReader implements FeedReaderInterface{
 
         $allFound['regions'] = $regions;
 
-        return json_encode($allFound);
+        return $allFound;
     }
 
     public function getRemoteDataset($datasetID, $boundaryID, $measuresID)
@@ -219,6 +219,11 @@ class NomiswebReader implements FeedReaderInterface{
         $data['length'] = sizeof($dataSets);
         $data['data'] = $dataSets;
 
-        return json_encode($data);
+        return $data;
+    }
+
+    public function getFeedName()
+    {
+        return 'nomisweb';
     }
 }

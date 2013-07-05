@@ -41,7 +41,7 @@ GeoPortal.Windows.RemoteDataResults = Ext.extend(Ext.Window, {
             {
                 xtype: 'grid',
 //                height: (Ext.getBody().getViewSize().height * 0.8) - 50,
-                id: 'grdResponses',
+                id: 'grdRemoteResults',
                 store: this.RemoteDataStore,
                 frame: true,
                 loadMask: true,
@@ -68,13 +68,34 @@ GeoPortal.Windows.RemoteDataResults = Ext.extend(Ext.Window, {
                 ]
             }
         ];
-//        this.bbar = {
-//            xtype: 'paging',
-//            store: this.ResponseStore,
-//            pageSize: 30,
-//            displayInfo: true,
-//            displayMsg: 'Displaying Questions {0} -{1} of {2}'
-//        };
+        this.bbar = {
+            xtype: 'paging',
+            store: this.RemoteDataStore,
+            pageSize: 30,
+            displayInfo: true,
+            displayMsg: 'Displaying Questions {0} -{1} of {2}',
+            items: [
+                {
+                    xtype: 'tbseparator'
+                },
+                {
+                    xtype: 'button',
+                    text: 'Save Search',
+                    icon: 'images/silk/disk.png',
+                    handler: function () { }
+
+                },
+                {
+                    xtype: 'button',
+                    text: 'Print Page',
+                    icon: 'images/silk/printer.png',
+                    handler: function () {
+                        var grid = Ext.getCmp('resultsGrid');
+                        Ext.ux.Printer.print(grid);
+                    }
+                }
+            ]
+        };
         GeoPortal.Windows.RemoteDataResults.superclass.initComponent.call(this);
     }
 });

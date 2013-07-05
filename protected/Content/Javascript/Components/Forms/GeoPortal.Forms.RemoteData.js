@@ -89,6 +89,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         anchor: '100%',
                         fieldLabel: 'Select Remote Data Source',
                         name: 'Source',
+                        editable: false,
                         triggerAction: 'all',
                         displayField: 'name',
                         hiddenName: 'hiddenURL',
@@ -133,8 +134,8 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
 //                            var cmbSource = Ext.getCmp('cmboSource');
 //                            var name = cmbSource.getValue();
 
-//                            var loadMask = new Ext.LoadMask(this.getBody(), {msg:"Retrieving Search Results...."});
-//                            loadMask.show();
+                            var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:"Retrieving Search Results...."});
+                            loadMask.show();
 
                             Ext.Ajax.request({
                                 url: remoteDataKeywordSearchURL,
@@ -151,14 +152,15 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
 
                                     var csvarea = Ext.getCmp('jsonarea');
                                     csvarea.setValue(resp.responseText);
-//                                    loadMask.hide()
+                                    loadMask.hide()
 
                                 },
                                 failure: function(resp) {
                                     console.log('failure!');
-//                                    loadMask.hide();
+                                    loadMask.hide();
                                 }
                             });
+                            this.getEl().unmask();
                         }
                     },
                     {
@@ -182,6 +184,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         anchor: '100%',
                         fieldLabel: 'Select Remote DataSet',
                         name: 'Dataset',
+                        editable: false,
                         triggerAction: 'all',
                         displayField: 'name',
                         hiddenName: 'hiddenURI',
@@ -273,6 +276,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'combo',
+                        editable: false,
                         id: 'cmboVariable',
                         anchor: '100%',
                         fieldLabel: 'Select Variable',
@@ -325,6 +329,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
 
 
                                     xtype: 'combo',
+                                    editable: false,
                                     id: 'cmboRegion',
                                     anchor: '100%',
                                     fieldLabel: 'Select Region',
@@ -463,6 +468,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'combo',
+                        editable: false,
                         id: 'cmboBoundary',
                         anchor: '100%',
                         fieldLabel: 'Select Boundary',
