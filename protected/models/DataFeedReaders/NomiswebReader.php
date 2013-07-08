@@ -189,11 +189,16 @@ class NomiswebReader implements FeedReaderInterface{
         return $allFound;
     }
 
-    public function getRemoteDataset($datasetID, $boundaryID, $measuresID)
+    public function getRemoteDataset($datasetID, $boundaryID, $measuresID, $recordLimit, $recordOffset)
     {
         $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $datasetID . ".data.json?";
         $url .= "geography=" . $boundaryID;
-        $url .= "&&measures" . $measuresID;
+        $url .= "&&measures=" . $measuresID;
+
+        $url .= "&&RecordLimit=" . $recordLimit;
+        $url .= "&&RecordOffset=" . $recordOffset;
+
+        Log::toFile($url);
 
         $output = RemoteDataController::curlURL($url);
 
@@ -225,5 +230,19 @@ class NomiswebReader implements FeedReaderInterface{
     public function getFeedName()
     {
         return 'nomisweb';
+    }
+
+    public function getRemoteDatasetDownloadURL($datasetID, $boundaryID, $measuresID, $format)
+    {
+        $toReturn = array();
+        if($format === 'csv') {
+
+            $url = "https://www.nomisweb.co.uk/api/v01/dataset/" . $datasetID . ".data.csv?";
+            $url .= "geography=" . $boundaryID;
+            $url .= "&&measures=" . $measuresID;
+            $toReturn['csv'] = $url;
+        }
+
+        return $toReturn;
     }
 }

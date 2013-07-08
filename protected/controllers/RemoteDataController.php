@@ -163,6 +163,23 @@ class RemoteDataController extends Controller {
         echo json_encode($remoteSources);
     }
 
+    public function actiongetRemoteDatasetDownloadUrl() {
+        $boundaryID = $_POST['BoundaryID'];
+        $datasetID = $_POST['DatasetID'];
+        $measuresID = $_POST['MeasuresID'];
+        $format = $_POST['format'];
+
+        $feedReader = "";
+        if(isset($_POST['apiName'])) {
+            $feedReader = $_POST['apiName'];
+        }
+
+        $readerClass = RemoteDataController::getFeedReaderClassByName($feedReader);
+        $urlArray = $readerClass->getRemoteDatasetDownloadURL($datasetID, $boundaryID, $measuresID, $format);
+
+        echo json_encode($urlArray);
+    }
+
     public function actiongetRemoteData() {
         $boundaryID = $_POST['BoundaryID'];
         $datasetID = $_POST['DatasetID'];
@@ -198,7 +215,7 @@ class RemoteDataController extends Controller {
 
         $readerClass = RemoteDataController::getFeedReaderClassByName($feedReader);
 
-        $dataResults = $readerClass->getRemoteDataset($datasetID, $boundaryID, $measuresID);
+        $dataResults = $readerClass->getRemoteDataset($datasetID, $boundaryID, $measuresID, $limit, $start);
 
 
 //        $dataResults['fullset'] = $dataResults;

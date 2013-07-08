@@ -91,7 +91,7 @@ class NHoodReader implements FeedReaderInterface {
         return $allFound;
     }
 
-    public function getRemoteDataset($datasetID, $boundaryID, $measuresID)
+    public function getRemoteDataset($datasetID, $boundaryID, $measuresID, $recordLimit, $recordOffset)
     {
 
         $wsdlDoc = "http://neighbourhood.statistics.gov.uk/NDE2/Deli?wsdl";
@@ -188,5 +188,10 @@ class NHoodReader implements FeedReaderInterface {
     public function getFeedName()
     {
         return 'neighbourhood.statistics';
+    }
+
+    public function getRemoteDatasetDownloadURL($datasetID, $boundaryID, $measuresID, $format)
+    {
+        // TODO: Implement getRemoteDatasetDownloadURL() method.
     }
 }

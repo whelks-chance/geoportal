@@ -19,14 +19,18 @@ class LandmarkGov implements FeedReaderInterface
 
         Log::toFile(print_r($decoded, true));
         $toReturn = array();
-        foreach ($decoded->listnodes as $listnode) {
-            Log::toFile($listnode->name);
-            $toReturn[] = $listnode->name;
+        foreach ($decoded->listnodes->listnode as $node) {
+            Log::toFile($node->name);
+            $thisNode['name'] = (string) $node->name;
+            $thisNode['id'] = (string) $node->name;
+            $thisNode["wiserd"] = "";
+            $thisNode["wiserd_survey"] = "";
+            $toReturn[] = $thisNode;
         }
         return $toReturn;
     }
 
-    public function getRemoteDataset($datasetID, $boundaryID, $measuresID)
+    public function getRemoteDataset($datasetID, $boundaryID, $measuresID, $recordLimit, $recordOffset)
     {
         // TODO: Implement getRemoteDataset() method.
     }
@@ -49,5 +53,10 @@ class LandmarkGov implements FeedReaderInterface
     public function getFeedName()
     {
         return 'landmark.gov';
+    }
+
+    public function getRemoteDatasetDownloadURL($datasetID, $boundaryID, $measuresID, $format)
+    {
+        // TODO: Implement getRemoteDatasetDownloadURL() method.
     }
 }

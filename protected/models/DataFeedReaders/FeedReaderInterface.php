@@ -14,12 +14,14 @@ interface FeedReaderInterface
 
     public function keywordSearch($keyword);
 
-    public function getRemoteDataset($datasetID, $boundaryID, $measuresID);
+    public function getRemoteDataset($datasetID, $boundaryID, $measuresID, $recordLimit, $recordOffset);
 
     public function getRemoteVariables($datasetID);
 
     public function getRemoteGeographies($datasetID, $topGeography);
 
     public function getRegionBreakdown($datasetID, $regionID);
+
+    public function getRemoteDatasetDownloadURL($datasetID, $boundaryID, $measuresID, $format);
 
 }

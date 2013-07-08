@@ -40,6 +40,8 @@ include('variables.php')
     var remoteGetDataURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteData';
     var remoteGetVariablesURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteVariables';
     var remoteGetGeographiesURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteDatasetGeographies';
+    var remoteDatasetDownloadURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/getRemoteDatasetDownloadUrl';
+
 
     var findQuestionLinkURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=RemoteData/findQuestionLinks';
 

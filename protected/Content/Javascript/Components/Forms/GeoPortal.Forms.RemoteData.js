@@ -184,6 +184,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         anchor: '100%',
                         fieldLabel: 'Select Remote DataSet',
                         name: 'Dataset',
+                        forceSelection: true,
                         editable: false,
                         triggerAction: 'all',
                         displayField: 'name',
@@ -276,6 +277,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'combo',
+                        forceSelection: true,
                         editable: false,
                         id: 'cmboVariable',
                         anchor: '100%',
@@ -329,6 +331,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
 
 
                                     xtype: 'combo',
+                                    forceSelection: true,
                                     editable: false,
                                     id: 'cmboRegion',
                                     anchor: '100%',
@@ -468,6 +471,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'combo',
+                        forceSelection: true,
                         editable: false,
                         id: 'cmboBoundary',
                         anchor: '100%',
@@ -518,20 +522,41 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         text: 'Get Data',
                         tooltip: 'Get Data',
                         handler: function() {
-//                            var loadMask = new Ext.LoadMask(this.getBody(), {msg:"Retrieving Search Results...."});
-//                            loadMask.show();
-                            var remoteDataWindow = new GeoPortal.Windows.RemoteDataResults(
-                                {
+
+                            Ext.Ajax.request({
+                                url: remoteDatasetDownloadURL,
+                                params : {
+                                    format : 'csv',
                                     apiName : apiName,
                                     DatasetID : datasetID,
                                     BoundaryID : boundaryID,
                                     MeasuresID : measuresID
-                                }
-                            );
-                            remoteDataWindow.show();
-//                            loadMask.hide();
-                        }
+                                },
+                                method : 'POST',
+                                success: function(resp) {
+                                    var responseData = Ext.decode(resp.responseText);
+                                    console.log(responseData);
 
+                                    var csvURL = "";
+                                    csvURL = responseData['csv'];
+                                    console.log('decoede : ' + csvURL);
+
+                                    var remoteDataWindow = new GeoPortal.Windows.RemoteDataResults(
+                                        {
+                                            apiName : apiName,
+                                            DatasetID : datasetID,
+                                            BoundaryID : boundaryID,
+                                            MeasuresID : measuresID,
+                                            CSVurl: csvURL
+                                        }
+                                    );
+                                    remoteDataWindow.show();
+                                },
+                                failure: function(resp) {
+                                }
+                            });
+
+                        }
                     },
                     {
                         fieldLabel      : 'csvarea',
@@ -539,7 +564,7 @@ GeoPortal.Forms.RemoteData = Ext.extend(Ext.form.FormPanel, {
                         name            : 'csv',
                         xtype           : 'textarea',
                         autoScroll      : true,
-                        height          : 260,
+                        height          : 70,
                         anchor: '100%'
                     }
                 ]
