@@ -538,16 +538,16 @@ class getMetaData {
             }
 
 //            Log::toFile("pageCol : " . print_r($pageCol, true));
+        }
 
-            ForEach ($pageCol as $key => $obj) {
-                $wordStats[$key] = ($obj);
-
-            }
-
-            Return $wordStats;
-
+        ForEach ($pageCol as $key => $obj) {
+            $wordStats[$key] = ($obj);
 
         }
+
+        Return $wordStats;
+
+
     }
 
     Public Function getPlaces($ID) {
