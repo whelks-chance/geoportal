@@ -1,45 +1,45 @@
 ﻿/*
-* Copyright (c) 2010 Bjoern Hoehrmann <http://bjoern.hoehrmann.de/>.
-* This module is licensed under the same terms as OpenLayers itself.
-*
-*/
+ * Copyright (c) 2010 Bjoern Hoehrmann <http://bjoern.hoehrmann.de/>.
+ * This module is licensed under the same terms as OpenLayers itself.
+ *
+ */
 
 /* Adapted for WISERD by Richard Fry (c) 2011 */
 
 Heatmap = {};
 
 /**
-* Class: Heatmap.Source
-*/
+ * Class: Heatmap.Source
+ */
 Heatmap.Source = OpenLayers.Class({
 
-    /** 
-    * APIProperty: lonlat
-    * {OpenLayers.LonLat} location of the heat source
-    */
+    /**
+     * APIProperty: lonlat
+     * {OpenLayers.LonLat} location of the heat source
+     */
     lonlat: null,
 
-    /** 
-    * APIProperty: radius
-    * {Number} Heat source radius
-    */
+    /**
+     * APIProperty: radius
+     * {Number} Heat source radius
+     */
     radius: null,
 
-    /** 
-    * APIProperty: intensity
-    * {Number} Heat source intensity
-    */
+    /**
+     * APIProperty: intensity
+     * {Number} Heat source intensity
+     */
     intensity: null,
 
     /**
-    * Constructor: Heatmap.Source
-    * Create a heat source.
-    *
-    * Parameters:
-    * lonlat - {OpenLayers.LonLat} Coordinates of the heat source
-    * radius - {Number} Optional radius
-    * intensity - {Number} Optional intensity
-    */
+     * Constructor: Heatmap.Source
+     * Create a heat source.
+     *
+     * Parameters:
+     * lonlat - {OpenLayers.LonLat} Coordinates of the heat source
+     * radius - {Number} Optional radius
+     * intensity - {Number} Optional intensity
+     */
     initialize: function (lonlat, radius, intensity) {
         this.lonlat = lonlat;
         this.radius = radius;
@@ -50,77 +50,85 @@ Heatmap.Source = OpenLayers.Class({
 });
 
 /**
-* Class: Heatmap.Layer
-* 
-* Inherits from:
-*  - <OpenLayers.Layer>
-*/
+ * Class: Heatmap.Layer
+ *
+ * Inherits from:
+ *  - <OpenLayers.Layer>
+ */
 Heatmap.Layer = OpenLayers.Class(OpenLayers.Layer, {
 
-    /** 
-    * APIProperty: isBaseLayer 
-    * {Boolean} Heatmap layer is never a base layer.  
-    */
+    /**
+     * APIProperty: isBaseLayer
+     * {Boolean} Heatmap layer is never a base layer.
+     */
     isBaseLayer: false,
 
-    /** 
-    * Property: points
-    * {Array(<Heatmap.Source>)} internal coordinate list
-    */
+    /**
+     * Property: points
+     * {Array(<Heatmap.Source>)} internal coordinate list
+     */
     points: null,
 
-    /** 
-    * Property: cache
-    * {Object} Hashtable with CanvasGradient objects
-    */
+    /**
+     * Property: cache
+     * {Object} Hashtable with CanvasGradient objects
+     */
     cache: null,
 
-    /** 
-    * Property: gradient
-    * {Array(Number)} RGBA gradient map used to colorize the intensity map.
-    */
+    /**
+     * Property: gradient
+     * {Array(Number)} RGBA gradient map used to colorize the intensity map.
+     */
     gradient: null,
 
     /*start colour*
-    *default: white
-    */
+     *default: white
+     */
 
     startColour: '#FFFFFF',
 
     /*Endcolour 
-    * default: red
-    */
+     * default: red
+     */
 
     endColour: '#FF0033',
 
-    /** 
-    * Property: canvas
-    * {DOMElement} Canvas element.
-    */
+    /**
+     * Property: canvas
+     * {DOMElement} Canvas element.
+     */
     canvas: null,
 
-    /** 
-    * APIProperty: defaultRadius
-    * {Number} Heat source default radius
-    */
+    /**
+     * APIProperty: defaultRadius
+     * {Number} Heat source default radius
+     */
     defaultRadius: null,
 
-    /** 
-    * APIProperty: defaultIntensity
-    * {Number} Heat source default intensity
-    */
+    /**
+     * APIProperty: defaultIntensity
+     * {Number} Heat source default intensity
+     */
     defaultIntensity: null,
 
     /**
-    * Constructor: Heatmap.Layer
-    * Create a heatmap layer.
-    *
-    * Parameters:
-    * name - {String} Name of the Layer
-    * options - {Object} Hashtable of extra options to tag onto the layer
-    */
+     * Constructor: Heatmap.Layer
+     * Create a heatmap layer.
+     *
+     * Parameters:
+     * name - {String} Name of the Layer
+     * options - {Object} Hashtable of extra options to tag onto the layer
+     */
     initialize: function (name, options) {
         var processing = new Processing();
+
+        console.log(options);
+
+        console.log('endColour : ' + options['endColour']);
+
+        if (typeof(options['endColour']) != "undefined") {
+            this.endColour = options['endColour'];
+        }
 
         OpenLayers.Layer.prototype.initialize.apply(this, arguments);
         this.points = [];
@@ -152,14 +160,14 @@ Heatmap.Layer = OpenLayers.Class(OpenLayers.Layer, {
     },
 
     /**
-    * APIMethod: setGradientStops
-    * ...
-    *
-    * Parameters:
-    * stops - {Object} Hashtable with stop position as keys and colors
-    *                  as values. Stop positions are numbers between 0
-    *                  and 1, color values numbers in 0xRRGGBBAA form.
-    */
+     * APIMethod: setGradientStops
+     * ...
+     *
+     * Parameters:
+     * stops - {Object} Hashtable with stop position as keys and colors
+     *                  as values. Stop positions are numbers between 0
+     *                  and 1, color values numbers in 0xRRGGBBAA form.
+     */
     setGradientStops: function (stops) {
 
         // There is no need to perform the linear interpolation manually,
@@ -185,37 +193,37 @@ Heatmap.Layer = OpenLayers.Class(OpenLayers.Layer, {
     },
 
     /**
-    * APIMethod: addSource
-    * Adds a heat source to the layer.
-    *
-    * Parameters:
-    * source - {<Heatmap.Source>} 
-    */
+     * APIMethod: addSource
+     * Adds a heat source to the layer.
+     *
+     * Parameters:
+     * source - {<Heatmap.Source>}
+     */
     addSource: function (source) {
         this.points.push(source);
     },
 
     /**
-    * APIMethod: removeSource
-    * Removes a heat source from the layer.
-    * 
-    * Parameters:
-    * source - {<Heatmap.Source>} 
-    */
+     * APIMethod: removeSource
+     * Removes a heat source from the layer.
+     *
+     * Parameters:
+     * source - {<Heatmap.Source>}
+     */
     removeSource: function (source) {
         if (this.points && this.points.length) {
             OpenLayers.Util.removeItem(this.points, source);
         }
     },
 
-    /** 
-    * Method: moveTo
-    *
-    * Parameters:
-    * bounds - {<OpenLayers.Bounds>} 
-    * zoomChanged - {Boolean} 
-    * dragging - {Boolean} 
-    */
+    /**
+     * Method: moveTo
+     *
+     * Parameters:
+     * bounds - {<OpenLayers.Bounds>}
+     * zoomChanged - {Boolean}
+     * dragging - {Boolean}
+     */
     moveTo: function (bounds, zoomChanged, dragging) {
 
         OpenLayers.Layer.prototype.moveTo.apply(this, arguments);
@@ -228,9 +236,9 @@ Heatmap.Layer = OpenLayers.Class(OpenLayers.Layer, {
         // between the map's 0,0 coordinate and the layer's 0,0 position.
         var someLoc = new OpenLayers.LonLat(0, 0).transform(geographic, OSGB);
         var offsetX = this.map.getViewPortPxFromLonLat(someLoc).x -
-                  this.map.getLayerPxFromLonLat(someLoc).x;
+            this.map.getLayerPxFromLonLat(someLoc).x;
         var offsetY = this.map.getViewPortPxFromLonLat(someLoc).y -
-                  this.map.getLayerPxFromLonLat(someLoc).y;
+            this.map.getLayerPxFromLonLat(someLoc).y;
 
         this.canvas.width = this.map.getSize().w;
         this.canvas.height = this.map.getSize().h;
@@ -294,14 +302,14 @@ Heatmap.Layer = OpenLayers.Class(OpenLayers.Layer, {
         this.canvas.style.top = (-offsetY) + 'px';
     },
 
-    
-    /** 
-    * APIMethod: getDataExtent
-    * Calculates the max extent which includes all of the heat sources.
-    * 
-    * Returns:
-    * {<OpenLayers.Bounds>}
-    */
+
+    /**
+     * APIMethod: getDataExtent
+     * Calculates the max extent which includes all of the heat sources.
+     *
+     * Returns:
+     * {<OpenLayers.Bounds>}
+     */
     getDataExtent: function () {
         var maxExtent = null;
 

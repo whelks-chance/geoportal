@@ -39,7 +39,7 @@ class RemoteDataController extends Controller {
         $declaredClasses = get_declared_classes();
         foreach (glob(Yii::getPathOfAlias('application.models.DataFeedReaders') . "/*.php") as $controller){
             $class = basename($controller, ".php");
-            Log::toFile($class . ' ' . $controller);
+//            Log::toFile($class . ' ' . $controller);
             if (!in_array($class, $declaredClasses)) {
                 Yii::import("application.models.DataFeedReaders." . $class, true);
             }

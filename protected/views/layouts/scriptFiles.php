@@ -77,6 +77,10 @@ include('variables.php')
     var getTagsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getCloud';
     var getSpatialDataSets = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/getSpatialDataSets';
 
+    var getTaggingTags = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/getTags';
+    var createTaggingMetadata = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/createTaggingMetadata';
+    var getTimeTicks = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/getTimeNowTicks';
+
     var geoserverWMS = '<? echo variables::$geoserverRoot ?>';
     var geoportalAddr = '<? echo variables::geoportalAddr() ?>';
 

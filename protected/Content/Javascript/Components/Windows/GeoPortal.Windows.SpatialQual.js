@@ -17,24 +17,22 @@
                 success: function (form, action) {
 
                     var id = buildQualMapLayer(action.result.shapes[0].title, "Qualitative Data", "Transcripts", Ext.getCmp('winQualSpatial').QID, Ext.getCmp('txtQLayerName').getValue());
-                    var heat = new Heatmap.Layer("Heatmap", { opacity: 0.5 });
+                    var heat = new Heatmap.Layer("Heatmap", { opacity: 0.5, endColour: action.result.colour});
 
 
                     for (var i = 0; i < action.result.shapes.length; i++) {
                         var lat = action.result.shapes[i].lat;
-                        var lon = action.result.shapes[i].lon
-
+                        var lon = action.result.shapes[i].lon;
 
                         for (var cnt = 0; cnt < action.result.shapes[i].counts; cnt++) {
                             heat.addSource(new Heatmap.Source(new OpenLayers.LonLat(lon, lat).transform(geographic, OSGB)));
-                        };
-
-
+                        }
 
                         var feature = new Object();
                         feature.lat = lat;
                         feature.lon = lon;
-                        feature.colour = Ext.getCmp('qualColour').getValue();
+//                        feature.colour = Ext.getCmp('qualColour').getValue();
+                        feature.colour = action.result.colour;
                         feature.counts = (action.result.shapes[i].counts * 2);
                         feature.title = action.result.shapes[i].title;
                         feature.QID = Ext.getCmp('winQualSpatial').QID;

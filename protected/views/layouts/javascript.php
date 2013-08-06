@@ -33,6 +33,7 @@ $javascriptFiles = array(
     "Components/Forms/GeoPortal.Forms.Login.js",
     "Components/Forms/GeoPortal.Forms.MyMaps.js",
     "Components/Forms/GeoPortal.Forms.UserDetails.js",
+    "Components/Forms/GeoPortal.Forms.Tagging.js",
     "Components/Windows/GeoPortal.Windows.MyAccount.js",
     "Components/Windows/GeoPortal.Windows.Cookies.js",
     "Components/Forms/GeoPortal.Forms.AdvancedSearch.js",

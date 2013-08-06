@@ -335,11 +335,16 @@ class SpatialDataController extends Controller {
             $ID = $_POST['ID'];
         }
 
+        $colour = "#F60434";
+        if(isset($_POST['fieldColour1'])) {
+            $colour = $_POST['fieldColour1'];
+        }
+
         $SD = New SpatialData();
         $shapes = $SD->generateQualSpatialData("red", $ID);
 
         If ( sizeof($shapes) > 0 ) {
-            echo '({"success": true, "shapes": ' . json_encode($shapes) . "})";
+            echo '({' . '"colour": "' . $colour .'", "success": true, "shapes": ' . json_encode($shapes) . "})";
         } Else {
             $msg = New jsonMsg();
             $msg->success = False;

@@ -13,10 +13,13 @@ $this->pageTitle=Yii::app()->name . ' - About';
 $this->breadcrumbs=array(
     'About',
 );
-phpinfo();
+//phpinfo();
 
 ?>
+
 <h1>textgui testing</h1>
+
+<!--    This page is not designed at all, and should not be used as an example for anything-->
 
 <script type="text/javascript">
 Ext.ns('Portal');
@@ -162,6 +165,7 @@ Ext.onReady(function(){
         width: 800,
         height: 600,
         layout: 'fit',
+        maximizable: true,
         items: [
             {
                 xtype: 'tabpanel',
@@ -170,6 +174,7 @@ Ext.onReady(function(){
                 activeTab: 0,
                 items: [
                     new GeoPortal.Forms.AdvancedSearch(),
+                    new GeoPortal.Forms.Tagging(),
                     new GeoPortal.Forms.QuestionMatching(),
                     inner,
                     new GeoPortal.Forms.RemoteData(),

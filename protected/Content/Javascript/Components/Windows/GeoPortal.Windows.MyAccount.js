@@ -16,12 +16,12 @@ GeoPortal.Windows.MyAccount = Ext.extend(Ext.Window, {
                 title: '',
                 items: [
                     new GeoPortal.Forms.UserDetails(),
+                    new GeoPortal.Forms.Tagging(),
                     {
                         xtype: 'panel',
                         title: 'My Messages'
                     },
-                    new GeoPortal.Forms.MyMaps()
-                    ,
+                    new GeoPortal.Forms.MyMaps(),
                     {
                         xtype: 'panel',
                         title: 'My Searches'

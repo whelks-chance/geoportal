@@ -29,7 +29,13 @@ return array(
         'application.models.DataAccess.*',
         'application.models.util.*',
         'application.models.DataFeedReaders.*',
-        'application.views.layouts.*'
+        'application.views.layouts.*',
+
+//        'application.models.RDFPHP.api.model.*',
+//        'application.models.RDFPHP.api.util.*',
+//        'application.models.RDFPHP.api.syntax.*',
+//        'application.models.RDFPHP.api.*',
+
     ),
 
     'modules'=>array(
@@ -72,16 +78,31 @@ return array(
         ),
 
         // uncomment the following to enable URLs in path-format
-        /*
+//        /*
+
         'urlManager'=>array(
             'urlFormat'=>'path',
             'rules'=>array(
-                '<controller:\w+>/<id:\d+>'=>'<controller>/view',
-                '<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
+/*
+                'api/<id:\d+>/<title:.*?>'=>'post/view',
+
+                array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
+                array('api/view', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'GET'),
+*/
+                'api/getMetadata/<val1:\w+>/<val2:\w+>'=>'API/doFunction',
+
+                '/'=>'site/index',
+                '<view:(about|textgui)>'=>'site/page',
+
                 '<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+
+//                '<controller:\w+>/<id:\d+>'=>'<controller>/view',
+//                '<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
+//                '<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
             ),
         ),
-        */
+
+//        */
         'db'=>array(
             'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
         ),
