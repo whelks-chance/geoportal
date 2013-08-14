@@ -81,6 +81,9 @@ include('variables.php')
     var createTaggingMetadata = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/createTaggingMetadata';
     var getTimeTicks = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/getTimeNowTicks';
 
+    var insertDC = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertDC';
+    var getDCids = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDCinfo';
+
     var geoserverWMS = '<? echo variables::$geoserverRoot ?>';
     var geoportalAddr = '<? echo variables::geoportalAddr() ?>';
 

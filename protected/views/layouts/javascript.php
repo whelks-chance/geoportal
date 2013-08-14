@@ -93,7 +93,14 @@ $javascriptFiles = array(
     "Components/Windows/GeoPortal.Windows.SpatialSearchResults.js",
     "Components/Windows/GeoPortal.Windows.WMS.js",
     "Components/Forms/GeoPortal.Forms.UsabilityLogin.js",
-    "Components/Windows/GeoPortal.Windows.ResetPassword.js"
+    "Components/Windows/GeoPortal.Windows.ResetPassword.js",
+    "Components/Windows/GeoPortal.Windows.TaggingResults.js",
+
+    "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.DublinCore.js",
+    "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.Survey.js",
+    "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.Questions.js",
+    "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.Response.js",
+    "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.FindDC.js"
 
 );
 

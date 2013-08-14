@@ -16,7 +16,6 @@ GeoPortal.Forms.Tagging = Ext.extend(Ext.form.FormPanel, {
     bodyStyle: 'padding: 5px',
     autoScroll: true,
     hideBorders: true,
-    wiserdID: '',
     initComponent: function () {
         var docTypes = '[{"docType":"Qualitative Data","docTypeId":"qual"},{"docType":"Grey Data","docTypeId":"grey"}]';
 
@@ -33,7 +32,14 @@ GeoPortal.Forms.Tagging = Ext.extend(Ext.form.FormPanel, {
             url: getTimeTicks,
             method : 'POST',
             success: function(resp) {
-                this.wiserdID = resp.responseText;
+                var response = Ext.decode(resp.responseText);
+
+                var txtcmp = Ext.getCmp('wiserdIdField');
+                txtcmp.setValue("WISID_" + response['micro']);
+
+                var txtcmp = Ext.getCmp('metadataCreationDate');
+                txtcmp.setValue(response['format']);
+
             },
             failure: function(resp) {
                 console.log('failure!');
@@ -47,25 +53,26 @@ GeoPortal.Forms.Tagging = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'tbfill'
                 },
-                {
-                    xtype: 'button',
-                    text: 'Get Tags',
-                    bodyStyle: 'float: right',
-                    icon: './images/silk/tag_blue.png',
-                    handler: function () {
-                        var taggingPanel = Ext.getCmp('frmTagging');
-                        taggingPanel.getForm().submit({
-                            url: getTaggingTags,
-                            waitMsg: 'Getting Tags.....',
-                            success: function (form, action) {
-                                Ext.Msg.alert("Sucess!", action.result.message);
-                            },
-                            failure: function (form, action) {
-                                Ext.Msg.alert(action.result.message);
-                            }
-                        })
-                    }
-                },
+//                {
+//                    xtype: 'button',
+//                    text: 'Get Tags',
+//                    bodyStyle: 'float: right',
+//                    icon: './images/silk/tag_blue.png',
+//                    handler: function () {
+//                        var taggingPanel = Ext.getCmp('frmTagging');
+//                        taggingPanel.getForm().submit({
+//                            url: getTaggingTags,
+//                            waitMsg: 'Getting Tags.....',
+//                            success: function (form, action) {
+//                                Ext.Msg.alert("Sucess!", action.result.message);
+//
+//                            },
+//                            failure: function (form, action) {
+//                                Ext.Msg.alert(action.result.message);
+//                            }
+//                        })
+//                    }
+//                },
                 {
                     xtype: 'button',
                     text: 'Create Metadata',
@@ -78,7 +85,41 @@ GeoPortal.Forms.Tagging = Ext.extend(Ext.form.FormPanel, {
                             waitMsg: 'Creating Metadata.....',
                             success: function (form, action) {
                                 console.log(action);
-                                Ext.Msg.alert("Success!", action.response.responseText);
+
+                                var tagStore = new Ext.data.JsonStore({
+                                    fields: [
+                                        { name: 'name', type: 'string' },
+                                        { name: 'type', type: 'string' },
+                                        { name: 'latitude', type: 'string'},
+                                        { name: 'longitude', type: 'string'}
+                                    ],
+                                    root: 'tags',
+                                    id: 'tagStore'
+                                });
+                                tagStore.loadData(Ext.decode(action.response.responseText));
+
+                                var wordCountStore = new Ext.data.JsonStore({
+                                    fields: [
+                                        { name: 'word', type: 'string' },
+                                        { name: 'count', type: 'string' },
+                                        { name: 'page', type: 'string'}
+                                    ],
+                                    root: 'wordCounts',
+                                    id: 'wordCountStore'
+                                });
+                                wordCountStore.loadData(Ext.decode(action.response.responseText));
+
+                                var txtcmp = Ext.getCmp('wiserdIdField');
+                                var wisID = txtcmp.getValue();
+
+                                var resultsWin = new GeoPortal.Windows.TaggingResults(
+                                    {
+                                        tagStore: tagStore,
+                                        wordCountStore: wordCountStore,
+                                        wid: wisID
+                                    }
+                                );
+                                resultsWin.show();
                             },
                             failure: function (form, action) {
                                 console.log("nope");
@@ -104,7 +145,7 @@ GeoPortal.Forms.Tagging = Ext.extend(Ext.form.FormPanel, {
                         xtype: 'textfield',
                         id: 'wiserdIdField',
                         anchor: '100%',
-                        value: 'WISID_' + this.wiserdID,
+                        value: 'WISID_',
                         fieldLabel: 'WISERD ID',
                         name: 'wiserdid'
                     },

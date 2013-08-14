@@ -46,19 +46,23 @@ class NomiswebReader implements FeedReaderInterface{
                 $dataAdapter = new DataAdapter();
                 $findQuery = "select id, wiserd_id from question_link where remote_id='" . $family->id . "';";
 
-                $results = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
-
                 $foundWord["wiserd"] = "";
                 $foundWord["wiserd_survey"] = "";
-                forEach($results as $DR) {
-                    $foundWord["wiserd"] = $DR->wiserd_id;
-                    $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . strtolower($DR->wiserd_id) . "');";
 
-                    $results = $dataAdapter->DefaultExecuteAndRead($survey_details, "Survey_Data");
+                try {
+                    $results = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
+                    forEach($results as $DR) {
+                        $foundWord["wiserd"] = $DR->wiserd_id;
+                        $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . strtolower($DR->wiserd_id) . "');";
 
-                    if(sizeof($results) > 0 ){
-                        $foundWord["wiserd_survey"] = $results[0]->surveyid;
+                        $results = $dataAdapter->DefaultExecuteAndRead($survey_details, "Survey_Data");
+
+                        if(sizeof($results) > 0 ){
+                            $foundWord["wiserd_survey"] = $results[0]->surveyid;
+                        }
                     }
+                }catch (Exception $ex) {
+                    Log::toFile(print_r($ex, true));
                 }
 
                 $allFound[] = $foundWord;

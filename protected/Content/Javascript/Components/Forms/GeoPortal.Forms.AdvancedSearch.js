@@ -140,6 +140,9 @@
     FormReset : function() {
         var advPanel = Ext.getCmp('advPanel');
         advPanel.getForm().reset();
+
+        console.log('reset ' + this.id)
+        console.log(advPanel);
     },
     initComponent: function () {
         var surveyStore = new Ext.data.JsonStore ({

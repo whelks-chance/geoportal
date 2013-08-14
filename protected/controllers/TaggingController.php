@@ -11,7 +11,14 @@ class TaggingController extends Controller{
 
 
     public function actiongetTimeNowTicks() {
-        echo microtime(true);
+        $today = date("Y-m-d H:i:s");
+        $micro = microtime(true);
+        $str = str_replace(".", '', $micro);
+
+        $times = array();
+        $times['micro'] = $str;
+        $times['format'] = $today;
+        echo json_encode($times);
     }
 
     public function actiongetTags() {
@@ -95,24 +102,37 @@ class TaggingController extends Controller{
 //            }
 //        }
 
-        $remove = array("\n", "\r\n", "\r", "<p>", "</p>", "<h1>", "</h1>", ".", ",", "\"");
+        $remove = array("\n", "\r\n", "\r", "<p>", "</p>", "<h1>", "</h1>", ".", ",", "\"", ":");
         $str = str_replace($remove, ' ', $str);
         $stringArray = explode(" ", $str);
 
+        $ignoreWords = array("a", "i", "the", "and", "with", "we", "to", "of", "on", "is", "for", "in");
+        array_push($ignoreWords, "that", "this", "each", "are", "all", "it", "its", "you", "think", "but");
+        array_push($ignoreWords, "know", "they", "can", "there", "very", "because", "int", "res", "things");
+        array_push($ignoreWords, "what", "got", "yeah", "be", "were", "has", "was", "at", "from", "our");
+        array_push($ignoreWords, "said");
+
         foreach ($stringArray as $word) {
-            if( strlen($word) > 4) {
-                if (array_key_exists($word, $counts)){
-                    $counts[$word] = $counts[$word] +1;
-                } else {
-                    $counts[$word] = 1;
+            if (in_array(($word), $ignoreWords)) {
+
+            } else {
+                if( strlen($word) > 0) {
+                    if (array_key_exists($word, $counts)){
+                        $counts[$word] = $counts[$word] +1;
+                    } else {
+                        $counts[$word] = 1;
+                    }
                 }
             }
         }
 
         $popularWords = array();
         foreach ($counts as $key=>$value) {
-            if($counts[$key] > 1) {
-                $popularWords[$key] = $value;
+            if($counts[$key] > 4) {
+                $word = array();
+                $word['word'] = $key;
+                $word['count'] = $value;
+                $popularWords[] = $word;
             }
         }
 

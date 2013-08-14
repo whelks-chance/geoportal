@@ -60,12 +60,9 @@ Ext.onReady(function(){
                 method : 'POST',
                 success: function(resp) {
                     console.log('success!');
-//                        console.log( resp );
                     var responseData = Ext.decode(resp.responseText);
-//                        console.log(responseData);
                     surveyStore.loadData(responseData);
                     thematicStore.loadData(responseData);
-//                        console.log(surveyStore);
                 },
                 failure: function(resp) {
                     console.log('failure!');
@@ -173,6 +170,18 @@ Ext.onReady(function(){
 //                        border: false,
                 activeTab: 0,
                 items: [
+                    {
+                        xtype: 'tabpanel',
+                        title: 'Data Entry',
+                        tabPosition: 'top',
+                        activeTab: 0,
+                        items: [
+                            new GeoPortal.Forms.DataEntry.DublinCore(),
+                            new GeoPortal.Forms.DataEntry.Survey(),
+                            new GeoPortal.Forms.DataEntry.Questions(),
+                                new GeoPortal.Forms.DataEntry.Response()
+                        ]
+                    },
                     new GeoPortal.Forms.AdvancedSearch(),
                     new GeoPortal.Forms.Tagging(),
                     new GeoPortal.Forms.QuestionMatching(),
@@ -186,52 +195,12 @@ Ext.onReady(function(){
             }
         ]
     });
+//    var sid = 'sid_bes2005scqw';
+//    Ext.getCmp("frmEntryDC").getForm().load({url: DCmetaURL,waitMsg: 'Loading.......',method: 'POST', params: {SID: sid}});
+//    Ext.getCmp("frmEntrySurvey").getForm().load({ url: SmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { SID: sid} });
+//    Ext.getCmp("frmEntryQuestion").getForm().load({ url: QDCmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { SID: sid} });
     advSearch.show();
 
-    // tabs for the center
-    //        var tabs = new Ext.TabPanel({
-    //            region: 'center',
-    //            margins:'3 3 3 0',
-    //            activeTab: 0,
-    //            defaults:{autoScroll:true},
-    //
-    //            items:[{
-    //                title: 'Bogus Tab',
-    //                html: ""
-    //            },{
-    //                title: 'Another Tab',
-    //                html: ""
-    //            },{
-    //                title: 'Closable Tab',
-    //                html: "",
-    //                closable:true
-    //            }]
-    //        });
-
-    // Panel for the west
-    //        var nav = new Ext.Panel({
-    //            title: 'Navigation',
-    //            region: 'west',
-    //            split: true,
-    //            width: 200,
-    //            collapsible: true,
-    //            margins:'3 0 3 3',
-    //            cmargins:'3 3 3 3'
-    //        });
-
-    //        var win = new Ext.Window({
-    //            title: 'Layout Window',
-    //            closable:true,
-    //            width:600,
-    //            height:350,
-    //            //border:false,
-    //            plain:true,
-    //            layout: 'border',
-    //
-    //            items: [nav, tabs]
-    //        });
-
-    //        win.show(this);
 });
 
 
