@@ -30,7 +30,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'fieldset',
                     title: 'General',
-                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                    defaults: {labelStyle: 'font-weight:bold;' },
                     collapsible: true,
                     items: [
                         {
@@ -63,7 +63,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                     xtype: 'container',
                                     columnWidth: 0.5,
                                     layout: 'form',
-                                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                    defaults: {labelStyle: 'font-weight:bold;' },
                                     labelWidth: 75,
                                     items: [
                                         {
@@ -77,7 +77,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                 {
                                     xtype: 'container',
                                     columnWidth: 0.5,
-                                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                    defaults: {labelStyle: 'font-weight:bold;' },
                                     layout: 'form',
                                     items: [
                                         {
@@ -101,7 +101,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                     xtype: 'container',
                                     columnWidth: 0.5,
                                     layout: 'form',
-                                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                    defaults: {labelStyle: 'font-weight:bold;' },
                                     labelWidth: 75,
                                     items: [
                                         {
@@ -116,7 +116,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                     xtype: 'container',
                                     columnWidth: 0.5,
                                     layout: 'form',
-                                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                    defaults: {labelStyle: 'font-weight:bold;' },
                                     items: [
                                         {
                                             xtype: 'textfield',
@@ -132,7 +132,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'container',
                             layout: 'column',
                             anchor: '97%',
-                            defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                            defaults: {labelStyle: 'font-weight:bold;' },
                             items: [
                                 {
                                     xtype: 'container',
@@ -168,7 +168,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                     xtype: 'fieldset',
                     title: 'Data Collection',
                     collapsible: true,
-                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                    defaults: {labelStyle: 'font-weight:bold;' },
                     items: [
                         {
                             xtype: 'textarea',
@@ -203,7 +203,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'fieldset',
                     title: 'Survey/Response Statistics',
-                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                    defaults: {labelStyle: 'font-weight:bold;' },
                     collapsible: true,
                     buttonAlign: 'center',
                     items: [
@@ -213,7 +213,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                             items: [
                                 {
                                     xtype: 'container',
-                                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                    defaults: {labelStyle: 'font-weight:bold;' },
                                     layout: 'form',
                                     columnWidth: 0.5,
                                     items: [
@@ -229,7 +229,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                     xtype: 'container',
                                     layout: 'form',
                                     columnWidth: 0.5,
-                                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                    defaults: {labelStyle: 'font-weight:bold;' },
                                     labelWidth: 110,
                                     items: [
                                         {
@@ -268,10 +268,96 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                     }
                 ]
             };
+            this.tbar = {
+                xtype: 'toolbar',
+                items: [
+                    {
+                        xtype: 'button',
+                        id: 'btnDCLoad',
+                        icon: 'images/silk/application_get.png',
+                        text: 'Load',
+                        type: 'reset',
+                        handler : this.FormLoad,
+                        scope : this
+                    },
+                    {
+                        xtype: 'tbfill'
+                    },
+                    {
+                        xtype: 'button',
+                        id: 'btnDCInsert',
+                        icon: 'images/silk/application_form_add.png',
+                        text: 'Insert',
+                        type: 'reset',
+                        handler : this.FormInsert,
+                        scope : this
+                    },
+                    {
+                        xtype: 'button',
+                        id: 'btnDCUpdate',
+                        icon: 'images/silk/application_form_edit.png',
+                        text: 'Update',
+                        type: 'reset',
+                        handler : this.FormUpdate,
+                        scope : this
+                    },
+                    {
+                        xtype: 'button',
+                        id: 'btnDCDelete',
+                        icon: 'images/silk/application_form_delete.png',
+                        text: 'Delete',
+                        type: 'reset',
+                        handler : this.FormDelete,
+                        scope : this
+                    },
+                    {
+                        xtype: 'button',
+                        id: 'btnDCReset',
+                        icon: 'images/silk/arrow_rotate_clockwise.png',
+                        text: 'Reset Form',
+                        type: 'reset',
+                        handler : this.FormReset,
+                        scope : this
+                    }
+                ]
+            };
+
 
             GeoPortal.Forms.DataEntry.Survey.superclass.initComponent.call(this);
         },
+        FormLoad : function() {
+            var loadDCWin = new Ext.Window({ items: [new GeoPortal.Forms.DataEntry.FindSurvey()], title: 'Load Survey', modal: true, width: 500, id: 'LoadSurveyWin' });
+            loadDCWin.show();
+        },
         FormReset : function() {
+            console.log('reset ' + this.id)
+            var thisPanel = Ext.getCmp(this.id);
+            console.log(thisPanel);
+            thisPanel.getForm().reset();
+        },
+        FormInsert : function() {
+            console.log('reset ' + this.id)
+            var thisPanel = Ext.getCmp(this.id);
+            console.log(thisPanel);
+            thisPanel.getForm().submit({
+                url: insertDC,
+                waitMsg: 'Inserting Dublic Core Data....',
+                success: function (form, action) {
+                    Ext.Msg.alert("Success!",action.result.message);
+//                    Ext.getCmp('ChgPWWin').hide();
+                },
+                failure: function (form, action) {
+                    Ext.Msg.alert("Error!",action.result.message);
+                }
+            });
+        },
+        FormUpdate : function() {
+            console.log('reset ' + this.id)
+            var thisPanel = Ext.getCmp(this.id);
+            console.log(thisPanel);
+            thisPanel.getForm().reset();
+        },
+        FormDelete : function() {
             console.log('reset ' + this.id)
             var thisPanel = Ext.getCmp(this.id);
             console.log(thisPanel);

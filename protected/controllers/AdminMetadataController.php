@@ -11,7 +11,7 @@ class AdminMetadataController extends Controller
 
     function actiongetDCinfo() {
 
-        $dcInfoQuery = "SELECT identifier, title FROM dc_info;";
+        $dcInfoQuery = "SELECT surveyid, identifier, title FROM dc_info;";
 
         $results = DataAdapter::DefaultExecuteAndRead($dcInfoQuery, "Survey_Data");
 
@@ -21,12 +21,41 @@ class AdminMetadataController extends Controller
 
         foreach ($results as $dcInfo) {
 //            Log::toFile("Survey : " . print_r($surveyData, true));
-            $dcInfoArray['id'] = trim($dcInfo->identifier);
+            $dcInfoArray['sid'] = trim($dcInfo->surveyid);
+            $dcInfoArray['wid'] = trim($dcInfo->identifier);
             $dcInfoArray['name'] = trim($dcInfo->title);
             $addDCInfoArray[] = $dcInfoArray;
         }
 
         $returnArray['DublinCoreId'] = $addDCInfoArray;
+
+        echo json_encode($returnArray);
+    }
+
+    function actiongetSurveyQuestions() {
+        $SID = "";
+        if(isset($_POST['SID'])) {
+            $SID = $_POST['SID'];
+        }
+
+        $dcInfoQuery = "SELECT FROM survey_questions_link, questions where surveyid='" . $SID . "';";
+
+        $surveyQuestionQuery = "select q.qid, q.questionnumber from questions q join survey_questions_link surql on q.qid = surql.qid where surql.surveyid='" . $SID . "';";
+
+        $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionQuery, "Survey_Data");
+
+        Log::toFile(print_r($results, true));
+
+        $allQuestionArray = array();
+
+        foreach ($results as $dcInfo) {
+//            Log::toFile("Survey : " . print_r($surveyData, true));
+            $questionArray['QuestionName'] = trim($dcInfo->questionnumber);
+            $questionArray['QuestionID'] = trim($dcInfo->qid);
+            $allQuestionArray[] = $questionArray;
+        }
+
+        $returnArray['questionData'] = $allQuestionArray;
 
         echo json_encode($returnArray);
     }

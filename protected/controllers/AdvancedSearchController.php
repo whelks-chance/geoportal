@@ -601,7 +601,7 @@ class AdvancedSearchController extends Controller {
         $dataAdapter = new DataAdapter();
 
         //The Survey titles as value, and surveyID for the key
-        $surveyNameQuery = "Select survey_title, surveyid From Survey";
+        $surveyNameQuery = "Select survey_title, identifier, surveyid From Survey";
 
         $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
 
@@ -612,6 +612,7 @@ class AdvancedSearchController extends Controller {
         foreach ($surveyNameResults as $surveyData) {
 //            Log::toFile("Survey : " . print_r($surveyData, true));
             $surveyObject['SurveyID'] = trim($surveyData->surveyid);
+            $surveyObject['WiserdID'] = trim($surveyData->identifier);
             $surveyObject['SurveyName'] = trim($surveyData->survey_title);
             $surveyDataArray[] = $surveyObject;
         }

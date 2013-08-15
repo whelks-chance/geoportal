@@ -83,6 +83,7 @@ include('variables.php')
 
     var insertDC = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertDC';
     var getDCids = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDCinfo';
+    var getSurveyQuestions = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getSurveyQuestions';
 
     var geoserverWMS = '<? echo variables::$geoserverRoot ?>';
     var geoportalAddr = '<? echo variables::geoportalAddr() ?>';

@@ -23,7 +23,7 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'fieldset',
                     title: 'Dublin Core',
-//                    defaults: {readOnly: true,labelStyle: 'font-weight:bold;' },
+                    defaults: {labelStyle: 'font-weight:bold;' },
                     collapsible: true,
                     items: [
                         {
@@ -64,7 +64,7 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                                     xtype: 'container',
                                     columnWidth: 0.5,
                                     layout: 'form',
-//                                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                    defaults: {labelStyle: 'font-weight:bold;' },
                                     labelWidth: 75,
                                     items: [
                                         {
@@ -92,7 +92,7 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                                     xtype: 'container',
                                     columnWidth: 0.5,
                                     layout: 'form',
-//                                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                    defaults: {labelStyle: 'font-weight:bold;' },
                                     labelWidth: 75,
                                     items: [
                                         {
@@ -106,7 +106,7 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                                 {
                                     xtype: 'container',
                                     columnWidth: 0.5,
-//                                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                    defaults: {labelStyle: 'font-weight:bold;' },
                                     layout: 'form',
                                     items: [
                                         {
@@ -248,7 +248,7 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
             GeoPortal.Forms.DataEntry.DublinCore.superclass.initComponent.call(this);
         },
         FormLoad : function() {
-            var loadDCWin = new Ext.Window({ items: [new GeoPortal.Forms.DataEntry.FindDC()], title: 'Load DC', modal: true, width: 500, id: 'LoadDCWin' });
+            var loadDCWin = new Ext.Window({ items: [new GeoPortal.Forms.DataEntry.FindSurvey()], title: 'Load Survey', modal: true, width: 500, id: 'LoadDCWin' });
             loadDCWin.show();
         },
         FormReset : function() {
