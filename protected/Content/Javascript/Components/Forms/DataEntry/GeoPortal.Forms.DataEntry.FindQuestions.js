@@ -78,6 +78,10 @@ GeoPortal.Forms.DataEntry.FindQuestions = Ext.extend(Ext.form.FormPanel, {
                                 }
                             }
                         );
+
+                        var breadcrumb = Ext.getCmp('breadcrumb');
+
+                        breadcrumb.updateBreadcrumb(null, null, questionID, "");
                     }
                 }
             ]

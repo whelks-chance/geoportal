@@ -81,6 +81,7 @@ include('variables.php')
     var createTaggingMetadata = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/createTaggingMetadata';
     var getTimeTicks = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/getTimeNowTicks';
 
+    var dataOptionLists = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDataEntryOptionLists';
     var insertDC = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertDC';
     var getDCids = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDCinfo';
     var getSurveyQuestions = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getSurveyQuestions';

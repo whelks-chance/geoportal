@@ -110,7 +110,7 @@ class TaggingController extends Controller{
         array_push($ignoreWords, "that", "this", "each", "are", "all", "it", "its", "you", "think", "but");
         array_push($ignoreWords, "know", "they", "can", "there", "very", "because", "int", "res", "things");
         array_push($ignoreWords, "what", "got", "yeah", "be", "were", "has", "was", "at", "from", "our");
-        array_push($ignoreWords, "said");
+        array_push($ignoreWords, "said", "by");
 
         foreach ($stringArray as $word) {
             if (in_array(($word), $ignoreWords)) {

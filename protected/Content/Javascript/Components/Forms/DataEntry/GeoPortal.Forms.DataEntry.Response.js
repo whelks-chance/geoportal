@@ -18,15 +18,23 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
         bodyCssClass: 'text-align:center',
 
 
-
         initComponent : function () {
+
+            this.on('actioncomplete', function (form,action) {
+                if (action.type=='load') {
+                    var responseID = Ext.getCmp('responseIdField').getValue();
+
+                    var breadcrumb = Ext.getCmp('breadcrumb');
+                    breadcrumb.updateBreadcrumb(null, null, null, responseID);
+                }
+            });
 
             this.tbar = {
                 xtype: 'toolbar',
                 items: [
                     {
                         xtype: 'button',
-                        id: 'btnDCLoad',
+                        id: 'btnResponseLoad',
                         icon: 'images/silk/application_get.png',
                         text: 'Load',
                         type: 'reset',
@@ -38,7 +46,7 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCInsert',
+                        id: 'btnResponseInsert',
                         icon: 'images/silk/application_form_add.png',
                         text: 'Insert',
                         type: 'reset',
@@ -47,7 +55,7 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCUpdate',
+                        id: 'btnResponseUpdate',
                         icon: 'images/silk/application_form_edit.png',
                         text: 'Update',
                         type: 'reset',
@@ -56,7 +64,7 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCDelete',
+                        id: 'btnResponseDelete',
                         icon: 'images/silk/application_form_delete.png',
                         text: 'Delete',
                         type: 'reset',
@@ -65,7 +73,7 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCReset',
+                        id: 'btnResponseReset',
                         icon: 'images/silk/arrow_rotate_clockwise.png',
                         text: 'Reset Form',
                         type: 'reset',
@@ -86,13 +94,15 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'textfield',
                             fieldLabel: 'Question ID',
                             anchor: '97%',
-                            name: 'questionID'
+                            name: 'questionID',
+                            id: 'resQuestionIDfield'
                         },
                         {
                             xtype: 'textfield',
                             fieldLabel: 'Response ID',
                             anchor: '97%',
-                            name: 'responseID'
+                            name: 'responseID',
+                            id: 'responseIdField'
                         },
                         {
                             xtype: 'textfield',

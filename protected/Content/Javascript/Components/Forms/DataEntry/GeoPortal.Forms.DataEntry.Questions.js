@@ -24,7 +24,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                 items: [
                     {
                         xtype: 'button',
-                        id: 'btnDCLoad',
+                        id: 'btnQuestionLoad',
                         icon: 'images/silk/application_get.png',
                         text: 'Load',
                         type: 'reset',
@@ -36,7 +36,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCInsert',
+                        id: 'btnQuestionInsert',
                         icon: 'images/silk/application_form_add.png',
                         text: 'Insert',
                         type: 'reset',
@@ -45,7 +45,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCUpdate',
+                        id: 'btnQuestionUpdate',
                         icon: 'images/silk/application_form_edit.png',
                         text: 'Update',
                         type: 'reset',
@@ -54,7 +54,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCDelete',
+                        id: 'btnQuestionDelete',
                         icon: 'images/silk/application_form_delete.png',
                         text: 'Delete',
                         type: 'reset',
@@ -63,7 +63,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCReset',
+                        id: 'btnQuestionReset',
                         icon: 'images/silk/arrow_rotate_clockwise.png',
                         text: 'Reset Form',
                         type: 'reset',
@@ -91,7 +91,8 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'textfield',
                             fieldLabel: 'Question ID',
                             anchor: '97%',
-                            name: 'QuestionID'
+                            name: 'QuestionID',
+                            id: 'QuestionIdField'
                         },
                         {
                             xtype: 'textfield',

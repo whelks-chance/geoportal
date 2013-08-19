@@ -85,6 +85,9 @@ GeoPortal.Forms.DataEntry.FindSurvey = Ext.extend(Ext.form.FormPanel, {
 
                         var surveyField = Ext.getCmp('QuestionSurveyID');
                         surveyField.setValue(surveyID);
+
+                        var breadcrumb = Ext.getCmp('breadcrumb');
+                        breadcrumb.updateBreadcrumb(wid, surveyID, "", "");
                     }
                 }
             ]

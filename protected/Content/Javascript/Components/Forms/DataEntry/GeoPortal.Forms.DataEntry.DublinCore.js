@@ -19,6 +19,52 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
 
         initComponent : function () {
 
+            var dcFormatStore = new Ext.data.JsonStore ({
+                fields: [
+                    {name: 'name', mapping: 'dc_format_title'},
+                    {name: 'id',  mapping: 'dcformatid'}
+                ],
+                id: "dcFormatTypesStore",
+                root : "dcFormatTypes"
+            });
+
+            var dcLanguageStore = new Ext.data.JsonStore ({
+                fields: [
+                    {name: 'name', mapping: 'dc_language_title'},
+                    {name: 'id',  mapping: 'dclangid'}
+                ],
+                id: "dcLanguageStore",
+                root : "dcLangs"
+            });
+
+            var dcTypeStore = new Ext.data.JsonStore ({
+                fields: [
+                    {name: 'name', mapping: 'dc_type_title'},
+                    {name: 'id',  mapping: 'dctypeid'}
+                ],
+                id: "dcTypeStore",
+                root : "dcTypes"
+            });
+
+            Ext.Ajax.request({
+                url: dataOptionLists,
+                method : 'POST',
+                params : {
+                    dublincore_format: true,
+                    dublincore_language: true,
+                    dublincore_type: true
+                },
+                success: function(resp) {
+                    var responseData = Ext.decode(resp.responseText);
+                    dcFormatStore.loadData(responseData);
+                    dcLanguageStore.loadData(responseData);
+                    dcTypeStore.loadData(responseData);
+                },
+                failure: function(resp) {
+                    console.log('failure!');
+                }
+            });
+
             this.items = [
                 {
                     xtype: 'fieldset',
@@ -30,7 +76,8 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'textfield',
                             fieldLabel: 'WISERD ID',
                             anchor: '97%',
-                            name: 'dcWiserdID'
+                            name: 'dcWiserdID',
+                            id: 'dcWiserdIDfield'
                         },
                         {
                             xtype: 'textarea',
@@ -96,10 +143,19 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                                     labelWidth: 75,
                                     items: [
                                         {
-                                            xtype: 'textfield',
-                                            name: 'dcType',
+                                            xtype: 'combo',
+                                            forceSelection: true,
+                                            editable: false,
+                                            id: 'dcTypeCombo',
                                             anchor: '94%',
-                                            fieldLabel: 'Type'
+                                            fieldLabel: 'Type',
+                                            name: 'dcType',
+                                            triggerAction: 'all',
+                                            displayField: 'name',
+//                            hiddenName: 'hiddenVariable',
+//                            valueField: 'id',
+                                            mode: 'local',
+                                            store : dcTypeStore
                                         }
                                     ]
                                 },
@@ -110,10 +166,19 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                                     layout: 'form',
                                     items: [
                                         {
-                                            xtype: 'textfield',
-                                            fieldLabel: 'Format',
+                                            xtype: 'combo',
+                                            forceSelection: true,
+                                            editable: false,
+                                            id: 'dcFormatCombo',
                                             anchor: '94%',
-                                            name: 'dcFormat'
+                                            fieldLabel: 'Format',
+                                            name: 'dcFormat',
+                                            triggerAction: 'all',
+                                            displayField: 'name',
+//                            hiddenName: 'hiddenVariable',
+//                            valueField: 'id',
+                                            mode: 'local',
+                                            store : dcFormatStore
                                         }
                                     ]
                                 }
@@ -176,10 +241,19 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                             ]
                         },
                         {
-                            xtype: 'textfield',
-                            fieldLabel: 'Language',
+                            xtype: 'combo',
+                            forceSelection: true,
+                            editable: false,
+                            id: 'dcLanguageCombo',
                             anchor: '97%',
-                            name: 'dcLanguage'
+                            fieldLabel: 'Language',
+                            name: 'dcLanguage',
+                            triggerAction: 'all',
+                            displayField: 'name',
+//                            hiddenName: 'hiddenVariable',
+//                            valueField: 'id',
+                            mode: 'local',
+                            store : dcLanguageStore
                         },
                         {
                             xtype: 'textarea',
@@ -194,6 +268,15 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
             this.tbar = {
                 xtype: 'toolbar',
                 items: [
+                    {
+                        xtype: 'button',
+                        id: 'btnNewSurvey',
+                        icon: 'images/silk/application_get.png',
+                        text: 'New Survey',
+                        type: 'reset',
+                        handler : this.NewSurvey,
+                        scope : this
+                    },
                     {
                         xtype: 'button',
                         id: 'btnDCLoad',
@@ -250,6 +333,28 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
         FormLoad : function() {
             var loadDCWin = new Ext.Window({ items: [new GeoPortal.Forms.DataEntry.FindSurvey()], title: 'Load Survey', modal: true, width: 500, id: 'LoadDCWin' });
             loadDCWin.show();
+        },
+        NewSurvey : function() {
+            Ext.MessageBox.prompt('Survey', 'Please enter a new Survey ID. Appropriate id tags will be automatically added.', function(btn, text){
+                if (btn == 'ok'){
+
+                    var wid = 'wisid_' + text;
+                    var sid = 'sid_' + text;
+                    var qid = 'qid_' + text;
+                    var resid = 'resid_qid_' + text;
+
+                    Ext.getCmp('dcWiserdIDfield').setValue(wid);
+                    Ext.getCmp('surveyIDfield').setValue(sid);
+                    Ext.getCmp('QuestionSurveyID').setValue(sid);
+                    Ext.getCmp('QuestionIdField').setValue(qid);
+                    Ext.getCmp('resQuestionIDfield').setValue(qid);
+                    Ext.getCmp('responseIdField').setValue(resid);
+
+                    var breadcrumb = Ext.getCmp('breadcrumb');
+                    breadcrumb.updateBreadcrumb(wid, sid, qid, resid);
+
+                }
+            });
         },
         FormReset : function() {
             console.log('reset ' + this.id)

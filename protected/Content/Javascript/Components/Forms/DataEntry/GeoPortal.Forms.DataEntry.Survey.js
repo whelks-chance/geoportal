@@ -37,7 +37,8 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'textfield',
                             fieldLabel: 'Survey ID',
                             anchor: '97%',
-                            name: 'surveyID'
+                            name: 'surveyID',
+                            id: 'surveyIDfield'
                         },
                         {
                             xtype: 'textarea',
@@ -259,21 +260,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                 items: [
                     {
                         xtype: 'button',
-                        id: 'btnSurveyReset',
-                        icon: 'images/silk/arrow_rotate_clockwise.png',
-                        text: 'Reset Form',
-                        type: 'reset',
-                        handler : this.FormReset,
-                        scope : this
-                    }
-                ]
-            };
-            this.tbar = {
-                xtype: 'toolbar',
-                items: [
-                    {
-                        xtype: 'button',
-                        id: 'btnDCLoad',
+                        id: 'btnSurveyLoad',
                         icon: 'images/silk/application_get.png',
                         text: 'Load',
                         type: 'reset',
@@ -285,7 +272,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCInsert',
+                        id: 'btnSurveyInsert',
                         icon: 'images/silk/application_form_add.png',
                         text: 'Insert',
                         type: 'reset',
@@ -294,7 +281,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCUpdate',
+                        id: 'btnSurveyUpdate',
                         icon: 'images/silk/application_form_edit.png',
                         text: 'Update',
                         type: 'reset',
@@ -303,7 +290,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCDelete',
+                        id: 'btnSurveyDelete',
                         icon: 'images/silk/application_form_delete.png',
                         text: 'Delete',
                         type: 'reset',
@@ -312,7 +299,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnDCReset',
+                        id: 'btnSurveyReset',
                         icon: 'images/silk/arrow_rotate_clockwise.png',
                         text: 'Reset Form',
                         type: 'reset',

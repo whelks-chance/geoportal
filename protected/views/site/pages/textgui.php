@@ -22,10 +22,10 @@ $this->breadcrumbs=array(
 <!--    This page is not designed at all, and should not be used as an example for anything-->
 
 <script type="text/javascript">
-    Ext.ns('Portal');
-    Ext.onReady(function(){
+Ext.ns('Portal');
+Ext.onReady(function(){
 
-        Portal.Innerpanel = Ext.extend(Ext.form.FormPanel, {
+    Portal.Innerpanel = Ext.extend(Ext.form.FormPanel, {
 //            width: 500,
 //            height: '100%',
 //        closable: true,
@@ -33,196 +33,235 @@ $this->breadcrumbs=array(
 //            autoScroll: true,
 //        loadMask: true,
 //        loadMsg: 'loading.....',
-            title: 'Advanced Search',
-            layout: 'fit',
-            id: 'advPanel',
+        title: 'Advanced Search',
+        layout: 'fit',
+        id: 'advPanel',
 
-            initComponent: function () {
+        initComponent: function () {
 
-                var surveyStore = new Ext.data.JsonStore ({
-                    fields: [
-                        {name: 'SurveyName', mapping: 'SurveyName'},
-                        {name: 'SurveyID',  mapping: 'SurveyID'}],
-                    id: "surveyStore",
-                    root : "surveyData"
-                });
+            var surveyStore = new Ext.data.JsonStore ({
+                fields: [
+                    {name: 'SurveyName', mapping: 'SurveyName'},
+                    {name: 'SurveyID',  mapping: 'SurveyID'}],
+                id: "surveyStore",
+                root : "surveyData"
+            });
 
-                var thematicStore = new Ext.data.JsonStore ({
-                    fields: [
-                        {name: 'theme', mapping: 'grouptitle'},
-                        {name: 'ID',  mapping: 'tgroupid'}],
-                    id: "thematicStore",
-                    root : "thematicData"
-                });
+            var thematicStore = new Ext.data.JsonStore ({
+                fields: [
+                    {name: 'theme', mapping: 'grouptitle'},
+                    {name: 'ID',  mapping: 'tgroupid'}],
+                id: "thematicStore",
+                root : "thematicData"
+            });
 
-                Ext.Ajax.request({
-                    url: advancedSearchMetaURL,
-                    method : 'POST',
-                    success: function(resp) {
-                        console.log('success!');
-                        var responseData = Ext.decode(resp.responseText);
-                        surveyStore.loadData(responseData);
-                        thematicStore.loadData(responseData);
-                    },
-                    failure: function(resp) {
-                        console.log('failure!');
-                    }
-                });
+            Ext.Ajax.request({
+                url: advancedSearchMetaURL,
+                method : 'POST',
+                success: function(resp) {
+                    console.log('success!');
+                    var responseData = Ext.decode(resp.responseText);
+                    surveyStore.loadData(responseData);
+                    thematicStore.loadData(responseData);
+                },
+                failure: function(resp) {
+                    console.log('failure!');
+                }
+            });
 
-                this.items = [
-                    {
-
-                        xtype: 'fieldset',
-                        title: 'Keywords',
-                        items: [
-                            {
-                                xtype: 'button',
-                                id: 'btnCookie',
-                                text: 'Cookie Policy',
-                                icon: 'images/silk/database_add.png',
-                                handler: function () {
-
-                                    var cookieForm = new GeoPortal.Windows.Cookies();
-                                    cookieForm.show()
-
-                                }
-                            },
-                            {
-                                xtype: 'textfield',
-                                id: 'txtAdvKeyword',
-                                emptyText: 'Comma separated keywords....',
-                                anchor: '100%',
-                                fieldLabel: 'Keywords',
-                                name: 'Keywords'
-                            },
-                            {
-                                xtype: 'combo',
-                                id: 'cmboSurvey',
-                                anchor: '100%',
-                                fieldLabel: 'Select Survey',
-                                name: 'Survey',
-                                triggerAction: 'all',
-                                displayField: 'SurveyName',
-                                hiddenName: 'SurveysId',
-                                valueField: 'SurveyID',
-                                mode: 'local',
-                                store : surveyStore
-                            },
-                            {
-                                xtype: 'combo',
-                                tpl: '<tpl for="."><div ext:qtip="hovertext - {theme} - {grouptitle}" class="x-combo-list-item">{theme}</div></tpl>',
-                                id: 'cmboThematic',
-                                anchor: '100%',
-                                fieldLabel: 'Thematic Group',
-                                name: 'Thematic',
-                                hiddenName: 'ThematicID',
-                                displayField: 'theme',
-                                valueField: 'ID',
-                                mode: 'local',
-                                triggerAction: 'all',
-                                store : thematicStore
-                            },
-                            {
-                                xtype: 'button',
-                                id: 'btnAdvSearchFrm',
-                                icon: 'images/silk/magnifier.png',
-                                text: 'Search',
-                                tooltip: 'Submit Search',
-                                handler: this.submitAll
-                            },
-                            {
-                                xtype: 'box',
-                                autoEl: {
-                                    tag: 'a',
-                                    href: 'http://www.google.com/',
-                                    target: '_blank',   //  for open in new window
-                                    cn: 'Google'
-                                }
-                            }
-                        ]
-                    }
-                ];
-                Portal.Innerpanel.superclass.initComponent.call(this);
-            },
-            submitAll : function() {
-                var advPanel = Ext.getCmp('advPanel');
-
-                advPanel.getForm().submit({
-                    url: advancedSearchURL,
-                    method: 'post'
-                });
-            }
-        });
-
-        var inner = new Portal.Innerpanel();
-
-        var advSearch = new Ext.Window({
-            title: 'Advanced Search',
-            id: 'advSearch',
-            width: 800,
-            height: 600,
-            layout: 'fit',
-            maximizable: true,
-            items: [
+            this.items = [
                 {
-                    xtype: 'tabpanel',
-                    tabPosition: 'top',
-//                        border: false,
-                    activeTab: 0,
+
+                    xtype: 'fieldset',
+                    title: 'Keywords',
                     items: [
                         {
-                            xtype: 'panel',
-                            title: 'Data Entry',
-                            layout: 'border',
-                            items : [
-                                {
-                                    xtype: 'field',
-                                    region: 'north',
-                                    id: 'breadcrumb',
-                                    readOnly: 'true',
-                                    value: 'dublin -> survy -> questio -> response',
-                                    width: '100%',
-//                                    anchor: '97%',
-                                    name: 'breadcrumb'
-                                },
-                                {
-                                    xtype: 'tabpanel',
-                                    region: 'center',
-//                                    title: 'Data Entry',
-//                                    tabPosition: 'top',
-                                    activeTab: 0,
-//                                    height: '100%',
-//                                    layout: 'fit',
-                                    items: [
-                                        new GeoPortal.Forms.DataEntry.DublinCore(),
-                                        new GeoPortal.Forms.DataEntry.Survey(),
-                                        new GeoPortal.Forms.DataEntry.Questions(),
-                                        new GeoPortal.Forms.DataEntry.Response()
-                                    ]
-                                }
-                            ]
-                        },
+                            xtype: 'button',
+                            id: 'btnCookie',
+                            text: 'Cookie Policy',
+                            icon: 'images/silk/database_add.png',
+                            handler: function () {
 
-                        new GeoPortal.Forms.AdvancedSearch(),
-                        new GeoPortal.Forms.Tagging(),
-                        new GeoPortal.Forms.QuestionMatching(),
-                        inner,
-                        new GeoPortal.Forms.RemoteData(),
+                                var cookieForm = new GeoPortal.Windows.Cookies();
+                                cookieForm.show()
+
+                            }
+                        },
                         {
-                            xtype: 'panel',
-                            title: 'My Messages'
+                            xtype: 'textfield',
+                            id: 'txtAdvKeyword',
+                            emptyText: 'Comma separated keywords....',
+                            anchor: '100%',
+                            fieldLabel: 'Keywords',
+                            name: 'Keywords'
+                        },
+                        {
+                            xtype: 'combo',
+                            id: 'cmboSurvey',
+                            anchor: '100%',
+                            fieldLabel: 'Select Survey',
+                            name: 'Survey',
+                            triggerAction: 'all',
+                            displayField: 'SurveyName',
+                            hiddenName: 'SurveysId',
+                            valueField: 'SurveyID',
+                            mode: 'local',
+                            store : surveyStore
+                        },
+                        {
+                            xtype: 'combo',
+                            tpl: '<tpl for="."><div ext:qtip="hovertext - {theme} - {grouptitle}" class="x-combo-list-item">{theme}</div></tpl>',
+                            id: 'cmboThematic',
+                            anchor: '100%',
+                            fieldLabel: 'Thematic Group',
+                            name: 'Thematic',
+                            hiddenName: 'ThematicID',
+                            displayField: 'theme',
+                            valueField: 'ID',
+                            mode: 'local',
+                            triggerAction: 'all',
+                            store : thematicStore
+                        },
+                        {
+                            xtype: 'button',
+                            id: 'btnAdvSearchFrm',
+                            icon: 'images/silk/magnifier.png',
+                            text: 'Search',
+                            tooltip: 'Submit Search',
+                            handler: this.submitAll
+                        },
+                        {
+                            xtype: 'box',
+                            autoEl: {
+                                tag: 'a',
+                                href: 'http://www.google.com/',
+                                target: '_blank',   //  for open in new window
+                                cn: 'Google'
+                            }
                         }
                     ]
                 }
-            ]
-        });
+            ];
+            Portal.Innerpanel.superclass.initComponent.call(this);
+        },
+        submitAll : function() {
+            var advPanel = Ext.getCmp('advPanel');
+
+            advPanel.getForm().submit({
+                url: advancedSearchURL,
+                method: 'post'
+            });
+        }
+    });
+
+    var inner = new Portal.Innerpanel();
+
+    var advSearch = new Ext.Window({
+        title: 'Advanced Search',
+        id: 'advSearch',
+        width: 800,
+        height: 600,
+        layout: 'fit',
+        maximizable: true,
+        items: [
+            {
+                xtype: 'tabpanel',
+                tabPosition: 'top',
+//                        border: false,
+                activeTab: 0,
+                items: [
+//                        {
+//                            xtype: 'panel',
+//                            title: 'Data Entry',
+//                            layout: 'border',
+//                            items : [
+//                                {
+//                                    xtype: 'field',
+//                                    region: 'north',
+//                                    id: 'breadcrumb',
+//                                    readOnly: 'true',
+//                                    value: 'DC -> Survey -> Question -> Response',
+//                                    width: '100%',
+////                                    anchor: '97%',
+//                                    name: 'breadcrumb',
+//                                    updateBreadcrumb : function(wid, sid, qid, rid){
+//                                        var surveyField = Ext.getCmp('breadcrumb');
+//
+//                                        var previous = surveyField.getValue().split("  =>  ")
+//
+//                                        if(wid != null) {
+//                                            previous[0] = "DC " + wid;
+//                                        }
+//                                        if(sid != null) {
+//                                            previous[1] = "Survey " + sid;
+//                                        }
+//                                        if(qid != null) {
+//                                            previous[2] = "Question " + qid;
+//                                        }
+//                                        if(rid != null) {
+//                                            previous[3] = "Response " + rid;
+//                                        }
+//                                        surveyField.setValue(previous[0] + '  =>  ' + previous[1] + '  =>  ' + previous[2] + '  =>  ' + previous[3]);
+//                                    }
+//                                },
+//                                {
+//                                    xtype: 'tabpanel',
+//                                    region: 'center',
+////                                    title: 'Data Entry',
+////                                    tabPosition: 'top',
+//                                    activeTab: 0,
+////                                    height: '100%',
+////                                    layout: 'fit',
+//                                    items: [
+//                                        new GeoPortal.Forms.DataEntry.DublinCore(),
+//                                        new GeoPortal.Forms.DataEntry.Survey(),
+//                                        new GeoPortal.Forms.DataEntry.Questions(),
+//                                        new GeoPortal.Forms.DataEntry.Response(),
+//                                        new GeoPortal.Forms.DataEntry.DBlines()
+//                                    ]
+//                                }
+//                            ]
+//                        },
+
+                    new GeoPortal.Forms.AdvancedSearch(),
+//                    new GeoPortal.Forms.Tagging(),
+                    new GeoPortal.Forms.QuestionMatching(),
+                    inner,
+                    new GeoPortal.Forms.RemoteData(),
+                    {
+                        xtype: 'panel',
+                        title: 'My Messages'
+                    },
+                    {
+                        xtype: 'panel',
+                        title: 'Data Entry',
+                        layout: 'border',
+                        items : [
+                            {
+                                xtype: 'button',
+                                id: 'btnDataEntry',
+                                icon: 'images/silk/application_get.png',
+                                text: 'DataEntry',
+                                type: 'reset',
+                                handler : function() {
+                                    var dataEntryWin = new GeoPortal.Windows.DataEntry();
+                                    dataEntryWin.show();
+                                }
+                            }
+
+                        ]
+                    }
+                ]
+            }
+        ]
+    });
 //    var sid = 'sid_bes2005scqw';
 //    Ext.getCmp("frmEntryDC").getForm().load({url: DCmetaURL,waitMsg: 'Loading.......',method: 'POST', params: {SID: sid}});
 //    Ext.getCmp("frmEntrySurvey").getForm().load({ url: SmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { SID: sid} });
 //    Ext.getCmp("frmEntryQuestion").getForm().load({ url: QDCmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { SID: sid} });
-        advSearch.show();
+    advSearch.show();
 
-    });
+});
 
 
 
