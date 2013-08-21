@@ -239,6 +239,9 @@ Ext.onReady(function(){
                         items : [
                             {
                                 xtype: 'button',
+                                region: 'center',
+                                height: '10%',
+                                width: '20%',
                                 id: 'btnDataEntry',
                                 icon: 'images/silk/application_get.png',
                                 text: 'DataEntry',
@@ -260,6 +263,14 @@ Ext.onReady(function(){
 //    Ext.getCmp("frmEntrySurvey").getForm().load({ url: SmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { SID: sid} });
 //    Ext.getCmp("frmEntryQuestion").getForm().load({ url: QDCmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { SID: sid} });
     advSearch.show();
+
+    var frmLogin = new Ext.Window({ title: 'Fake log-in',
+        items: new GeoPortal.Forms.UsabilityLogin(),
+        id: 'WinLogin',
+        resizable: false,
+        closable: false
+    });
+    frmLogin.show();
 
 });
 

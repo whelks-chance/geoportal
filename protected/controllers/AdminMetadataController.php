@@ -202,7 +202,7 @@ class AdminMetadataController extends Controller
             $SID = $_POST['SID'];
         }
 
-        $dcInfoQuery = "SELECT FROM survey_questions_link, questions where surveyid='" . $SID . "';";
+//        $dcInfoQuery = "SELECT FROM survey_questions_link, questions where surveyid='" . $SID . "';";
 
         $surveyQuestionQuery = "select q.qid, q.questionnumber from questions q join survey_questions_link surql on q.qid = surql.qid where surql.surveyid='" . $SID . "';";
 

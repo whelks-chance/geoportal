@@ -40,14 +40,14 @@ return array(
 
     'modules'=>array(
         // uncomment the following to enable the Gii tool
-        /*
+
         'gii'=>array(
             'class'=>'system.gii.GiiModule',
-            'password'=>'Enter Your Password Here',
+            'password'=>'g11w15erd',
             // If removed, Gii defaults to localhost only. Edit carefully to taste.
             'ipFilters'=>array('127.0.0.1','::1'),
         ),
-        */
+
     ),
 
 
@@ -83,12 +83,12 @@ return array(
         'urlManager'=>array(
             'urlFormat'=>'path',
             'rules'=>array(
-/*
-                'api/<id:\d+>/<title:.*?>'=>'post/view',
+                /*
+                                'api/<id:\d+>/<title:.*?>'=>'post/view',
 
-                array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
-                array('api/view', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'GET'),
-*/
+                                array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
+                                array('api/view', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'GET'),
+                */
                 'api/getMetadata/<val1:\w+>/<val2:\w+>'=>'API/doFunction',
 
                 '/'=>'site/index',
@@ -103,9 +103,9 @@ return array(
         ),
 
 //        */
-        'db'=>array(
-            'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
-        ),
+//        'db'=>array(
+//            'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
+//        ),
         // uncomment the following to use a MySQL database
         /*
         'db'=>array(
@@ -116,6 +116,20 @@ return array(
             'charset' => 'utf8',
         ),
         */
+        'db'=>array(
+            'tablePrefix'=>'',
+            'connectionString' => 'pgsql:host=192.168.56.103;port=5432;dbname=Geoportal',
+            'username'=>'dataportal',
+            'password'=>'d4t4p0rtalacce55',
+            'charset'=>'UTF8',
+        ),
+
+        'authManager'=>array(
+//            'class'=>'CDbAuthManager',
+            'class'=>'CPhpAuthManager'
+//            'connectionID'=>'db',
+        ),
+
         'errorHandler'=>array(
             // use 'site/error' action to display errors
             'errorAction'=>'site/error',

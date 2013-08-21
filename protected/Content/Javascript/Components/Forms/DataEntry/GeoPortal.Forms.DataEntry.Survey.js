@@ -26,6 +26,32 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
 
         initComponent : function () {
 
+            var frequencyStore = new Ext.data.JsonStore ({
+                fields: [
+                    {name: 'name', mapping: 'svy_frequency_title'},
+                    {name: 'id',  mapping: 'svyfreqid'}
+                ],
+                id: "frequencyStore",
+                root : "survey_frequency"
+            });
+
+            Ext.Ajax.request({
+                url: dataOptionLists,
+                method : 'POST',
+                params : {
+                    survey_frequency: true
+
+                },
+                success: function(resp) {
+                    var responseData = Ext.decode(resp.responseText);
+                    frequencyStore.loadData(responseData);
+
+                },
+                failure: function(resp) {
+                    console.log('failure!');
+                }
+            });
+
             this.items = [
                 {
                     xtype: 'fieldset',
@@ -105,11 +131,26 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                     defaults: {labelStyle: 'font-weight:bold;' },
                                     labelWidth: 75,
                                     items: [
+//                                        {
+//                                            xtype: 'textfield',
+//                                            name: 'surveyFrequency',
+//                                            anchor: '94%',
+//                                            fieldLabel: 'Frequency'
+//                                        },
                                         {
-                                            xtype: 'textfield',
-                                            name: 'surveyFrequency',
+                                            xtype: 'combo',
+                                            forceSelection: true,
+                                            editable: false,
+                                            id: 'frequencyCombo',
                                             anchor: '94%',
-                                            fieldLabel: 'Frequency'
+                                            fieldLabel: 'Frequency',
+                                            name: 'surveyFrequency',
+                                            triggerAction: 'all',
+                                            displayField: 'name',
+//                            hiddenName: 'hiddenVariable',
+//                            valueField: 'id',
+                                            mode: 'local',
+                                            store : frequencyStore
                                         }
                                     ]
                                 },

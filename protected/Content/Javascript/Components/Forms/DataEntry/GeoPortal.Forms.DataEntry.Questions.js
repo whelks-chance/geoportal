@@ -19,6 +19,41 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
 
         initComponent : function () {
 
+            var thematicGroupStore = new Ext.data.JsonStore ({
+                fields: [
+                    {name: 'name', mapping: 'grouptitle'},
+                    {name: 'id',  mapping: 'tgroupid'}
+                ],
+                id: "thematicGroupStore",
+                root : "thematic_groups"
+            });
+            var thematicTagStore = new Ext.data.JsonStore ({
+                fields: [
+                    {name: 'name', mapping: 'tag_text'},
+                    {name: 'id',  mapping: 'tagid'}
+                ],
+                id: "thematicTagStore",
+                root : "group_tags"
+            });
+
+            Ext.Ajax.request({
+                url: dataOptionLists,
+                method : 'POST',
+                params : {
+                    thematic_groups: true,
+                    group_tags: true
+                },
+                success: function(resp) {
+                    var responseData = Ext.decode(resp.responseText);
+                    thematicGroupStore.loadData(responseData);
+                    thematicTagStore.loadData(responseData);
+
+                },
+                failure: function(resp) {
+                    console.log('failure!');
+                }
+            });
+
             this.tbar = {
                 xtype: 'toolbar',
                 items: [
@@ -126,17 +161,47 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                     collapsible: true,
                     defaults: { labelStyle: 'font-weight:bold;' },
                     items: [
+//                        {
+//                            xtype: 'textfield',
+//                            fieldLabel: 'Groups',
+//                            anchor: '97%',
+//                            name: 'QuestionThematicGroups'
+//                        },
                         {
-                            xtype: 'textfield',
+                            xtype: 'combo',
+                            forceSelection: true,
+                            editable: false,
+                            id: 'thematicGroupCombo',
+                            anchor: '97%',
                             fieldLabel: 'Groups',
-                            anchor: '97%',
-                            name: 'QuestionThematicGroups'
+                            name: 'QuestionThematicGroups',
+                            triggerAction: 'all',
+                            displayField: 'name',
+//                            hiddenName: 'hiddenVariable',
+//                            valueField: 'id',
+                            mode: 'local',
+                            store : thematicGroupStore
                         },
+//                        {
+//                            xtype: 'textfield',
+//                            fieldLabel: 'Sub Themes',
+//                            anchor: '97%',
+//                            name: 'QuestionThematicTags'
+//                        },
                         {
-                            xtype: 'textfield',
-                            fieldLabel: 'Sub Themes',
+                            xtype: 'combo',
+                            forceSelection: true,
+                            editable: false,
+                            id: 'frequencyCombo',
                             anchor: '97%',
-                            name: 'QuestionThematicTags'
+                            fieldLabel: 'Sub Themes',
+                            name: 'QuestionThematicTags',
+                            triggerAction: 'all',
+                            displayField: 'name',
+//                            hiddenName: 'hiddenVariable',
+//                            valueField: 'id',
+                            mode: 'local',
+                            store : thematicTagStore
                         }
                     ]
                 },

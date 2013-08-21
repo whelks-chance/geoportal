@@ -72,7 +72,7 @@ class getDBConnections {
 
     Public static Function getUser($userName, $Password) {
 
-        $loginStr = "Select id, username, firstname, lastname, email from alphausersdetails where username = '" . $userName . "' and  password = crypt('" . $Password . "', password)";
+        $loginStr = "Select id, username, firstname, lastname, email, r.name as role from alphausersdetails aud, roles r where username = '" . $userName . "' and  password = crypt('" . $Password . "', password) and aud.role = r.roleid";
 
 //        $cmd = pg_query($this::getDBConnection(), $loginStr);
 
@@ -98,7 +98,23 @@ class getDBConnections {
             $user->success = True;
             $user->message = "Successfully Logged in as " . $userName . "!";
 
+            $role = $DR->role;
+
+            // set session details
+            $auth = Yii::app()->authManager; //initializes the authManager
+            if(!$auth->isAssigned($role, $user->UserName)) //checks if the role for this user has already been assigned and if it is NOT than it returns true and continues with assigning it below
+            {
+                if($auth->assign($role, $user->UserName)) //assigns the role to the user
+                {
+                    Yii::app()->authManager->save();
+                }
+            }
+
             Yii::app()->session["User"] = $user;
+            $identity=new LoggedInUserIdentity($userName, $Password);
+            $identity->authenticate();
+            Yii::app()->user->login($identity, 0);
+
 
             Return $user;
         } Else {

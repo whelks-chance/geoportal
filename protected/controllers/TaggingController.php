@@ -18,6 +18,12 @@ class TaggingController extends Controller{
         $times = array();
         $times['micro'] = $str;
         $times['format'] = $today;
+
+        if(Yii::app()->user->checkAccess('user'))
+        {
+            $times['admin'] = "looks like you're a regular user";
+        }
+
         echo json_encode($times);
     }
 
