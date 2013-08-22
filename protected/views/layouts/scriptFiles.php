@@ -84,6 +84,9 @@ include('variables.php')
     var dataOptionLists = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDataEntryOptionLists';
     var surveyVisibility = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getUserProjectData';
     var addSurveyToProject = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/addSurveyToProject';
+    var changeSurveyVisibility = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/changeSurveyVisibility';
+    var createProject = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/createProject';
+    var addUserToProject = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/addUserToProject';
 
     var insertDC = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertDC';
     var getDCids = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDCinfo';

@@ -11,7 +11,7 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
 //    height: 800,
     loadMask: true,
     id: 'frmProjectManagement',
-    title: 'ProjectManagement',
+    title: 'Project Management',
 //    bodyStyle: 'padding: 5px',
     autoScroll: true,
     hideBorders: true,
@@ -61,6 +61,15 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
             root : "projects"
         });
 
+        var userStore = new Ext.data.JsonStore ({
+            fields: [
+                {name: 'name', mapping: 'username'},
+                {name: 'id',  mapping: 'id'}
+            ],
+            id: "userStore",
+            root : "users"
+        });
+
         var surveyStore = new Ext.data.JsonStore ({
             fields: [
                 {name: 'name', mapping: 'surveyid'}
@@ -76,13 +85,15 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
             params : {
                 visibilities: true,
                 projects: true,
-                surveys: true
+                surveys: true,
+                users: true
             },
             success: function(resp) {
                 var responseData = Ext.decode(resp.responseText);
                 visibilityStore.loadData(responseData);
                 projectStore.loadData(responseData);
                 surveyStore.loadData(responseData);
+                userStore.loadData(responseData);
             },
             failure: function(resp) {
                 console.log('failure!');
@@ -127,21 +138,41 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                         fieldLabel: 'Project ID',
                                         name: 'projectid'
                                     },
-
                                     {
                                         xtype: 'textfield',
                                         id: 'txtprojectname',
                                         fieldLabel: 'Project name',
                                         name: 'projectname'
                                     },
-
                                     {
                                         xtype: 'button',
                                         id: 'btnSaveNewProject',
                                         icon: 'images/silk/application_form_add.png',
+                                        scope: this,
                                         text: 'Create',
                                         handler : function() {
+                                            var idField = Ext.getCmp('txtprojectid');
+                                            var idVal = idField.getValue();
 
+                                            var projectField = Ext.getCmp('txtprojectname');
+                                            var projectName = projectField.getValue();
+
+                                            Ext.Ajax.request({
+                                                url: createProject,
+                                                method : 'POST',
+                                                scope: this,
+                                                params : {
+                                                    projectID: idVal,
+                                                    projectName: projectName
+                                                },
+                                                success: function(resp) {
+                                                    alert("Created project " + projectName);
+                                                    projectStore.reload();
+                                                },
+                                                failure: function(resp) {
+                                                    alert("Failed ");
+                                                }
+                                            });
                                         }
                                     }
                                 ]
@@ -153,14 +184,20 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                 title: 'Add User to Project',
                                 items: [
                                     {
-                                        xtype: 'textfield',
+                                        xtype: 'combo',
+                                        forceSelection: true,
+                                        editable: false,
                                         id: 'txtuseridtoproject',
                                         fieldLabel: 'User ID',
-                                        name: 'userid'
+                                        name: 'userid',
+                                        triggerAction: 'all',
+                                        displayField: 'name',
+                                        hiddenName: 'hiddenVariable',
+                                        valueField: 'id',
+                                        mode: 'local',
+                                        store : userStore
                                     },
-
                                     {
-
                                         xtype: 'combo',
                                         forceSelection: true,
                                         editable: false,
@@ -172,14 +209,33 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                         mode: 'local',
                                         store : projectStore
                                     },
-
                                     {
                                         xtype: 'button',
                                         id: 'btnAddUserToProject',
                                         icon: 'images/silk/application_form_add.png',
                                         text: 'Add',
                                         handler : function() {
+                                            var useridField = Ext.getCmp('txtuseridtoproject');
+                                            var useridVal = useridField.getValue();
 
+                                            var projectField = Ext.getCmp('combousertoprojectname');
+                                            var projectName = projectField.getValue();
+
+                                            Ext.Ajax.request({
+                                                url: addUserToProject,
+                                                method : 'POST',
+                                                scope: this,
+                                                params : {
+                                                    userID: useridVal,
+                                                    projectName: projectName
+                                                },
+                                                success: function(resp) {
+                                                    alert("Added user " + useridVal + " to project " + projectName);
+                                                },
+                                                failure: function(resp) {
+                                                    alert("Failed ");
+                                                }
+                                            });
                                         }
                                     }
                                 ]
@@ -223,8 +279,8 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                         name: 'projectname',
                                         triggerAction: 'all',
                                         displayField: 'name',
-                            hiddenName: 'hiddenVariable',
-                            valueField: 'id',
+                                        hiddenName: 'hiddenVariable',
+                                        valueField: 'id',
                                         mode: 'local',
                                         store : projectStore
                                     },
@@ -234,6 +290,7 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                         id: 'btnAddSurveyToProject',
                                         icon: 'images/silk/application_form_add.png',
                                         text: 'Add',
+                                        scope: this,
                                         handler : function() {
                                             var surveyCheck = Ext.getCmp('txtprojsurveyid');
                                             var surveyVal = surveyCheck.getValue();
@@ -244,12 +301,14 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                             Ext.Ajax.request({
                                                 url: addSurveyToProject,
                                                 method : 'POST',
+                                                scope: this,
                                                 params : {
                                                     projectID: projectVal,
                                                     surveyID: surveyVal
                                                 },
                                                 success: function(resp) {
                                                     alert("Added " + surveyVal + " to " + projectVal)
+                                                    this.surveyProjectVisibilityStore.reload();
                                                 },
                                                 failure: function(resp) {
                                                     alert("Failed ");
@@ -289,8 +348,8 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                         name: 'surveyVisibility',
                                         triggerAction: 'all',
                                         displayField: 'name',
-//                            hiddenName: 'hiddenVariable',
-//                            valueField: 'id',
+                                        hiddenName: 'hiddenVariable',
+                                        valueField: 'id',
                                         mode: 'local',
                                         store : visibilityStore
                                     },
@@ -300,8 +359,30 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                         id: 'btnsetsurveyvisibility',
                                         icon: 'images/silk/application_form_add.png',
                                         text: 'Set',
+                                        scope: this,
                                         handler : function() {
+                                            var surveyCombo = Ext.getCmp('txtsurveyidvis');
+                                            var surveyVal = surveyCombo.getValue();
 
+                                            var visibilityCombo = Ext.getCmp('visibilityCombo');
+                                            var visibilityComboVal = visibilityCombo.getValue();
+
+                                            Ext.Ajax.request({
+                                                url: changeSurveyVisibility,
+                                                method : 'POST',
+                                                scope: this,
+                                                params : {
+                                                    visibilityID: visibilityComboVal,
+                                                    surveyID: surveyVal
+                                                },
+                                                success: function(resp) {
+                                                    alert("Set " + surveyVal + " visibility to " + visibilityComboVal)
+                                                    this.surveyProjectVisibilityStore.reload();
+                                                },
+                                                failure: function(resp) {
+                                                    alert("Failed ");
+                                                }
+                                            });
                                         }
                                     }
                                 ]
@@ -310,72 +391,6 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                     }
                 ]
             },
-//            {
-//                xtype: 'fieldset',
-//                flex: 1,
-////                layout: 'hbox',
-//                title: 'Project',
-//                items: [
-//                    {
-//                        xtype: 'textfield',
-//                        id: 'txtprojectid',
-////                        anchor: '100%',
-//                        fieldLabel: 'Project ID',
-//                        name: 'projectid'
-//                    },
-//
-//                    {
-//                        xtype: 'textfield',
-//                        id: 'txtprojectname',
-////                        anchor: '100%',
-//                        fieldLabel: 'Project name',
-//                        name: 'projectname'
-//                    },
-//
-//                    {
-//                        xtype: 'button',
-//                        id: 'btnSaveNewProject',
-//                        icon: 'images/silk/application_form_add.png',
-//                        text: 'Save',
-//                        handler : function() {
-//
-//                        }
-//                    }
-//                ]
-//            },
-//            {
-//                xtype: 'fieldset',
-//                flex: 1,
-////                layout: 'vbox',
-//                title: 'User',
-//                items: [
-//                    {
-//                        xtype: 'textfield',
-//                        id: 'txtuserid',
-////                        anchor: '100%',
-//                        fieldLabel: 'User ID',
-//                        name: 'userid'
-//                    },
-//
-//                    {
-//                        xtype: 'textfield',
-//                        id: 'txtprojecttousername',
-////                        anchor: '100%',
-//                        fieldLabel: 'Project name',
-//                        name: 'projectusername'
-//                    },
-//
-//                    {
-//                        xtype: 'button',
-//                        id: 'btnSaveUserToProject',
-//                        icon: 'images/silk/application_form_add.png',
-//                        text: 'Save',
-//                        handler : function() {
-//
-//                        }
-//                    }
-//                ]
-//            },
             {
                 xtype: 'grid',
                 flex: 3,
@@ -402,14 +417,14 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                     {
                         xtype: 'gridcolumn',
                         dataIndex: 'StateID',
-                        header: 'State ID',
+                        header: 'Visibility State ID',
                         sortable: true,
                         width: 50
                     },
                     {
                         xtype: 'gridcolumn',
                         dataIndex: 'StateName',
-                        header: 'State Name',
+                        header: 'Visibility State Name',
                         sortable: true,
                         width: 80
                     },

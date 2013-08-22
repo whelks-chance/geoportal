@@ -8,6 +8,85 @@
  */
 class AdminMetadataController extends Controller
 {
+    function actionaddUserToProject() {
+        $userID = "";
+        if(isset($_POST['userID'])) {
+            $userID = $_POST['userID'];
+        }
+        $projectName = "";
+        if(isset($_POST['projectName'])) {
+            $projectName = $_POST['projectName'];
+        }
+
+        $results = array();
+        if ($userID != "" && $projectName != "") {
+
+//      Create Project
+
+            $upsetVisibility = "INSERT INTO projectusers(
+            userid, projectid) VALUES ('" . $userID . "', '" . $projectName . "');";
+            $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+
+            $results['success'] = true;
+        }
+
+        echo json_encode($results);
+    }
+
+    function actioncreateProject() {
+        $projectID = "";
+        if(isset($_POST['projectID'])) {
+            $projectID = $_POST['projectID'];
+        }
+        $projectName = "";
+        if(isset($_POST['projectName'])) {
+            $projectName = $_POST['projectName'];
+        }
+
+        $results = array();
+        if ($projectID != "" && $projectName != "") {
+
+//      Create Project
+
+            $upsetVisibility = "INSERT INTO project(
+            projectid, projectname) VALUES ('" . $projectID . "', '" . $projectName . "');";
+            $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+
+            $results['success'] = true;
+        }
+
+        echo json_encode($results);
+    }
+
+
+    function actionchangeSurveyVisibility() {
+        $surveyID = "";
+        if(isset($_POST['surveyID'])) {
+            $surveyID = $_POST['surveyID'];
+        }
+        $visibilityID = "";
+        if(isset($_POST['visibilityID'])) {
+            $visibilityID = $_POST['visibilityID'];
+        }
+
+        if ($surveyID != "" && $visibilityID != "") {
+
+//      Set visibility of survey
+
+            $upsetVisibility = "Update surveyvisibility Set visibilitystateid='" . $visibilityID . "'
+            Where surveyid='" . $surveyID . "';
+            Insert into surveyvisibility(surveyid, visibilitystateid)
+                Select '" . $surveyID . "', 'st002' Where Not Exists
+                (Select 1 From surveyvisibility Where
+            surveyid='" . $surveyID . "');";
+            $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+
+        }
+        $results['success'] = true;
+
+        echo json_encode($results);
+    }
+
 
     function actionaddSurveyToProject() {
         $surveyID = "";
@@ -20,12 +99,26 @@ class AdminMetadataController extends Controller
         }
 
         if ($surveyID != "" && $projectID != "") {
-            $addSurveyToProjectQuery = "INSERT INTO surveyownership(
-            surveyid, projectid)
-    VALUES ('" . $surveyID . "', '" . $projectID . "');";
 
-            Log::toFile($addSurveyToProjectQuery);
-            $results = DataAdapter::DefaultExecuteAndRead($addSurveyToProjectQuery, "Geoportal");
+//      UpSet survey to be owned by project
+
+            $upsetSurveyProject = "Update surveyownership Set projectid='" . $projectID . "' Where
+             surveyid='" . $surveyID . "';
+            Insert into surveyownership(surveyid, projectid)
+                Select '" . $surveyID . "', '" . $projectID . "' Where Not Exists
+                (Select 1 From surveyownership Where
+            surveyid='" . $surveyID . "');";
+            $results1 = DataAdapter::DefaultExecuteAndRead($upsetSurveyProject, "Geoportal");
+
+//      Set visibility of survey
+
+            $upsetVisibility = "Update surveyvisibility Set visibilitystateid='st002'
+            Where surveyid='" . $surveyID . "';
+            Insert into surveyvisibility(surveyid, visibilitystateid)
+                Select '" . $surveyID . "', 'st002' Where Not Exists
+                (Select 1 From surveyvisibility Where
+            surveyid='" . $surveyID . "');";
+            $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
 
         }
         $results['success'] = true;
@@ -63,6 +156,18 @@ proj.projectid = so.projectid;";
     function actiongetDataEntryOptionLists() {
 
         $returnArray = array();
+
+        if(isset($_POST['users'])) {
+            $userQuery = "SELECT id, username FROM alphausersdetails;";
+            $results = DataAdapter::DefaultExecuteAndRead($userQuery, "Geoportal");
+            $usersArray = array();
+            foreach ($results as $user) {
+                $userArray['id'] = trim($user->id);
+                $userArray['username'] = trim($user->username);
+                $usersArray[] = $userArray;
+            }
+            $returnArray['users'] = $usersArray;
+        }
 
         if(isset($_POST['surveys'])) {
             $surveyQuery = "SELECT surveyid FROM survey;";
