@@ -82,6 +82,9 @@ include('variables.php')
     var getTimeTicks = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/getTimeNowTicks';
 
     var dataOptionLists = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDataEntryOptionLists';
+    var surveyVisibility = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getUserProjectData';
+    var addSurveyToProject = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/addSurveyToProject';
+
     var insertDC = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertDC';
     var getDCids = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDCinfo';
     var getSurveyQuestions = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getSurveyQuestions';

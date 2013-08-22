@@ -9,9 +9,98 @@
 class AdminMetadataController extends Controller
 {
 
+    function actionaddSurveyToProject() {
+        $surveyID = "";
+        if(isset($_POST['surveyID'])) {
+            $surveyID = $_POST['surveyID'];
+        }
+        $projectID = "";
+        if(isset($_POST['projectID'])) {
+            $projectID = $_POST['projectID'];
+        }
+
+        if ($surveyID != "" && $projectID != "") {
+            $addSurveyToProjectQuery = "INSERT INTO surveyownership(
+            surveyid, projectid)
+    VALUES ('" . $surveyID . "', '" . $projectID . "');";
+
+            Log::toFile($addSurveyToProjectQuery);
+            $results = DataAdapter::DefaultExecuteAndRead($addSurveyToProjectQuery, "Geoportal");
+
+        }
+        $results['success'] = true;
+
+        echo json_encode($results);
+    }
+
+    function actiongetUserProjectData() {
+
+        $returnArray = array();
+
+        $recordedSurveyOwnershipVisibilityQuery = "SELECT servis.surveyid, servis.visibilitystateid,
+         visstat.visibilitystatename, so.projectid, proj.projectname
+FROM surveyvisibility servis, visibilitystates visstat, surveyownership so, project proj where
+servis.visibilitystateid = visstat.visibilitystateid and
+so.surveyid = servis.surveyid and
+proj.projectid = so.projectid;";
+        $results = DataAdapter::DefaultExecuteAndRead($recordedSurveyOwnershipVisibilityQuery, "Geoportal");
+
+        $visibilityArray = array();
+        foreach ($results as $survey) {
+            $surveyArray['surveyid'] = trim($survey->surveyid);
+            $surveyArray['visibilitystateid'] = trim($survey->visibilitystateid);
+            $surveyArray['visibilitystatename'] = trim($survey->visibilitystatename);
+            $surveyArray['projectid'] = trim($survey->projectid);
+            $surveyArray['projectname'] = trim($survey->projectname);
+            $visibilityArray[] = $surveyArray;
+        }
+        $returnArray['surveyVisibilityTotal'] = sizeof($visibilityArray);
+        $returnArray['surveyVisibility'] = $visibilityArray;
+
+        echo json_encode($returnArray);
+    }
+
     function actiongetDataEntryOptionLists() {
 
         $returnArray = array();
+
+        if(isset($_POST['surveys'])) {
+            $surveyQuery = "SELECT surveyid FROM survey;";
+            $results = DataAdapter::DefaultExecuteAndRead($surveyQuery, "Survey_Data");
+            $surveysArray = array();
+            foreach ($results as $survey) {
+                $surveyArray['surveyid'] = trim($survey->surveyid);
+                $surveysArray[] = $surveyArray;
+            }
+            $returnArray['surveys'] = $surveysArray;
+        }
+
+
+        if(isset($_POST['projects'])) {
+            $projectsQuery = "SELECT projectid, projectname FROM project;";
+            $results = DataAdapter::DefaultExecuteAndRead($projectsQuery, "Geoportal");
+            $projectsArray = array();
+            foreach ($results as $project) {
+                $projectArray['projectid'] = trim($project->projectid);
+                $projectArray['projectname'] = trim($project->projectname);
+                $projectsArray[] = $projectArray;
+            }
+            $returnArray['projects'] = $projectsArray;
+        }
+
+
+        if(isset($_POST['visibilities'])) {
+            $visStatesQuery = "SELECT visibilitystateid, visibilitystatename FROM visibilitystates;";
+            $results = DataAdapter::DefaultExecuteAndRead($visStatesQuery, "Geoportal");
+            $visArray = array();
+            foreach ($results as $visibility) {
+                $visibilityArray['vis_id'] = trim($visibility->visibilitystateid);
+                $visibilityArray['vis_name'] = trim($visibility->visibilitystatename);
+                $visArray[] = $visibilityArray;
+            }
+            $returnArray['visibility'] = $visArray;
+        }
+
 
         if(isset($_POST['route_type'])) {
             //route types
