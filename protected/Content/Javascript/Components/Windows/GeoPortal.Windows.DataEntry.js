@@ -69,8 +69,8 @@ GeoPortal.Windows.DataEntry = Ext.extend(Ext.Window, {
                                     new GeoPortal.Forms.DataEntry.DublinCore(),
                                     new GeoPortal.Forms.DataEntry.Survey(),
                                     new GeoPortal.Forms.DataEntry.Questions(),
-                                    new GeoPortal.Forms.DataEntry.Response(),
-                                    new GeoPortal.Forms.DataEntry.DBlines()
+                                    new GeoPortal.Forms.DataEntry.Response()
+//                                    new GeoPortal.Forms.DataEntry.DBlines()
                                 ]
                             }
                         ]

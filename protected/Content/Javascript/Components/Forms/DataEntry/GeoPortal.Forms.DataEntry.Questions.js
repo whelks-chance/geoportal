@@ -192,7 +192,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'combo',
                             forceSelection: true,
                             editable: false,
-                            id: 'frequencyCombo',
+                            id: 'QuestionThematicTagsCombo',
                             anchor: '97%',
                             fieldLabel: 'Sub Themes',
                             name: 'QuestionThematicTags',

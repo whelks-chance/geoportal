@@ -335,26 +335,43 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
             loadDCWin.show();
         },
         NewSurvey : function() {
-            Ext.MessageBox.prompt('Survey', 'Please enter a new Survey ID. Appropriate id tags will be automatically added.', function(btn, text){
-                if (btn == 'ok'){
 
-                    var wid = 'wisid_' + text;
-                    var sid = 'sid_' + text;
-                    var qid = 'qid_' + text;
-                    var resid = 'resid_qid_' + text;
-
-                    Ext.getCmp('dcWiserdIDfield').setValue(wid);
-                    Ext.getCmp('surveyIDfield').setValue(sid);
-                    Ext.getCmp('QuestionSurveyID').setValue(sid);
-                    Ext.getCmp('QuestionIdField').setValue(qid);
-                    Ext.getCmp('resQuestionIDfield').setValue(qid);
-                    Ext.getCmp('responseIdField').setValue(resid);
-
-                    var breadcrumb = Ext.getCmp('breadcrumb');
-                    breadcrumb.updateBreadcrumb(wid, sid, qid, resid);
-
+            var setupSurveyWin = new Ext.Window(
+                {
+                    items: [
+                        new GeoPortal.Forms.DataEntry.SetupNewSurvey()
+                    ],
+                    title: 'Create Survey',
+                    modal: true,
+                    height: 180,
+                    width: 310,
+                    id: 'setupSurveyWin'
                 }
-            });
+            );
+            setupSurveyWin.show();
+
+//            Ext.MessageBox.prompt('Survey', 'Please enter a new Survey ID. Appropriate id tags will be automatically added.', function(btn, text){
+//                if (btn == 'ok'){
+
+//                    var wid = 'wisid_' + text;
+//                    var sid = 'sid_' + text;
+//                    var qid = 'qid_' + text;
+//                    var resid = 'resid_qid_' + text;
+//
+//                    Ext.getCmp('dcWiserdIDfield').setValue(wid);
+//                    Ext.getCmp('surveyIDfield').setValue(sid);
+//                    Ext.getCmp('QuestionSurveyID').setValue(sid);
+//                    Ext.getCmp('QuestionIdField').setValue(qid);
+//                    Ext.getCmp('resQuestionIDfield').setValue(qid);
+//                    Ext.getCmp('responseIdField').setValue(resid);
+//
+//                    var breadcrumb = Ext.getCmp('breadcrumb');
+//                    breadcrumb.updateBreadcrumb(wid, sid, qid, resid);
+
+//                }
+//            });
+
+
         },
         FormReset : function() {
             console.log('reset ' + this.id)

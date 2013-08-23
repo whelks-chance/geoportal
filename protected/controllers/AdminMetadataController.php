@@ -8,29 +8,61 @@
  */
 class AdminMetadataController extends Controller
 {
+
+    function actionbuildNewSurveyLinks() {
+
+        
+
+        $returnArray['success'] = true;
+
+        echo json_encode($returnArray);
+    }
+
+
     function actionaddUserToProject() {
         $userID = "";
         if(isset($_POST['userID'])) {
             $userID = $_POST['userID'];
         }
-        $projectName = "";
-        if(isset($_POST['projectName'])) {
-            $projectName = $_POST['projectName'];
+        $projectID = "";
+        if(isset($_POST['projectID'])) {
+            $projectID = $_POST['projectID'];
         }
 
         $results = array();
-        if ($userID != "" && $projectName != "") {
+        if ($userID != "" && $projectID != "") {
 
 //      Create Project
 
             $upsetVisibility = "INSERT INTO projectusers(
-            userid, projectid) VALUES ('" . $userID . "', '" . $projectName . "');";
+            userid, projectid) VALUES ('" . $userID . "', '" . $projectID . "');";
             $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
 
             $results['success'] = true;
         }
 
         echo json_encode($results);
+    }
+
+    function actiongetUsersProjects() {
+
+        $userObject = Yii::app()->user;
+        $username = $userObject->getName();
+
+        $projectsQuery = "SELECT pu.projectid, p.projectname
+            FROM alphausersdetails a, projectusers pu, project p
+            where username='" . $username . "' and CAST (a.id AS text) = pu.userid
+            and pu.projectid = p.projectid;";
+        $results = DataAdapter::DefaultExecuteAndRead($projectsQuery, "Geoportal");
+        $projectsArray = array();
+        foreach ($results as $project) {
+            $projectArray['projectid'] = trim($project->projectid);
+            $projectArray['projectname'] = trim($project->projectname);
+            $projectsArray[] = $projectArray;
+        }
+        $returnArray['usersProjects'] = $projectsArray;
+
+        echo json_encode($returnArray);
     }
 
     function actioncreateProject() {

@@ -88,9 +88,13 @@ include('variables.php')
     var createProject = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/createProject';
     var addUserToProject = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/addUserToProject';
 
+    var getUsersProjects = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getUsersProjects';
     var insertDC = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertDC';
     var getDCids = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDCinfo';
     var getSurveyQuestions = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getSurveyQuestions';
+
+    var buildNewSurveyLinks = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/buildNewSurveyLinks';
+
 
     var geoserverWMS = '<? echo variables::$geoserverRoot ?>';
     var geoportalAddr = '<? echo variables::geoportalAddr() ?>';

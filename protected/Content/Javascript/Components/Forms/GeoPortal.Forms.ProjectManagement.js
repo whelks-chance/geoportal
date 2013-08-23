@@ -32,7 +32,7 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                 {name: 'ProjectName', mapping: 'projectname'}
             ],
             root: 'surveyVisibility',
-            id: 'visibilityStore',
+            id: 'surveyProjectVisibilityStore',
             url: surveyVisibility,
             totalProperty: 'surveyVisibilityTotal'
         });
@@ -52,14 +52,24 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
             root : "visibility"
         });
 
-        var projectStore = new Ext.data.JsonStore ({
+        this.projectStore = new Ext.data.JsonStore ({
             fields: [
                 {name: 'name', mapping: 'projectname'},
                 {name: 'id',  mapping: 'projectid'}
             ],
+            baseParams : {
+                projects: true
+            },
+            url: dataOptionLists,
             id: "projectStore",
             root : "projects"
         });
+        this.projectStore.on('load', function(store, recs, opt){
+            this.doLayout();
+            //update your display here
+        }, this);
+        this.projectStore.load();
+
 
         var userStore = new Ext.data.JsonStore ({
             fields: [
@@ -82,16 +92,17 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
         Ext.Ajax.request({
             url: dataOptionLists,
             method : 'POST',
+            scope: this,
             params : {
                 visibilities: true,
-                projects: true,
+//                projects: true,
                 surveys: true,
                 users: true
             },
             success: function(resp) {
                 var responseData = Ext.decode(resp.responseText);
                 visibilityStore.loadData(responseData);
-                projectStore.loadData(responseData);
+//                this.projectStore.loadData(responseData);
                 surveyStore.loadData(responseData);
                 userStore.loadData(responseData);
             },
@@ -167,7 +178,7 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                                 },
                                                 success: function(resp) {
                                                     alert("Created project " + projectName);
-                                                    projectStore.reload();
+                                                    this.projectStore.reload();
                                                 },
                                                 failure: function(resp) {
                                                     alert("Failed ");
@@ -206,8 +217,10 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                         name: 'projectusername',
                                         triggerAction: 'all',
                                         displayField: 'name',
+                                        hiddenName: 'hiddenVariable',
+                                        valueField: 'id',
                                         mode: 'local',
-                                        store : projectStore
+                                        store : this.projectStore
                                     },
                                     {
                                         xtype: 'button',
@@ -219,7 +232,7 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                             var useridVal = useridField.getValue();
 
                                             var projectField = Ext.getCmp('combousertoprojectname');
-                                            var projectName = projectField.getValue();
+                                            var projectID = projectField.getValue();
 
                                             Ext.Ajax.request({
                                                 url: addUserToProject,
@@ -227,10 +240,10 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                                 scope: this,
                                                 params : {
                                                     userID: useridVal,
-                                                    projectName: projectName
+                                                    projectID: projectID
                                                 },
                                                 success: function(resp) {
-                                                    alert("Added user " + useridVal + " to project " + projectName);
+                                                    alert("Added user " + useridVal + " to project " + projectID);
                                                 },
                                                 failure: function(resp) {
                                                     alert("Failed ");
@@ -282,7 +295,7 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                         hiddenName: 'hiddenVariable',
                                         valueField: 'id',
                                         mode: 'local',
-                                        store : projectStore
+                                        store : this.projectStore
                                     },
 
                                     {
