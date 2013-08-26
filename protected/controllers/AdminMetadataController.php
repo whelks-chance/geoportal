@@ -11,7 +11,7 @@ class AdminMetadataController extends Controller
 
     function actionbuildNewSurveyLinks() {
 
-        
+        $this->upsetSurveyProjectAndVisibility($_POST['sid'], $_POST['projectID']);
 
         $returnArray['success'] = true;
 
@@ -132,7 +132,16 @@ class AdminMetadataController extends Controller
 
         if ($surveyID != "" && $projectID != "") {
 
-//      UpSet survey to be owned by project
+            $this->upsetSurveyProjectAndVisibility($surveyID, $projectID);
+
+        }
+        $results['success'] = true;
+
+        echo json_encode($results);
+    }
+
+    function upsetSurveyProjectAndVisibility($surveyID, $projectID) {
+//        UpSet survey to be owned by project
 
             $upsetSurveyProject = "Update surveyownership Set projectid='" . $projectID . "' Where
              surveyid='" . $surveyID . "';
@@ -151,11 +160,6 @@ class AdminMetadataController extends Controller
                 (Select 1 From surveyvisibility Where
             surveyid='" . $surveyID . "');";
             $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
-
-        }
-        $results['success'] = true;
-
-        echo json_encode($results);
     }
 
     function actiongetUserProjectData() {
@@ -450,74 +454,215 @@ proj.projectid = so.projectid;";
         echo json_encode($returnArray);
     }
 
-    function actionInsertDC(){
-        Log::toFile(print_r($_POST, true));
+    function actioninsertSurvey() {
+        $surveyID = "N/A";
+        if(isset($_POST['surveyID'])) {
+            $surveyID = $_POST['surveyID'];
+        }
+
+        $surveyTitle = "N/A";
+        if(isset($_POST['surveyTitle'])) {
+            $surveyTitle = $_POST['surveyTitle'];
+        }
+
+        $surveyCollector = "N/A";
+        if(isset($_POST['surveyCollector'])) {
+            $surveyCollector = $_POST['surveyCollector'];
+        }
+
+        $surveyStart = "now";
+        if(isset($_POST['surveyStart'])) {
+            $surveyStart = $_POST['surveyStart'];
+        }
+
+        $surveyEnd = "now";
+        if(isset($_POST['surveyEnd'])) {
+            $surveyEnd = $_POST['surveyEnd'];
+        }
+
+        $surveyFrequency = "N/A";
+        if(isset($_POST['surveyFrequency'])) {
+            $surveyFrequency = $_POST['surveyFrequency'];
+        }
+
+        $surveySeries = "N/A";
+        if(isset($_POST['surveySeries'])) {
+            $surveySeries = $_POST['surveySeries'];
+        }
+
+        $surveyNotes = "N/A";
+        if(isset($_POST['surveyNotes'])) {
+            $surveyNotes = $_POST['surveyNotes'];
+        }
+
+        $surveyLocation = "N/A";
+        if(isset($_POST['surveyLocation'])) {
+            $surveyLocation = $_POST['surveyLocation'];
+        }
+
+        $surveyURL = "N/A";
+        if(isset($_POST['surveyURL'])) {
+            $surveyURL = $_POST['surveyURL'];
+        }
+
+        $surveyDataCollectionMethod = "N/A";
+        if(isset($_POST['surveyDataCollectionMethod'])) {
+            $surveyDataCollectionMethod = $_POST['surveyDataCollectionMethod'];
+        }
+
+        $surveyCollectionSituation = "N/A";
+        if(isset($_POST['surveyCollectionSituation'])) {
+            $surveyCollectionSituation = $_POST['surveyCollectionSituation'];
+        }
+
+        $surveySamplingProcedure = "N/A";
+        if(isset($_POST['surveySamplingProcedure'])) {
+            $surveySamplingProcedure = $_POST['surveySamplingProcedure'];
+        }
+
+        $surveySamplingError = "N/A";
+        if(isset($_POST['surveySamplingError'])) {
+            $surveySamplingError = $_POST['surveySamplingError'];
+        }
+
+        $surveySampleSize = "N/A";
+        if(isset($_POST['surveySampleSize'])) {
+            $surveySampleSize = $_POST['surveySampleSize'];
+        }
+
+        $surveyResponseRate = "N/A";
+        if(isset($_POST['surveyResponseRate'])) {
+            $surveyResponseRate = $_POST['surveyResponseRate'];
+        }
+
+        $surveyWeighting = "N/A";
+        if(isset($_POST['surveyWeighting'])) {
+            $surveyWeighting = $_POST['surveyWeighting'];
+        }
+
+        $long = "No";
+        if(isset($_POST['long'])) {
+            $long = $_POST['long'];
+        }
 
         $identifier = "N/A";
-        if(isset($_POST['identifier'])) {
-            $identifier = $_POST['identifier'];
+        if(isset($_POST['wid'])) {
+            $identifier = $_POST['wid'];
+        }
+
+        $username = "";
+        $userObject = Yii::app()->user;
+        $username = $userObject->getName();
+
+        $collectionstartdate = "now";
+        $collectionenddate = "now";
+        $dataproduct = "";
+        $dataproductid = "";
+        $created = "now";
+        $short_title = "";
+        $spatialdata = "false";
+
+        $dbInsert = "INSERT INTO survey(
+            surveyid, identifier, survey_title, datacollector, collectionstartdate,
+            collectionenddate, moc_description, samp_procedure, collectionsituation,
+            surveyfrequency, surveystartdate, surveyenddate, des_weighting,
+            samplesize, responserate, descriptionofsamplingerror, dataproduct,
+            dataproductid, location, link, notes, user_id, created, updated,
+            long, short_title, spatialdata)
+    VALUES (";
+
+        $dbInsert .= "'" . $surveyID . "', '" . $identifier . "', '" . $surveyTitle . "', '" . $surveyCollector . "', Timestamp '" . $collectionstartdate . "', Timestamp '" .
+            $collectionenddate . "', '" . $surveyDataCollectionMethod . "', '" . $surveySamplingProcedure . "', '" . $surveyCollectionSituation . "', '" .
+            $surveyFrequency . "', Timestamp '" . $surveyStart . "', Timestamp '" . $surveyEnd . "', '" . $surveyWeighting . "', '" .
+            $surveySampleSize . "', '" . $surveyResponseRate . "', '" . $surveySamplingError . "', '" . $dataproduct . "', '" .
+            $dataproductid . "', '" . $surveyLocation . "', '" . $surveyURL . "', '" . $surveyNotes . "', '" . $username . "', Timestamp '" .
+            $created . "', Timestamp 'now', '" . $long . "', '" . $short_title . "', '" . $spatialdata;
+
+        $dbInsert .= "');";
+
+        Log::toFile($dbInsert);
+
+        $returnArray['success'] = true;
+        $returnArray['surveyInsert'] = $dbInsert;
+
+        $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
+
+        echo json_encode($returnArray);
+
+    }
+
+    function actionInsertDC (){
+        Log::toFile(print_r($_POST, true));
+
+        $username = "";
+        $userObject = Yii::app()->user;
+        $username = $userObject->getName();
+
+        $identifier = "N/A";
+        if(isset($_POST['dcWiserdID'])) {
+            $identifier = $_POST['dcWiserdID'];
         }
         $title = "N/A";
-        if(isset($_POST['title'])) {
-            $title = $_POST['title'];
+        if(isset($_POST['dcTitle'])) {
+            $title = $_POST['dcTitle'];
         }
         $creator = "N/A";
-        if(isset($_POST['creator'])) {
-            $creator = $_POST['creator'];
+        if(isset($_POST['dcCreator'])) {
+            $creator = $_POST['dcCreator'];
         }
         $subject = "N/A";
-        if(isset($_POST['subject'])) {
-            $subject = $_POST['subject'];
+        if(isset($_POST['dcSubject'])) {
+            $subject = $_POST['dcSubject'];
         }
         $description = "N/A";
-        if(isset($_POST['description'])) {
-            $description = $_POST['description'];
+        if(isset($_POST['dcDescription'])) {
+            $description = $_POST['dcDescription'];
         }
         $publisher = "N/A";
-        if(isset($_POST['publisher'])) {
-            $publisher = $_POST['publisher'];
+        if(isset($_POST['dcPublisher'])) {
+            $publisher = $_POST['dcPublisher'];
         }
         $contributor = "N/A";
-        if(isset($_POST['contributor'])) {
-            $contributor = $_POST['contributor'];
+        if(isset($_POST['dcContributor'])) {
+            $contributor = $_POST['dcContributor'];
         }
 
         $dateObject = new DateTime('now');
         $date = $dateObject->format('Y-m-d H:i:s');
-        if(isset($_POST['date'])) {
-            $date = $_POST['date'];
+        if(isset($_POST['dcDate'])) {
+            $date = $_POST['dcDate'];
         }
         $type = "N/A";
-        if(isset($_POST['type'])) {
-            $type = $_POST['type'];
+        if(isset($_POST['dcType'])) {
+            $type = $_POST['dcType'];
         }
         $format = "N/A";
-        if(isset($_POST['format'])) {
-            $format = $_POST['format'];
+        if(isset($_POST['dcFormat'])) {
+            $format = $_POST['dcFormat'];
         }
         $source = "N/A";
-        if(isset($_POST['source'])) {
-            $source = $_POST['source'];
+        if(isset($_POST['dcSource'])) {
+            $source = $_POST['dcSource'];
         }
         $language = "N/A";
-        if(isset($_POST['language'])) {
-            $language = $_POST['language'];
+        if(isset($_POST['dcLanguage'])) {
+            $language = $_POST['dcLanguage'];
         }
         $relation = "N/A";
-        if(isset($_POST['relation'])) {
-            $relation = $_POST['relation'];
+        if(isset($_POST['dcRelation'])) {
+            $relation = $_POST['dcRelation'];
         }
         $coverage = "N/A";
-        if(isset($_POST['coverage'])) {
-            $coverage = $_POST['coverage'];
+        if(isset($_POST['dcCoverage'])) {
+            $coverage = $_POST['dcCoverage'];
         }
         $rights = "N/A";
-        if(isset($_POST['rights'])) {
-            $rights = $_POST['rights'];
+        if(isset($_POST['dcRights'])) {
+            $rights = $_POST['dcRights'];
         }
         $user_id = "N/A";
-        if(isset($_POST['user_id'])) {
-            $user_id = $_POST['user_id'];
+        if($username != "") {
+            $user_id = $username;
         }
         $created = $date;
         if(isset($_POST['created'])) {
@@ -545,7 +690,12 @@ proj.projectid = so.projectid;";
 
         Log::toFile($dbInsert);
 
-//        $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
+        $returnArray['success'] = true;
+        $returnArray['dcInsert'] = $dbInsert;
+
+        $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
+
+        echo json_encode($returnArray);
     }
 
 }

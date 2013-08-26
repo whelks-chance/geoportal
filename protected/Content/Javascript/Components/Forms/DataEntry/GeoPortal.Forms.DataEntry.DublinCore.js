@@ -74,6 +74,7 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                     items: [
                         {
                             xtype: 'textfield',
+                            readOnly: true,
                             fieldLabel: 'WISERD ID',
                             anchor: '97%',
                             name: 'dcWiserdID',
@@ -83,6 +84,7 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'textarea',
                             anchor: '97%',
                             fieldLabel: 'Title',
+                            allowBlank:false,
                             name: 'dcTitle',
                             autoHeight: true
                         },
@@ -115,10 +117,15 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                                     labelWidth: 75,
                                     items: [
                                         {
-                                            xtype: 'textfield',
-                                            name: 'dcDate',
+                                            xtype: 'datefield',
+                                            id: 'dcDate',
                                             anchor: '94%',
-                                            fieldLabel: 'Date'
+                                            emptyText: '',
+                                            format: 'Y/m/d',
+//                                            columnWidth: 0.5,
+                                            name: 'dcDate',
+                                            fieldLabel : 'Date',
+                                            value: new Date(1980, 1, 1)
                                         }
                                     ]
                                 },
@@ -336,42 +343,26 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
         },
         NewSurvey : function() {
 
-            var setupSurveyWin = new Ext.Window(
-                {
-                    items: [
-                        new GeoPortal.Forms.DataEntry.SetupNewSurvey()
-                    ],
-                    title: 'Create Survey',
-                    modal: true,
-                    height: 180,
-                    width: 310,
-                    id: 'setupSurveyWin'
+            Ext.MessageBox.prompt('Survey', 'Please enter a new Survey ID. Appropriate id tags will be automatically added.', function(btn, text){
+                if (btn == 'ok'){
+
+                    var wid = 'wisid_' + text;
+                    var sid = 'sid_' + text;
+                    var qid = 'qid_' + text;
+                    var resid = 'resid_qid_' + text;
+
+                    Ext.getCmp('dcWiserdIDfield').setValue(wid);
+                    Ext.getCmp('surveyIDfield').setValue(sid);
+                    Ext.getCmp('QuestionSurveyID').setValue(sid);
+                    Ext.getCmp('QuestionIdField').setValue(qid);
+                    Ext.getCmp('resQuestionIDfield').setValue(qid);
+                    Ext.getCmp('responseIdField').setValue(resid);
+
+                    var breadcrumb = Ext.getCmp('breadcrumb');
+                    breadcrumb.updateBreadcrumb(wid, sid, qid, resid);
+
                 }
-            );
-            setupSurveyWin.show();
-
-//            Ext.MessageBox.prompt('Survey', 'Please enter a new Survey ID. Appropriate id tags will be automatically added.', function(btn, text){
-//                if (btn == 'ok'){
-
-//                    var wid = 'wisid_' + text;
-//                    var sid = 'sid_' + text;
-//                    var qid = 'qid_' + text;
-//                    var resid = 'resid_qid_' + text;
-//
-//                    Ext.getCmp('dcWiserdIDfield').setValue(wid);
-//                    Ext.getCmp('surveyIDfield').setValue(sid);
-//                    Ext.getCmp('QuestionSurveyID').setValue(sid);
-//                    Ext.getCmp('QuestionIdField').setValue(qid);
-//                    Ext.getCmp('resQuestionIDfield').setValue(qid);
-//                    Ext.getCmp('responseIdField').setValue(resid);
-//
-//                    var breadcrumb = Ext.getCmp('breadcrumb');
-//                    breadcrumb.updateBreadcrumb(wid, sid, qid, resid);
-
-//                }
-//            });
-
-
+            });
         },
         FormReset : function() {
             console.log('reset ' + this.id)
@@ -380,20 +371,56 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
             thisPanel.getForm().reset();
         },
         FormInsert : function() {
-            console.log('reset ' + this.id)
-            var thisPanel = Ext.getCmp(this.id);
-            console.log(thisPanel);
-            thisPanel.getForm().submit({
-                url: insertDC,
-                waitMsg: 'Inserting Dublic Core Data....',
-                success: function (form, action) {
-                    Ext.Msg.alert("Success!",action.result.message);
-//                    Ext.getCmp('ChgPWWin').hide();
-                },
-                failure: function (form, action) {
-                    Ext.Msg.alert("Error!",action.result.message);
+
+            var wid = Ext.getCmp('dcWiserdIDfield').getValue();
+            var sid = Ext.getCmp('surveyIDfield').getValue();
+
+            var dcForm = Ext.getCmp(this.id).getForm();
+            var surveyForm = Ext.getCmp('frmEntrySurvey').getForm();
+
+            if(wid == "" || sid == "") {
+                Ext.MessageBox.alert('Status', 'Please set a WISERD ID and Survey ID by clicking the \'New Survey\' button.');
+            } else {
+                if(dcForm.isValid() && surveyForm.isValid()) {
+
+                    var setupSurveyWin = new Ext.Window(
+                        {
+                            items: [
+                                new GeoPortal.Forms.DataEntry.SetupNewSurvey(
+                                    {
+                                        wid : wid,
+                                        sid : sid,
+                                        DCForm : dcForm,
+                                        SurveyForm : surveyForm
+                                    }
+                                )
+                            ],
+                            title: 'Create Survey',
+                            modal: true,
+                            height: 180,
+                            width: 310,
+                            id: 'setupSurveyWin'
+                        }
+                    );
+                    setupSurveyWin.show();
+
+//                var thisPanel = Ext.getCmp(this.id);
+//                console.log(thisPanel);
+//                thisPanel.getForm().submit({
+//                    url: insertDC,
+//                    waitMsg: 'Inserting Dublic Core Data....',
+//                    success: function (form, action) {
+//                        Ext.Msg.alert("Success!",action.result.message);
+////                    Ext.getCmp('ChgPWWin').hide();
+//                    },
+//                    failure: function (form, action) {
+//                        Ext.Msg.alert("Error!",action.result.message);
+//                    }
+//                });
+                } else {
+                    Ext.MessageBox.alert('Status', 'There is an invalid entry on either the Dublin Core or Survey form.');
                 }
-            });
+            }
         },
         FormUpdate : function() {
             console.log('reset ' + this.id)

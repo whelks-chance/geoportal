@@ -31,26 +31,38 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                     {name: 'name', mapping: 'svy_frequency_title'},
                     {name: 'id',  mapping: 'svyfreqid'}
                 ],
-                id: "frequencyStore",
-                root : "survey_frequency"
-            });
-
-            Ext.Ajax.request({
                 url: dataOptionLists,
-                method : 'POST',
-                params : {
+                baseParams : {
                     survey_frequency: true
 
                 },
-                success: function(resp) {
-                    var responseData = Ext.decode(resp.responseText);
-                    frequencyStore.loadData(responseData);
-
-                },
-                failure: function(resp) {
-                    console.log('failure!');
-                }
+                id: "frequencyStore",
+                root : "survey_frequency"
             });
+            frequencyStore.on('load', function(store, recs, opt){
+                var freqcmbo = Ext.getCmp('frequencyCombo');
+                freqcmbo.setValue(frequencyStore.getAt(7).get('name'));
+
+                this.doLayout();
+            }, this);
+            frequencyStore.load();
+
+//            Ext.Ajax.request({
+//                url: dataOptionLists,
+//                method : 'POST',
+//                params : {
+//                    survey_frequency: true
+//
+//                },
+//                success: function(resp) {
+//                    var responseData = Ext.decode(resp.responseText);
+//                    frequencyStore.loadData(responseData);
+//
+//                },
+//                failure: function(resp) {
+//                    console.log('failure!');
+//                }
+//            });
 
             this.items = [
                 {
@@ -61,6 +73,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                     items: [
                         {
                             xtype: 'textfield',
+                            readOnly: true,
                             fieldLabel: 'Survey ID',
                             anchor: '97%',
                             name: 'surveyID',
@@ -70,6 +83,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'textarea',
                             anchor: '97%',
                             fieldLabel: 'Survey Title',
+                            allowBlank:false,
                             name: 'surveyTitle',
                             autoHeight: true
                         },
@@ -94,10 +108,14 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                     labelWidth: 75,
                                     items: [
                                         {
-                                            xtype: 'textfield',
+                                            xtype: 'datefield',
+                                            id: 'surveyStart',
+                                            emptyText: '',
+                                            format: 'Y/m/d',
+//                                            columnWidth: 0.5,
                                             name: 'surveyStart',
-                                            anchor: '94%',
-                                            fieldLabel: 'Survey Start'
+                                            fieldLabel : 'Survey Start',
+                                            value: new Date(1980, 1, 1)
                                         }
                                     ]
                                 },
@@ -108,10 +126,13 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                     layout: 'form',
                                     items: [
                                         {
-                                            xtype: 'textfield',
-                                            anchor: '94%',
-                                            fieldLabel: 'Survey End',
-                                            name: 'surveyEnd'
+                                            xtype: 'datefield',
+                                            id: 'surveyEnd',
+                                            emptyText: '',
+                                            format: 'Y/m/d',
+                                            name: 'surveyEnd',
+                                            fieldLabel : 'Survey End',
+                                            value: new Date(1980, 1, 1)
                                         }
                                     ]
                                 }
@@ -131,12 +152,6 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                     defaults: {labelStyle: 'font-weight:bold;' },
                                     labelWidth: 75,
                                     items: [
-//                                        {
-//                                            xtype: 'textfield',
-//                                            name: 'surveyFrequency',
-//                                            anchor: '94%',
-//                                            fieldLabel: 'Frequency'
-//                                        },
                                         {
                                             xtype: 'combo',
                                             forceSelection: true,
@@ -147,6 +162,7 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                             name: 'surveyFrequency',
                                             triggerAction: 'all',
                                             displayField: 'name',
+//                                            value: frequencyStore.getAt(0).get('name'),
 //                            hiddenName: 'hiddenVariable',
 //                            valueField: 'id',
                                             mode: 'local',
@@ -160,12 +176,26 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                                     layout: 'form',
                                     defaults: {labelStyle: 'font-weight:bold;' },
                                     items: [
-                                        {
-                                            xtype: 'textfield',
+                                        new Ext.form.ComboBox({
+                                            store: new Ext.data.SimpleStore ({
+                                                fields:['Value'],
+                                                data: [
+                                                    ['Yes'],
+                                                    ['No']
+                                                ]
+                                            }),
+                                            allowBlank:false,
+                                            required:true,
+                                            editable:false,
                                             anchor: '94%',
                                             fieldLabel: 'Series Y/N',
+                                            displayField:'Value',
+//                                            valueField:'priority',
+                                            mode:'local',
+                                            triggerAction:'all',
+                                            value:'No',
                                             name: 'surveySeries'
-                                        }
+                                        })
                                     ]
                                 }
                             ]
@@ -364,20 +394,20 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
             thisPanel.getForm().reset();
         },
         FormInsert : function() {
-            console.log('reset ' + this.id)
-            var thisPanel = Ext.getCmp(this.id);
-            console.log(thisPanel);
-            thisPanel.getForm().submit({
-                url: insertDC,
-                waitMsg: 'Inserting Dublic Core Data....',
-                success: function (form, action) {
-                    Ext.Msg.alert("Success!",action.result.message);
-//                    Ext.getCmp('ChgPWWin').hide();
-                },
-                failure: function (form, action) {
-                    Ext.Msg.alert("Error!",action.result.message);
-                }
-            });
+//            console.log('reset ' + this.id)
+//            var thisPanel = Ext.getCmp(this.id);
+//            console.log(thisPanel);
+//            thisPanel.getForm().submit({
+//                url: insertDC,
+//                waitMsg: 'Inserting Dublic Core Data....',
+//                success: function (form, action) {
+//                    Ext.Msg.alert("Success!",action.result.message);
+////                    Ext.getCmp('ChgPWWin').hide();
+//                },
+//                failure: function (form, action) {
+//                    Ext.Msg.alert("Error!",action.result.message);
+//                }
+//            });
         },
         FormUpdate : function() {
             console.log('reset ' + this.id)

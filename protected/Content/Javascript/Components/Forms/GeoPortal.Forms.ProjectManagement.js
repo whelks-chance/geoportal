@@ -117,6 +117,17 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
             height: 26,
             items: [
                 {
+                    xtype: 'button',
+                    text: 'Refresh',
+                    id: 'btnRefreshProjectManagement',
+                    scope: this,
+                    handler: function(){
+                        this.projectStore.reload();
+                        this.surveyProjectVisibilityStore.reload();
+                    }
+                },
+
+                {
                     xtype: 'tbfill'
                 }
             ]

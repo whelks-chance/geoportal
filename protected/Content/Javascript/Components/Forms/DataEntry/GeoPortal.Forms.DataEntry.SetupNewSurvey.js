@@ -8,6 +8,10 @@
 
 
 GeoPortal.Forms.DataEntry.SetupNewSurvey = Ext.extend(Ext.form.FormPanel, {
+    DCForm : null,
+    SurveyForm: null,
+    wid : null,
+    sid: null,
     width: 300,
     id: 'frmSetupSurvey',
 //    height: 140,
@@ -19,77 +23,101 @@ GeoPortal.Forms.DataEntry.SetupNewSurvey = Ext.extend(Ext.form.FormPanel, {
                 {name: 'name', mapping: 'projectname'},
                 {name: 'id',  mapping: 'projectid'}
             ],
+            baseParams : {
+            },
+            url: getUsersProjects,
             id: "userProjectStore",
             root : "usersProjects"
         });
-
-        Ext.Ajax.request({
-            url: getUsersProjects,
-            method : 'POST',
-            params : {
-                dublincore_type: true
-            },
-            success: function(resp) {
-                var responseData = Ext.decode(resp.responseText);
-                userProjectStore.loadData(responseData);
-            },
-            failure: function(resp) {
-                console.log('failure!');
-            }
-        });
+        userProjectStore.on('load', function(store, recs, opt){
+            this.doLayout();
+            //update your display here
+        }, this);
+        userProjectStore.load();
 
         this.buttons  =[
             {
                 xtype: 'button',
                 text: 'Create',
                 id: 'btnCreatenewsurvey',
+                scope: this,
                 handler: function(){
-                    var frmSurveyName = Ext.getCmp('newsurveyname');
-                    var text = frmSurveyName.getValue();
 
-                    var wid = 'wisid_' + text;
-                    var sid = 'sid_' + text;
-                    var qid = 'qid_' + text;
-                    var resid = 'resid_qid_' + text;
-
-                    Ext.getCmp('dcWiserdIDfield').setValue(wid);
-                    Ext.getCmp('surveyIDfield').setValue(sid);
-                    Ext.getCmp('QuestionSurveyID').setValue(sid);
-                    Ext.getCmp('QuestionIdField').setValue(qid);
-                    Ext.getCmp('resQuestionIDfield').setValue(qid);
-                    Ext.getCmp('responseIdField').setValue(resid);
-
-                    var breadcrumb = Ext.getCmp('breadcrumb');
-                    breadcrumb.updateBreadcrumb(wid, sid, qid, resid);
-
-                    var thisPanel = Ext.getCmp('frmSetupSurvey');
-                    thisPanel.getForm().submit({
-                        url: buildNewSurveyLinks,
-                        waitMsg: 'Building Survey structure....',
-                        params : {
-                            wid: wid,
-                            sid: sid
-                        },
+                    this.DCForm.submit({
+                        scope: this,
+                        url: insertDC,
+                        waitMsg: 'Inserting Dublic Core Data....',
                         success: function (form, action) {
-                            Ext.Msg.alert("Success!",action.result.message);
+//                            Ext.Msg.alert("DC insert Success!",action.result.message);
+
+                            this.SurveyForm.submit({
+                                scope: this,
+                                url: insertSurvey,
+                                params : {
+                                    wid : this.wid
+                                },
+                                waitMsg: 'Inserting Survey Data....',
+                                success: function (form, action) {
+//                                    Ext.Msg.alert("Survey insert Success!",action.result.message);
+
+
+                                    var projectName = Ext.getCmp('newSurveyToProjectcombo');
+                                    var projectID = projectName.getValue();
+
+                                    var thisPanel = Ext.getCmp('frmSetupSurvey');
+                                    thisPanel.getForm().submit({
+                                        url: buildNewSurveyLinks,
+                                        waitMsg: 'Building Survey structure....',
+                                        params : {
+                                            wid: this.wid,
+                                            sid: this.sid,
+                                            projectID: projectID
+                                        },
+                                        success: function (form, action) {
+                                            Ext.Msg.alert("Success!",action.result.message);
+                                        },
+                                        failure: function (form, action) {
+                                            Ext.Msg.alert("Error!",action.result.message);
+                                        }
+                                    });
+
+
+
+                                },
+                                failure: function (form, action) {
+                                    Ext.Msg.alert("Error!",action.result.message);
+                                }
+                            });
+
                         },
                         failure: function (form, action) {
                             Ext.Msg.alert("Error!",action.result.message);
                         }
                     });
+
+
                 }
-            }];
-        this.items = [
-            {
-                xtype: 'textfield',
-                flex: 1,
-                fieldLabel: 'Survey Name',
-                anchor: '100%',
-                name: 'surveyName',
-//                inputType: 'password',
-                id: 'newsurveyname',
-                allowBlank: false
             },
+            {
+                xtype: 'button',
+                text: 'Cancel',
+                id: 'btnCancelnewsurvey',
+                handler: function(){
+                    Ext.getCmp('setupSurveyWin').destroy();
+                }
+            }
+        ];
+        this.items = [
+//            {
+//                xtype: 'textfield',
+//                flex: 1,
+//                fieldLabel: 'Survey Name',
+//                anchor: '100%',
+//                name: 'surveyName',
+////                inputType: 'password',
+//                id: 'newsurveyname',
+//                allowBlank: false
+//            },
             {
                 xtype: 'combo',
                 flex: 1,
