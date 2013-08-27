@@ -35,18 +35,28 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                 id: "thematicTagStore",
                 root : "group_tags"
             });
+            var questionTypeStore = new Ext.data.JsonStore ({
+                fields: [
+                    {name: 'name', mapping: 'q_type_text'},
+                    {name: 'id',  mapping: 'q_typeid'}
+                ],
+                id: "questionTypeStore",
+                root : "questionTypes"
+            });
 
             Ext.Ajax.request({
                 url: dataOptionLists,
                 method : 'POST',
                 params : {
                     thematic_groups: true,
-                    group_tags: true
+                    group_tags: true,
+                    q_type: true
                 },
                 success: function(resp) {
                     var responseData = Ext.decode(resp.responseText);
                     thematicGroupStore.loadData(responseData);
                     thematicTagStore.loadData(responseData);
+                    questionTypeStore.loadData(responseData);
 
                 },
                 failure: function(resp) {
@@ -118,6 +128,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                         {
                             xtype: 'textfield',
                             fieldLabel: 'Survey ID',
+                            allowBlank:false,
                             anchor: '97%',
                             name: 'QuestionSurveyID',
                             id: 'QuestionSurveyID'
@@ -125,6 +136,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                         {
                             xtype: 'textfield',
                             fieldLabel: 'Question ID',
+                            allowBlank:false,
                             anchor: '97%',
                             name: 'QuestionID',
                             id: 'QuestionIdField'
@@ -152,6 +164,12 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                             fieldLabel: 'Variable ID',
                             anchor: '97%',
                             name: 'QuestionVariable'
+                        },
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'q_text',
+                            anchor: '97%',
+                            name: 'q_text'
                         }
                     ]
                 },
@@ -208,16 +226,26 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'fieldset',
                     title: 'Routing Information',
-                    collapsed: true,
+                    collapsed: false,
                     collapsible: true,
                     defaults: { labelStyle: 'font-weight:bold;' },
                     items: [
                         {
-                            xtype: 'textfield',
-                            fieldLabel: ' Type',
+                            xtype: 'combo',
+                            forceSelection: true,
+                            editable: false,
+                            id: 'questionTypeCombo',
                             anchor: '97%',
-                            name: 'QuestionType'
-                        },
+                            fieldLabel: 'Type',
+                            name: 'QuestionType',
+                            triggerAction: 'all',
+                            displayField: 'name',
+//                            hiddenName: 'hiddenVariable',
+//                            valueField: 'id',
+                            mode: 'local',
+                            store : questionTypeStore
+                        }
+                        ,
                         {
                             xtype: 'textfield',
                             fieldLabel: 'Follows QID',
@@ -259,8 +287,8 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
             var thisPanel = Ext.getCmp(this.id);
             console.log(thisPanel);
             thisPanel.getForm().submit({
-                url: insertDC,
-                waitMsg: 'Inserting Dublic Core Data....',
+                url: insertQuestion,
+                waitMsg: 'Inserting Question Data....',
                 success: function (form, action) {
                     Ext.Msg.alert("Success!",action.result.message);
 //                    Ext.getCmp('ChgPWWin').hide();

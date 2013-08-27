@@ -143,23 +143,23 @@ class AdminMetadataController extends Controller
     function upsetSurveyProjectAndVisibility($surveyID, $projectID) {
 //        UpSet survey to be owned by project
 
-            $upsetSurveyProject = "Update surveyownership Set projectid='" . $projectID . "' Where
+        $upsetSurveyProject = "Update surveyownership Set projectid='" . $projectID . "' Where
              surveyid='" . $surveyID . "';
             Insert into surveyownership(surveyid, projectid)
                 Select '" . $surveyID . "', '" . $projectID . "' Where Not Exists
                 (Select 1 From surveyownership Where
             surveyid='" . $surveyID . "');";
-            $results1 = DataAdapter::DefaultExecuteAndRead($upsetSurveyProject, "Geoportal");
+        $results1 = DataAdapter::DefaultExecuteAndRead($upsetSurveyProject, "Geoportal");
 
 //      Set visibility of survey
 
-            $upsetVisibility = "Update surveyvisibility Set visibilitystateid='st002'
+        $upsetVisibility = "Update surveyvisibility Set visibilitystateid='st002'
             Where surveyid='" . $surveyID . "';
             Insert into surveyvisibility(surveyid, visibilitystateid)
                 Select '" . $surveyID . "', 'st002' Where Not Exists
                 (Select 1 From surveyvisibility Where
             surveyid='" . $surveyID . "');";
-            $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+        $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
     }
 
     function actiongetUserProjectData() {
@@ -694,6 +694,98 @@ proj.projectid = so.projectid;";
         $returnArray['dcInsert'] = $dbInsert;
 
         $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
+
+        echo json_encode($returnArray);
+    }
+
+    function actioninsertQuestion() {
+        $QuestionSurveyID = "N/A";
+        if(isset($_POST['QuestionSurveyID'])) {
+            $QuestionSurveyID = $_POST['QuestionSurveyID'];
+        }
+
+        $QuestionID = "N/A";
+        if(isset($_POST['QuestionID'])) {
+            $QuestionID = $_POST['QuestionID'];
+        }
+
+        $QuestionNumber = "N/A";
+        if(isset($_POST['QuestionNumber'])) {
+            $QuestionNumber = $_POST['QuestionNumber'];
+        }
+
+        $QuestionText = "N/A";
+        if(isset($_POST['QuestionText'])) {
+            $QuestionText = $_POST['QuestionText'];
+        }
+
+        $QuestionNotesPrompts = "N/A";
+        if(isset($_POST['QuestionNotesPrompts'])) {
+            $QuestionNotesPrompts = $_POST['QuestionNotesPrompts'];
+        }
+
+        $QuestionVariable = "N/A";
+        if(isset($_POST['QuestionVariable'])) {
+            $QuestionVariable = $_POST['QuestionVariable'];
+        }
+
+        $QuestionThematicGroups = "N/A";
+        if(isset($_POST['QuestionThematicGroups'])) {
+            $QuestionThematicGroups = $_POST['QuestionThematicGroups'];
+        }
+
+        $QuestionThematicTags = "N/A";
+        if(isset($_POST['QuestionThematicTags'])) {
+            $QuestionThematicTags = $_POST['QuestionThematicTags'];
+        }
+
+        $QuestionType = "N/A";
+        if(isset($_POST['QuestionType'])) {
+            $QuestionType = $_POST['QuestionType'];
+        }
+
+        $QuestionLinkedFrom = "N/A";
+        if(isset($_POST['QuestionLinkedFrom'])) {
+            $QuestionLinkedFrom = $_POST['QuestionLinkedFrom'];
+        }
+
+        $QuestionSubOf = "N/A";
+        if(isset($_POST['QuestionSubOf'])) {
+            $QuestionSubOf = $_POST['QuestionSubOf'];
+        }
+
+        $qtext_index = "N/A";
+        if(isset($_POST['q_text'])) {
+            $qtext_index = $_POST['q_text'];
+        }
+
+        $username = "";
+        $userObject = Yii::app()->user;
+        $username = $userObject->getName();
+
+        $questionInsertQuery = "INSERT INTO questions(
+            qid, literal_question_text, questionnumber, thematic_groups,
+            thematic_tags, link_from, subof, type, variableid, notes, user_id,
+            created, updated, qtext_index)
+    VALUES ('";
+
+        $questionInsertQuery .= $QuestionID . "', '" . $QuestionText . "', '" . $QuestionNumber . "', '" . $QuestionThematicGroups . "', '" .
+            $QuestionThematicTags . "', '" . $QuestionLinkedFrom . "', '" . $QuestionSubOf . "', '" . $QuestionType . "', '" .
+            $QuestionVariable . "', '" . $QuestionNotesPrompts . "', '" . $username .
+            "', Timestamp 'now', Timestamp 'now', '" . $qtext_index . "');";
+
+        Log::toFile($questionInsertQuery);
+
+        $returnArray['success'] = true;
+        $returnArray['questionInsert'] = $questionInsertQuery;
+
+        $results = DataAdapter::DefaultExecuteAndRead($questionInsertQuery, "Survey_Data");
+
+
+        $surveyQuestionLinkQuery = "INSERT INTO survey_questions_link( surveyid, qid, pk) VALUES ('" .
+            $QuestionSurveyID . "', '" . $QuestionID . "', 0);";
+        $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionLinkQuery, "Survey_Data");
+
 
         echo json_encode($returnArray);
     }

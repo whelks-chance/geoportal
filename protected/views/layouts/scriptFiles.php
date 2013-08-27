@@ -91,6 +91,7 @@ include('variables.php')
     var getUsersProjects = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getUsersProjects';
     var insertDC = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertDC';
     var insertSurvey = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertSurvey';
+    var insertQuestion = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertQuestion';
     var getDCids = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDCinfo';
     var getSurveyQuestions = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getSurveyQuestions';
 
