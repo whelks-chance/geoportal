@@ -30,7 +30,7 @@ class OpenCalais2
             'paramsXML' => html_entity_decode($xmlParams)
         );
 
-        $response = $this::postToCalais("http://api.opencalais.com/enlighten/calais.asmx/Enlighten", $fields);
+        $response = $this::postToURL("http://api.opencalais.com/enlighten/calais.asmx/Enlighten", $fields);
 
 //        $responseDecoded = html_entity_decode($response);
 
@@ -71,12 +71,13 @@ class OpenCalais2
 //            echo "Object: " . $statement->getLabelObject() . "<P>";
 
             $subj = $statement->getLabelSubject();
+            $pred = substr($statement->getLabelPredicate(), (strrpos($statement->getLabelPredicate(), "/") + 1));
 
             if ( array_key_exists($subj, $found) ) {
-                $found[$subj][$statement->getLabelPredicate()] = $statement->getLabelObject();
+                $found[$subj][$pred] = $statement->getLabelObject();
             } else {
                 $labels = array();
-                $labels[$statement->getLabelPredicate()] = $statement->getLabelObject();
+                $labels[$pred] = $statement->getLabelObject();
                 $found[$subj] = $labels;
             }
 
@@ -125,11 +126,15 @@ class OpenCalais2
 //                $toReturn[$key] = $items[$key];
 //            }
 
+
+            // Working on the assumption that dochash entries are junk
             if(strpos($key, "http://d.opencalais.com/dochash") === false) {
-                $toReturn[$key] = $items[$key];
+                $toReturn[] = $items[$key];
             }
 
         }
+
+        $toReturn['length'] = sizeof($toReturn);
 
 //        Log::toFile(print_r($toReturn, true));
 
@@ -164,9 +169,9 @@ class OpenCalais2
         return $ret_parse;
     }
 
-    public function postToCalais($url, $fields) {
+    public static function postToURL($url, $fields) {
 
-        $fieldString = $this::preparePostFields($fields);
+        $fieldString = OpenCalais2::preparePostFields($fields);
 
         $ch = curl_init($url);
 
@@ -180,7 +185,7 @@ class OpenCalais2
         return $response;
     }
 
-    function preparePostFields($array) {
+    static function preparePostFields($array) {
         $params = array();
 
         foreach ($array as $key => $value) {

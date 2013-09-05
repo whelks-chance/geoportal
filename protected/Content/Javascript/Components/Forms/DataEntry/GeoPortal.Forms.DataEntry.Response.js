@@ -87,14 +87,16 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'fieldset',
                     title: 'General',
-                    defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
-                    collapsible: true,
+                    defaults: { labelStyle: 'font-weight:bold;' },
+//                    collapsible: true,
                     items: [
                         {
                             xtype: 'textfield',
                             fieldLabel: 'Question ID',
                             anchor: '97%',
                             name: 'questionID',
+                            allowBlank:false,
+                            readOnly: true,
                             id: 'resQuestionIDfield'
                         },
                         {
@@ -139,8 +141,8 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'fieldset',
                     title: 'Routing Information',
-                    collapsed: true,
-                    collapsible: true,
+//                    collapsed: true,
+//                    collapsible: true,
                     items: [
                         {
                             xtype: 'textarea',
@@ -177,8 +179,8 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
             var thisPanel = Ext.getCmp(this.id);
             console.log(thisPanel);
             thisPanel.getForm().submit({
-                url: insertDC,
-                waitMsg: 'Inserting Dublic Core Data....',
+                url: insertResponse,
+                waitMsg: 'Inserting Response Data....',
                 success: function (form, action) {
                     Ext.Msg.alert("Success!",action.result.message);
 //                    Ext.getCmp('ChgPWWin').hide();

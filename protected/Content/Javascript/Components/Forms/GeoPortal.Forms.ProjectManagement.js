@@ -89,20 +89,29 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
             root : "surveys"
         });
 
+        var roleStore = new Ext.data.JsonStore ({
+            fields: [
+                {name: 'name'}
+//                {name: 'id',  mapping: 'projectid'}
+            ],
+            id: "roleStore",
+            root : "roles.allRoles"
+        });
+
         Ext.Ajax.request({
             url: dataOptionLists,
             method : 'POST',
             scope: this,
             params : {
                 visibilities: true,
-//                projects: true,
+                roles: true,
                 surveys: true,
                 users: true
             },
             success: function(resp) {
                 var responseData = Ext.decode(resp.responseText);
                 visibilityStore.loadData(responseData);
-//                this.projectStore.loadData(responseData);
+                roleStore.loadData(responseData);
                 surveyStore.loadData(responseData);
                 userStore.loadData(responseData);
             },
@@ -255,6 +264,71 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                                 },
                                                 success: function(resp) {
                                                     alert("Added user " + useridVal + " to project " + projectID);
+                                                },
+                                                failure: function(resp) {
+                                                    alert("Failed ");
+                                                }
+                                            });
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+// Add user to role
+                                xtype: 'fieldset',
+                                flex: 1,
+                                title: 'Change User Role',
+                                items: [
+                                    {
+                                        xtype: 'combo',
+                                        forceSelection: true,
+                                        editable: false,
+                                        id: 'txtuseridtorole',
+                                        fieldLabel: 'User Name',
+                                        name: 'userid',
+                                        triggerAction: 'all',
+                                        displayField: 'name',
+//                                        hiddenName: 'hiddenVariable',
+//                                        valueField: 'id',
+                                        mode: 'local',
+                                        store : userStore
+                                    },
+                                    {
+                                        xtype: 'combo',
+                                        forceSelection: true,
+                                        editable: false,
+                                        id: 'comboroleforuser',
+                                        fieldLabel: 'Role name',
+                                        name: 'rolename',
+                                        triggerAction: 'all',
+                                        displayField: 'name',
+//                                        hiddenName: 'hiddenVariable',
+//                                        valueField: 'id',
+                                        mode: 'local',
+                                        store : roleStore
+                                    },
+                                    {
+                                        xtype: 'button',
+                                        id: 'btnAddUserToProject',
+                                        icon: 'images/silk/application_form_add.png',
+                                        text: 'Add',
+                                        handler : function() {
+                                            var useridField = Ext.getCmp('txtuseridtorole');
+                                            var useridVal = useridField.getValue();
+
+                                            var roleField = Ext.getCmp('comboroleforuser');
+                                            var roleName = roleField.getValue();
+
+                                            Ext.Ajax.request({
+                                                url: addUserToRole,
+                                                method : 'POST',
+                                                scope: this,
+                                                params : {
+                                                    userID: useridVal,
+                                                    roleName: roleName
+                                                },
+                                                success: function(resp) {
+                                                    alert("Added user " + useridVal + " to role " + roleName);
                                                 },
                                                 failure: function(resp) {
                                                     alert("Failed ");

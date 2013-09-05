@@ -122,13 +122,13 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'fieldset',
                     title: 'General',
-                    collapsible: true,
+//                    collapsible: true,
                     defaults: { labelStyle: 'font-weight:bold;' },
                     items: [
                         {
                             xtype: 'textfield',
                             fieldLabel: 'Survey ID',
-                            allowBlank:false,
+                            readOnly: true,
                             anchor: '97%',
                             name: 'QuestionSurveyID',
                             id: 'QuestionSurveyID'
@@ -176,7 +176,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'fieldset',
                     title: 'WISERD Thematic Tagging',
-                    collapsible: true,
+//                    collapsible: true,
                     defaults: { labelStyle: 'font-weight:bold;' },
                     items: [
 //                        {
@@ -226,8 +226,8 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'fieldset',
                     title: 'Routing Information',
-                    collapsed: false,
-                    collapsible: true,
+//                    collapsed: false,
+//                    collapsible: true,
                     defaults: { labelStyle: 'font-weight:bold;' },
                     items: [
                         {

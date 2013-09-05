@@ -9,6 +9,8 @@
 class AdminMetadataController extends Controller
 {
 
+
+
     function actionbuildNewSurveyLinks() {
 
         $this->upsetSurveyProjectAndVisibility($_POST['sid'], $_POST['projectID']);
@@ -44,11 +46,51 @@ class AdminMetadataController extends Controller
         echo json_encode($results);
     }
 
+    function actionaddUserToRole() {
+        $userID = "";
+        if(isset($_POST['userID'])) {
+            $userID = $_POST['userID'];
+        }
+        $roleName = "";
+        if(isset($_POST['roleName'])) {
+            $roleName = $_POST['roleName'];
+        }
+
+        $results = array();
+        if ($userID != "" && $roleName != "") {
+
+            RoleManager::changeRole($userID, $roleName);
+
+            $results['success'] = true;
+        }
+
+        echo json_encode($results);
+    }
+
     function actiongetUsersProjects() {
 
         $userObject = Yii::app()->user;
         $username = $userObject->getName();
 
+        $returnArray['usersProjects'] = $this::getUsersProjects($username);
+
+//        $projectsQuery = "SELECT pu.projectid, p.projectname
+//            FROM alphausersdetails a, projectusers pu, project p
+//            where username='" . $username . "' and CAST (a.id AS text) = pu.userid
+//            and pu.projectid = p.projectid;";
+//        $results = DataAdapter::DefaultExecuteAndRead($projectsQuery, "Geoportal");
+//        $projectsArray = array();
+//        foreach ($results as $project) {
+//            $projectArray['projectid'] = trim($project->projectid);
+//            $projectArray['projectname'] = trim($project->projectname);
+//            $projectsArray[] = $projectArray;
+//        }
+//        $returnArray['usersProjects'] = $projectsArray;
+
+        echo json_encode($returnArray);
+    }
+
+    static function getUsersProjects( $username ) {
         $projectsQuery = "SELECT pu.projectid, p.projectname
             FROM alphausersdetails a, projectusers pu, project p
             where username='" . $username . "' and CAST (a.id AS text) = pu.userid
@@ -60,12 +102,49 @@ class AdminMetadataController extends Controller
             $projectArray['projectname'] = trim($project->projectname);
             $projectsArray[] = $projectArray;
         }
-        $returnArray['usersProjects'] = $projectsArray;
+//        $returnArray['usersProjects'] = $projectsArray;
 
-        echo json_encode($returnArray);
+        return $projectsArray;
     }
 
+//    function deleteme() {
+//        //hacky stuff
+//
+////warning, this sets everything GLOBAL - don't do this if theres any project stuff in there
+//        $userQuery = "SELECT surveyid FROM survey;";
+//        $results = DataAdapter::DefaultExecuteAndRead($userQuery, "Survey_Data");
+//        $surveysArray = array();
+//        foreach ($results as $user) {
+//            $surveyArray['surveyid'] = trim($user->surveyid);
+//            $surveysArray[] = $surveyArray;
+//        }
+//
+//        foreach ($surveysArray as $survey) {
+//            $ownQuery = "SELECT surveyid, projectid FROM surveyownership where surveyid='" . $survey['surveyid'] . "';";
+//            $visresults = DataAdapter::DefaultExecuteAndRead($ownQuery, "Geoportal");
+//
+//            if(sizeof($visresults) == 0) {
+//                $visQuery = "Insert into surveyownership(surveyid, projectid) Values ('" . $survey['surveyid'] . "', 'proj_0001');";
+//                $visresults = DataAdapter::DefaultExecuteAndRead($visQuery, "Geoportal");
+//            }
+//
+//            $visQuery = "SELECT surveyid, visibilitystateid FROM surveyvisibility where surveyid='" . $survey['surveyid'] . "';";
+//            $visresults = DataAdapter::DefaultExecuteAndRead($visQuery, "Geoportal");
+//
+//            if(sizeof($visresults) == 0) {
+//                $visQuery = "Insert into surveyvisibility(surveyid, visibilitystateid) Values ('" . $survey['surveyid'] . "', 'st001');";
+//                $visresults = DataAdapter::DefaultExecuteAndRead($visQuery, "Geoportal");
+//            }
+//
+//        }
+//
+//delete hacky stuff
+//    }
+
     function actioncreateProject() {
+
+//        $this->deleteme();
+
         $projectID = "";
         if(isset($_POST['projectID'])) {
             $projectID = $_POST['projectID'];
@@ -192,6 +271,16 @@ proj.projectid = so.projectid;";
     function actiongetDataEntryOptionLists() {
 
         $returnArray = array();
+
+        if(isset($_POST['roles'])) {
+
+            $userID = Yii::app()->user->getID();
+
+            $roleArray['authorisedActions'] = RoleManager::getAuthorisedActions($userID);
+            $roleArray['allRoles'] = RoleManager::getAllRoles();
+
+            $returnArray['roles'] = $roleArray;
+        }
 
         if(isset($_POST['users'])) {
             $userQuery = "SELECT id, username FROM alphausersdetails;";
@@ -438,7 +527,7 @@ proj.projectid = so.projectid;";
 
         $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionQuery, "Survey_Data");
 
-        Log::toFile(print_r($results, true));
+//        Log::toFile(print_r($results, true));
 
         $allQuestionArray = array();
 
@@ -591,111 +680,197 @@ proj.projectid = so.projectid;";
 
     }
 
+
+
+
     function actionInsertDC (){
+        $returnArray = array();
+
         Log::toFile(print_r($_POST, true));
+        $project = "";
+        if(isset($_POST['projectID'])) {
+            $project = $_POST['projectID'];
+        }
+
+        $params['projectID'] = $project;
+        if ( RoleManager::hasPermission('insertDC', $params) ) {
+
+            $username = Yii::app()->user->getName();
+
+            $identifier = "N/A";
+            if(isset($_POST['dcWiserdID'])) {
+                $identifier = $_POST['dcWiserdID'];
+            }
+            $title = "N/A";
+            if(isset($_POST['dcTitle'])) {
+                $title = $_POST['dcTitle'];
+            }
+            $creator = "N/A";
+            if(isset($_POST['dcCreator'])) {
+                $creator = $_POST['dcCreator'];
+            }
+            $subject = "N/A";
+            if(isset($_POST['dcSubject'])) {
+                $subject = $_POST['dcSubject'];
+            }
+            $description = "N/A";
+            if(isset($_POST['dcDescription'])) {
+                $description = $_POST['dcDescription'];
+            }
+            $publisher = "N/A";
+            if(isset($_POST['dcPublisher'])) {
+                $publisher = $_POST['dcPublisher'];
+            }
+            $contributor = "N/A";
+            if(isset($_POST['dcContributor'])) {
+                $contributor = $_POST['dcContributor'];
+            }
+
+            $dateObject = new DateTime('now');
+            $date = $dateObject->format('Y-m-d H:i:s');
+            if(isset($_POST['dcDate'])) {
+                $date = $_POST['dcDate'];
+            }
+            $type = "N/A";
+            if(isset($_POST['dcType'])) {
+                $type = $_POST['dcType'];
+            }
+            $format = "N/A";
+            if(isset($_POST['dcFormat'])) {
+                $format = $_POST['dcFormat'];
+            }
+            $source = "N/A";
+            if(isset($_POST['dcSource'])) {
+                $source = $_POST['dcSource'];
+            }
+            $language = "N/A";
+            if(isset($_POST['dcLanguage'])) {
+                $language = $_POST['dcLanguage'];
+            }
+            $relation = "N/A";
+            if(isset($_POST['dcRelation'])) {
+                $relation = $_POST['dcRelation'];
+            }
+            $coverage = "N/A";
+            if(isset($_POST['dcCoverage'])) {
+                $coverage = $_POST['dcCoverage'];
+            }
+            $rights = "N/A";
+            if(isset($_POST['dcRights'])) {
+                $rights = $_POST['dcRights'];
+            }
+            $user_id = "N/A";
+            if($username != "") {
+                $user_id = $username;
+            }
+            $created = $date;
+            if(isset($_POST['created'])) {
+                $created = $_POST['created'];
+            }
+            $updated = $date;
+            if(isset($_POST['updated'])) {
+                $updated = $_POST['updated'];
+            }
+
+
+            $dbInsert = "INSERT INTO dc_info(
+            identifier, title, creator, subject, description, publisher,
+            contributor, date, type, format, source, language, relation,
+            coverage, rights, user_id, created, updated)";
+            $dbInsert .= " VALUES ('";
+
+            $dbInsert .= $identifier . "', '" . $title . "', '" . $creator . "', '" . $subject . "', '" .
+                $description . "', '" . $publisher . "', '" . $contributor . "', TIMESTAMP '" . $date . "', '" .
+                $type . "', '" . $format . "', '" . $source . "', '" . $language . "', '" . $relation . "', '" .
+                $coverage . "', '" . $rights . "', '" . $user_id . "'" .
+                ", TIMESTAMP '" . $created . "', TIMESTAMP 'now"; // . $updated;
+
+            $dbInsert .= "');";
+
+            Log::toFile($dbInsert);
+
+            $returnArray['success'] = true;
+            $returnArray['dcInsert'] = $dbInsert;
+
+            $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
+
+        } else {
+            $returnArray['failure'] = "no perms";
+            $returnArray['message'] = "User permission error";
+        }
+        echo json_encode($returnArray);
+    }
+
+    function actioninsertResponse() {
+        $questionID = "N/A";
+        if(isset($_POST['questionID'])) {
+            $questionID = $_POST['questionID'];
+        }
+
+        $responseID = "N/A";
+        if(isset($_POST['responseID'])) {
+            $responseID = $_POST['responseID'];
+        }
+
+        $responseType = "N/A";
+        if(isset($_POST['responseType'])) {
+            $responseType = $_POST['responseType'];
+        }
+
+        $responseText = "N/A";
+        if(isset($_POST['responseText'])) {
+            $responseText = $_POST['responseText'];
+        }
+
+        $responseTableID = "N/A";
+        if(isset($_POST['responseTableID'])) {
+            $responseTableID = $_POST['responseTableID'];
+        }
+
+        $responseChecks = "N/A";
+        if(isset($_POST['responseChecks'])) {
+            $responseChecks = $_POST['responseChecks'];
+        }
+
+        $responseVariables = "N/A";
+        if(isset($_POST['responseVariables'])) {
+            $responseVariables = $_POST['responseVariables'];
+        }
+
+        $responseRouting = "N/A";
+        if(isset($_POST['responseRouting'])) {
+            $responseRouting = $_POST['responseRouting'];
+        }
+
+        $routetype = "N/A";
 
         $username = "";
         $userObject = Yii::app()->user;
         $username = $userObject->getName();
 
-        $identifier = "N/A";
-        if(isset($_POST['dcWiserdID'])) {
-            $identifier = $_POST['dcWiserdID'];
-        }
-        $title = "N/A";
-        if(isset($_POST['dcTitle'])) {
-            $title = $_POST['dcTitle'];
-        }
-        $creator = "N/A";
-        if(isset($_POST['dcCreator'])) {
-            $creator = $_POST['dcCreator'];
-        }
-        $subject = "N/A";
-        if(isset($_POST['dcSubject'])) {
-            $subject = $_POST['dcSubject'];
-        }
-        $description = "N/A";
-        if(isset($_POST['dcDescription'])) {
-            $description = $_POST['dcDescription'];
-        }
-        $publisher = "N/A";
-        if(isset($_POST['dcPublisher'])) {
-            $publisher = $_POST['dcPublisher'];
-        }
-        $contributor = "N/A";
-        if(isset($_POST['dcContributor'])) {
-            $contributor = $_POST['dcContributor'];
-        }
-
-        $dateObject = new DateTime('now');
-        $date = $dateObject->format('Y-m-d H:i:s');
-        if(isset($_POST['dcDate'])) {
-            $date = $_POST['dcDate'];
-        }
-        $type = "N/A";
-        if(isset($_POST['dcType'])) {
-            $type = $_POST['dcType'];
-        }
-        $format = "N/A";
-        if(isset($_POST['dcFormat'])) {
-            $format = $_POST['dcFormat'];
-        }
-        $source = "N/A";
-        if(isset($_POST['dcSource'])) {
-            $source = $_POST['dcSource'];
-        }
-        $language = "N/A";
-        if(isset($_POST['dcLanguage'])) {
-            $language = $_POST['dcLanguage'];
-        }
-        $relation = "N/A";
-        if(isset($_POST['dcRelation'])) {
-            $relation = $_POST['dcRelation'];
-        }
-        $coverage = "N/A";
-        if(isset($_POST['dcCoverage'])) {
-            $coverage = $_POST['dcCoverage'];
-        }
-        $rights = "N/A";
-        if(isset($_POST['dcRights'])) {
-            $rights = $_POST['dcRights'];
-        }
-        $user_id = "N/A";
-        if($username != "") {
-            $user_id = $username;
-        }
-        $created = $date;
-        if(isset($_POST['created'])) {
-            $created = $_POST['created'];
-        }
-        $updated = $date;
-        if(isset($_POST['updated'])) {
-            $updated = $_POST['updated'];
-        }
-
-
-        $dbInsert = "INSERT INTO dc_info(
-            identifier, title, creator, subject, description, publisher,
-            contributor, date, type, format, source, language, relation,
-            coverage, rights, user_id, created, updated)";
-        $dbInsert .= " VALUES ('";
-
-        $dbInsert .= $identifier . "', '" . $title . "', '" . $creator . "', '" . $subject . "', '" .
-            $description . "', '" . $publisher . "', '" . $contributor . "', TIMESTAMP '" . $date . "', '" .
-            $type . "', '" . $format . "', '" . $source . "', '" . $language . "', '" . $relation . "', '" .
-            $coverage . "', '" . $rights . "', '" . $user_id . "'" .
-            ", TIMESTAMP '" . $created . "', TIMESTAMP 'now"; // . $updated;
-
-        $dbInsert .= "');";
-
-        Log::toFile($dbInsert);
+        $insertResponseQuery = "INSERT INTO responses(
+            responseid, responsetext, response_type, routetype, table_ids,
+            computed_var, checks, route_notes, user_id, created, updated)
+    VALUES ('" . $responseID . "', '" . $responseText . "', '" . $responseType . "', '" . $routetype . "', '" . $responseTableID . "', '" .
+            $responseVariables . "', '" . $responseChecks . "', '" . $responseRouting . "', '" . $username .
+            "', Timestamp 'now', Timestamp 'now');";
+        Log::toFile($insertResponseQuery);
 
         $returnArray['success'] = true;
-        $returnArray['dcInsert'] = $dbInsert;
+        $returnArray['questionInsert'] = $insertResponseQuery;
 
-        $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
+        $results = DataAdapter::DefaultExecuteAndRead($insertResponseQuery, "Survey_Data");
+
+
+        $questionResponseLinkQuery = "INSERT INTO questions_responses_link( qid, responseid) VALUES ('" .
+            $questionID . "', '" . $responseID . "');";
+        Log::toFile($questionResponseLinkQuery);
+        $results = DataAdapter::DefaultExecuteAndRead($questionResponseLinkQuery, "Survey_Data");
+
+        $returnArray['resqueslink'] = $questionResponseLinkQuery;
 
         echo json_encode($returnArray);
+
     }
 
     function actioninsertQuestion() {
@@ -754,10 +929,8 @@ proj.projectid = so.projectid;";
             $QuestionSubOf = $_POST['QuestionSubOf'];
         }
 
-        $qtext_index = "N/A";
-        if(isset($_POST['q_text'])) {
-            $qtext_index = $_POST['q_text'];
-        }
+        $qtext_index_function = "to_tsvector('english', '" . $QuestionText . "')";
+
 
         $username = "";
         $userObject = Yii::app()->user;
@@ -772,7 +945,7 @@ proj.projectid = so.projectid;";
         $questionInsertQuery .= $QuestionID . "', '" . $QuestionText . "', '" . $QuestionNumber . "', '" . $QuestionThematicGroups . "', '" .
             $QuestionThematicTags . "', '" . $QuestionLinkedFrom . "', '" . $QuestionSubOf . "', '" . $QuestionType . "', '" .
             $QuestionVariable . "', '" . $QuestionNotesPrompts . "', '" . $username .
-            "', Timestamp 'now', Timestamp 'now', '" . $qtext_index . "');";
+            "', Timestamp 'now', Timestamp 'now', " . $qtext_index_function . ");";
 
         Log::toFile($questionInsertQuery);
 

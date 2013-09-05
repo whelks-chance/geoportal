@@ -30,8 +30,13 @@ GeoPortal.Forms.DataEntry.SetupNewSurvey = Ext.extend(Ext.form.FormPanel, {
             root : "usersProjects"
         });
         userProjectStore.on('load', function(store, recs, opt){
-            this.doLayout();
-            //update your display here
+
+            if(store.data.length == 0) {
+                Ext.MessageBox.alert('Error', 'Please login to perform this action');
+                Ext.getCmp('setupSurveyWin').destroy();
+            } else {
+                this.doLayout();
+            }
         }, this);
         userProjectStore.load();
 
@@ -43,9 +48,15 @@ GeoPortal.Forms.DataEntry.SetupNewSurvey = Ext.extend(Ext.form.FormPanel, {
                 scope: this,
                 handler: function(){
 
+                    var projectName = Ext.getCmp('newSurveyToProjectcombo');
+                    var projectID = projectName.getValue();
+
                     this.DCForm.submit({
                         scope: this,
                         url: insertDC,
+                        params : {
+                            projectID : projectID
+                        },
                         waitMsg: 'Inserting Dublic Core Data....',
                         success: function (form, action) {
 //                            Ext.Msg.alert("DC insert Success!",action.result.message);
@@ -54,15 +65,11 @@ GeoPortal.Forms.DataEntry.SetupNewSurvey = Ext.extend(Ext.form.FormPanel, {
                                 scope: this,
                                 url: insertSurvey,
                                 params : {
+                                    project : projectID,
                                     wid : this.wid
                                 },
                                 waitMsg: 'Inserting Survey Data....',
                                 success: function (form, action) {
-//                                    Ext.Msg.alert("Survey insert Success!",action.result.message);
-
-
-                                    var projectName = Ext.getCmp('newSurveyToProjectcombo');
-                                    var projectID = projectName.getValue();
 
                                     var thisPanel = Ext.getCmp('frmSetupSurvey');
                                     thisPanel.getForm().submit({
@@ -80,8 +87,6 @@ GeoPortal.Forms.DataEntry.SetupNewSurvey = Ext.extend(Ext.form.FormPanel, {
                                             Ext.Msg.alert("Error!",action.result.message);
                                         }
                                     });
-
-
 
                                 },
                                 failure: function (form, action) {

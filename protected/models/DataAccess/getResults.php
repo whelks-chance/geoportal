@@ -54,7 +54,6 @@ class getResults {
         $cnn = $db->getDBConnection("Survey_Data");
 
 
-//Npgsql.NpgsqlCommand
         $cmd = pg_query($cnn, $SSearch);
 
         $DA = new DataAdapter();
@@ -62,22 +61,53 @@ class getResults {
         $rows = $DA->Read($cmd);
 
         $id = 1;
-//        $cnn.Open();
-//        $DA->Fill($dt);
-//        $cnn.Close();
 
-
-
-//        $results = new SortedDictionary(Of String, Object);
         $results = array();
 
 
-//        $qtype = "";
+//check that the surveys found are viewable for this user
+        $userObject = Yii::app()->user;
+        $username = $userObject->getName();
 
-//        For Each row As DataRow In dt.Rows
+        $checkViewableQuery = "Select Distinct vis.surveyid From surveyvisibility vis
+left join
+surveyownership surproj
+on vis.surveyid = surproj.surveyid
+where
+vis.visibilitystateid='st001'
+or
+surproj.projectid
+in
+( Select Distinct projectid from projectusers pu join
+alphausersdetails aud on pu.userid = cast (aud.id as text)
+where aud.username='" . $username . "');";
+
+        $allowedSurveys = DataAdapter::DefaultExecuteAndRead($checkViewableQuery, "Geoportal");
+
+//        Log::toFile(print_r($allowedSurveys, true));
+
+        $allowed = array();
         foreach ($rows as $row) {
 
-//            @var DataRow $row
+            $getQuestionsSurveyQuery = "SELECT surveyid FROM survey_questions_link where qid='" . trim($row->qid) . "';";
+            $thisSurvey = DataAdapter::DefaultExecuteAndRead($getQuestionsSurveyQuery, "Survey_Data");
+            Log::toFile(print_r($thisSurvey, true));
+
+            if(sizeof($thisSurvey) > 0){
+                foreach($allowedSurveys as $allowedSurvey) {
+                    if(trim($allowedSurvey->surveyid) == trim($thisSurvey[0]->surveyid)) {
+                        $allowed[] = $row;
+                    }
+                }
+            }
+
+        }
+        $rows = $allowed;
+
+        Log::toFile(print_r($rows, true));
+
+        foreach ($rows as $row) {
+
 
             $qtype = Trim($row->q_type);
 
@@ -94,7 +124,8 @@ class getResults {
                 $rootQ->DataSource = "WISERD DB";
                 $rootQ->RecordID = $id;
 
-                $survey_ID = Trim($row->link_from);
+//                $survey_ID = Trim($row->link_from);
+                $survey_ID = Trim($row->qid);
 
                 $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
@@ -143,7 +174,8 @@ class getResults {
                 $singleQ->RecordID = $id;
 
 
-                $survey_ID = Trim($row->link_from);
+//                $survey_ID = Trim($row->link_from);
+                $survey_ID = Trim($row->qid);
 
                 $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
@@ -188,7 +220,8 @@ class getResults {
                 $subQ->RecordID = $id;
                 $subQ->RootQuestion = Trim($row->subof);
 
-                $survey_ID = Trim($row->link_from);
+//                $survey_ID = Trim($row->link_from);
+                $survey_ID = Trim($row->qid);
 
                 $survey_details = "Select * from Survey WHERE lower(surveyid) = lower((Select distinct(surveyid) from survey_questions_link WHERE qid = lower('" . $survey_ID . "')));";
 
@@ -238,7 +271,8 @@ class getResults {
                 $compoundQ->DataSource = "WISERD DB";
                 $compoundQ->RecordID = $id;
 
-                $survey_ID = Trim($row->link_from);
+//                $survey_ID = Trim($row->link_from);
+                $survey_ID = Trim($row->qid);
 
                 $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
@@ -279,7 +313,8 @@ class getResults {
                 $subsubQ->RecordID = $id;
                 $subsubQ->RootQuestion = Trim($row->subof);
 
-                $survey_ID = Trim($row->link_from);
+//                $survey_ID = Trim($row->link_from);
+                $survey_ID = Trim($row->qid);
 
                 $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
