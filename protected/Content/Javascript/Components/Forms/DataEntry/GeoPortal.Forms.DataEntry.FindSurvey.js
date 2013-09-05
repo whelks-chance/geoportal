@@ -24,7 +24,6 @@ GeoPortal.Forms.DataEntry.FindSurvey = Ext.extend(Ext.form.FormPanel, {
         });
 
         Ext.Ajax.request({
-//            url: getDCids,
             url: advancedSearchMetaURL,
             method : 'POST',
             success: function(resp) {

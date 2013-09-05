@@ -18,7 +18,7 @@ class RoleManager {
 
         $auth=Yii::app()->authManager;
 
-        $userRole=$auth->createRole('publicUser');
+        $userRole=$auth->createRole('user');
         $projectUserRole=$auth->createRole('projectUser');
         $dataEntryRole=$auth->createRole('projectDataEntry');
         $hubAdminRole=$auth->createRole('hubAdmin');
@@ -66,13 +66,17 @@ class RoleManager {
         $superAdminRole->addChild('hubAdmin');
         $hubAdminRole->addChild('projectDataEntry');
         $dataEntryRole->addChild('projectUser');
-        $projectUserRole->addChild('publicUser');
+        $projectUserRole->addChild('user');
 
 
         //fake role is assigned purely to check if this hierachy has been loaded.
         // The init method checks for this user/ role configuration
         $fakeRole=$auth->createRole('fakerole');
         $auth->assign('fakerole', 'fakeuser');
+
+
+        $auth->assign('superAdmin', 'a');
+
         $auth->save();
     }
 
@@ -81,8 +85,6 @@ class RoleManager {
         if( $auth->checkAccess('fakerole', 'fakeuser') != true) {
             $auth->clearAll();
             RoleManager::buildAuthHierachy();
-
-            $auth->assign('projectDataEntry', 'a');
         }
     }
 
@@ -92,19 +94,28 @@ class RoleManager {
         RoleManager::init();
         $userID = Yii::app()->user->getID();
 
-        if($task == "createRecordandDC") {
-            if(Yii::app()->user->checkAccess('createRecordandDC')) {
+        if(Yii::app()->user->checkAccess($task)) {
+            return true;
+        } else {
 
-                $projects = AdminMetadataController::getUsersProjects($userID);
+            Log::toFile("User : " . $userID . " failed perm check for task : " . $task . " : " . print_r($params, true));
 
-                foreach($projects as $project) {
-                    if($project['projectid'] == $params['projectID']) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+            return false;
         }
+
+//        if($task == "createRecordandDC") {
+//            if(Yii::app()->user->checkAccess('createRecordandDC')) {
+//
+//                $projects = AdminMetadataController::getUsersProjects($userID);
+//
+//                foreach($projects as $project) {
+//                    if($project['projectid'] == $params['projectID']) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//        }
 
 // assume you probably shouldn't allow it
         return false;

@@ -15,7 +15,7 @@ class AdminMetadataController extends Controller
 
         $this->upsetSurveyProjectAndVisibility($_POST['sid'], $_POST['projectID']);
 
-        $returnArray['success'] = true;
+        $returnArray['success'] = "true";
 
         echo json_encode($returnArray);
     }
@@ -34,13 +34,18 @@ class AdminMetadataController extends Controller
         $results = array();
         if ($userID != "" && $projectID != "") {
 
-//      Create Project
+            if(RoleManager::hasPermission('addUserToProject', null)) {
 
-            $upsetVisibility = "INSERT INTO projectusers(
+                $upsetVisibility = "INSERT INTO projectusers(
             userid, projectid) VALUES ('" . $userID . "', '" . $projectID . "');";
-            $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+                $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
 
-            $results['success'] = true;
+                $results['success'] = "true";
+            } else {
+                $results['success'] = false;
+                $results['message'] = "You do not have permission to perform this action";
+            }
+
         }
 
         echo json_encode($results);
@@ -58,10 +63,14 @@ class AdminMetadataController extends Controller
 
         $results = array();
         if ($userID != "" && $roleName != "") {
+            if(RoleManager::hasPermission('addUserToProject', null)) {
 
-            RoleManager::changeRole($userID, $roleName);
-
-            $results['success'] = true;
+                RoleManager::changeRole($userID, $roleName);
+                $results['success'] = "true";
+            } else {
+                $results['success'] = false;
+                $results['message'] = "You do not have permission to perform this action";
+            }
         }
 
         echo json_encode($results);
@@ -73,19 +82,6 @@ class AdminMetadataController extends Controller
         $username = $userObject->getName();
 
         $returnArray['usersProjects'] = $this::getUsersProjects($username);
-
-//        $projectsQuery = "SELECT pu.projectid, p.projectname
-//            FROM alphausersdetails a, projectusers pu, project p
-//            where username='" . $username . "' and CAST (a.id AS text) = pu.userid
-//            and pu.projectid = p.projectid;";
-//        $results = DataAdapter::DefaultExecuteAndRead($projectsQuery, "Geoportal");
-//        $projectsArray = array();
-//        foreach ($results as $project) {
-//            $projectArray['projectid'] = trim($project->projectid);
-//            $projectArray['projectname'] = trim($project->projectname);
-//            $projectsArray[] = $projectArray;
-//        }
-//        $returnArray['usersProjects'] = $projectsArray;
 
         echo json_encode($returnArray);
     }
@@ -159,14 +155,23 @@ class AdminMetadataController extends Controller
 
 //      Create Project
 
-            $upsetVisibility = "INSERT INTO project(
-            projectid, projectname) VALUES ('" . $projectID . "', '" . $projectName . "');";
-            $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+            if(RoleManager::hasPermission('createProject', null)) {
+                $this::createProject($projectID, $projectName);
 
-            $results['success'] = true;
+                $results['success'] = "true";
+            } else {
+                $results['success'] = false;
+                $results['message'] = "You do not have permission to perform this action";
+            }
         }
 
         echo json_encode($results);
+    }
+
+    private function createProject($projectID, $projectName) {
+        $upsetVisibility = "INSERT INTO project(
+            projectid, projectname) VALUES ('" . $projectID . "', '" . $projectName . "');";
+        $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
     }
 
 
@@ -184,18 +189,28 @@ class AdminMetadataController extends Controller
 
 //      Set visibility of survey
 
-            $upsetVisibility = "Update surveyvisibility Set visibilitystateid='" . $visibilityID . "'
+            if(RoleManager::hasPermission('changeRecordVisibility', null)) {
+                $this::setVisibility($surveyID, $visibilityID);
+
+                $results['success'] = "true";
+            } else {
+                $results['success'] = false;
+                $results['message'] = "You do not have permission to perform this action";
+            }
+
+        }
+
+        echo json_encode($results);
+    }
+
+    function setVisibility($surveyID, $visibilityID) {
+        $upsetVisibility = "Update surveyvisibility Set visibilitystateid='" . $visibilityID . "'
             Where surveyid='" . $surveyID . "';
             Insert into surveyvisibility(surveyid, visibilitystateid)
                 Select '" . $surveyID . "', 'st002' Where Not Exists
                 (Select 1 From surveyvisibility Where
             surveyid='" . $surveyID . "');";
-            $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
-
-        }
-        $results['success'] = true;
-
-        echo json_encode($results);
+        $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
     }
 
 
@@ -210,11 +225,19 @@ class AdminMetadataController extends Controller
         }
 
         if ($surveyID != "" && $projectID != "") {
+            if(RoleManager::hasPermission('changeRecordVisibility', null)) {
+                $this->upsetSurveyProjectAndVisibility($surveyID, $projectID);
 
-            $this->upsetSurveyProjectAndVisibility($surveyID, $projectID);
+                $results['success'] = "true";
+            } else {
+                $results['success'] = false;
+                $results['message'] = "You do not have permission to perform this action";
+            }
 
+        } else {
+            $results['success'] = false;
+            $results['message'] = "Must provide a surveyID and a projectID";
         }
-        $results['success'] = true;
 
         echo json_encode($results);
     }
@@ -368,7 +391,7 @@ proj.projectid = so.projectid;";
             $questionTypeQuery = 'SELECT q_typeid, q_type_text, "q_typeDesc" FROM q_type;';
             $results = DataAdapter::DefaultExecuteAndRead($questionTypeQuery, "Survey_Data");
 
-            Log::toFile(print_r($results, true));
+//            Log::toFile(print_r($results, true));
 
             $questionTypes = array();
             foreach ($results as $questionInfo) {
@@ -498,7 +521,7 @@ proj.projectid = so.projectid;";
 
         $results = DataAdapter::DefaultExecuteAndRead($dcInfoQuery, "Survey_Data");
 
-        Log::toFile(print_r($results, true));
+//        Log::toFile(print_r($results, true));
 
         $addDCInfoArray = array();
 
@@ -544,114 +567,117 @@ proj.projectid = so.projectid;";
     }
 
     function actioninsertSurvey() {
-        $surveyID = "N/A";
-        if(isset($_POST['surveyID'])) {
-            $surveyID = $_POST['surveyID'];
-        }
 
-        $surveyTitle = "N/A";
-        if(isset($_POST['surveyTitle'])) {
-            $surveyTitle = $_POST['surveyTitle'];
-        }
+        if(RoleManager::hasPermission('createRecordandDC', null)) {
 
-        $surveyCollector = "N/A";
-        if(isset($_POST['surveyCollector'])) {
-            $surveyCollector = $_POST['surveyCollector'];
-        }
+            $surveyID = "N/A";
+            if(isset($_POST['surveyID'])) {
+                $surveyID = $_POST['surveyID'];
+            }
 
-        $surveyStart = "now";
-        if(isset($_POST['surveyStart'])) {
-            $surveyStart = $_POST['surveyStart'];
-        }
+            $surveyTitle = "N/A";
+            if(isset($_POST['surveyTitle'])) {
+                $surveyTitle = $_POST['surveyTitle'];
+            }
 
-        $surveyEnd = "now";
-        if(isset($_POST['surveyEnd'])) {
-            $surveyEnd = $_POST['surveyEnd'];
-        }
+            $surveyCollector = "N/A";
+            if(isset($_POST['surveyCollector'])) {
+                $surveyCollector = $_POST['surveyCollector'];
+            }
 
-        $surveyFrequency = "N/A";
-        if(isset($_POST['surveyFrequency'])) {
-            $surveyFrequency = $_POST['surveyFrequency'];
-        }
+            $surveyStart = "now";
+            if(isset($_POST['surveyStart'])) {
+                $surveyStart = $_POST['surveyStart'];
+            }
 
-        $surveySeries = "N/A";
-        if(isset($_POST['surveySeries'])) {
-            $surveySeries = $_POST['surveySeries'];
-        }
+            $surveyEnd = "now";
+            if(isset($_POST['surveyEnd'])) {
+                $surveyEnd = $_POST['surveyEnd'];
+            }
 
-        $surveyNotes = "N/A";
-        if(isset($_POST['surveyNotes'])) {
-            $surveyNotes = $_POST['surveyNotes'];
-        }
+            $surveyFrequency = "N/A";
+            if(isset($_POST['surveyFrequency'])) {
+                $surveyFrequency = $_POST['surveyFrequency'];
+            }
 
-        $surveyLocation = "N/A";
-        if(isset($_POST['surveyLocation'])) {
-            $surveyLocation = $_POST['surveyLocation'];
-        }
+            $surveySeries = "N/A";
+            if(isset($_POST['surveySeries'])) {
+                $surveySeries = $_POST['surveySeries'];
+            }
 
-        $surveyURL = "N/A";
-        if(isset($_POST['surveyURL'])) {
-            $surveyURL = $_POST['surveyURL'];
-        }
+            $surveyNotes = "N/A";
+            if(isset($_POST['surveyNotes'])) {
+                $surveyNotes = $_POST['surveyNotes'];
+            }
 
-        $surveyDataCollectionMethod = "N/A";
-        if(isset($_POST['surveyDataCollectionMethod'])) {
-            $surveyDataCollectionMethod = $_POST['surveyDataCollectionMethod'];
-        }
+            $surveyLocation = "N/A";
+            if(isset($_POST['surveyLocation'])) {
+                $surveyLocation = $_POST['surveyLocation'];
+            }
 
-        $surveyCollectionSituation = "N/A";
-        if(isset($_POST['surveyCollectionSituation'])) {
-            $surveyCollectionSituation = $_POST['surveyCollectionSituation'];
-        }
+            $surveyURL = "N/A";
+            if(isset($_POST['surveyURL'])) {
+                $surveyURL = $_POST['surveyURL'];
+            }
 
-        $surveySamplingProcedure = "N/A";
-        if(isset($_POST['surveySamplingProcedure'])) {
-            $surveySamplingProcedure = $_POST['surveySamplingProcedure'];
-        }
+            $surveyDataCollectionMethod = "N/A";
+            if(isset($_POST['surveyDataCollectionMethod'])) {
+                $surveyDataCollectionMethod = $_POST['surveyDataCollectionMethod'];
+            }
 
-        $surveySamplingError = "N/A";
-        if(isset($_POST['surveySamplingError'])) {
-            $surveySamplingError = $_POST['surveySamplingError'];
-        }
+            $surveyCollectionSituation = "N/A";
+            if(isset($_POST['surveyCollectionSituation'])) {
+                $surveyCollectionSituation = $_POST['surveyCollectionSituation'];
+            }
 
-        $surveySampleSize = "N/A";
-        if(isset($_POST['surveySampleSize'])) {
-            $surveySampleSize = $_POST['surveySampleSize'];
-        }
+            $surveySamplingProcedure = "N/A";
+            if(isset($_POST['surveySamplingProcedure'])) {
+                $surveySamplingProcedure = $_POST['surveySamplingProcedure'];
+            }
 
-        $surveyResponseRate = "N/A";
-        if(isset($_POST['surveyResponseRate'])) {
-            $surveyResponseRate = $_POST['surveyResponseRate'];
-        }
+            $surveySamplingError = "N/A";
+            if(isset($_POST['surveySamplingError'])) {
+                $surveySamplingError = $_POST['surveySamplingError'];
+            }
 
-        $surveyWeighting = "N/A";
-        if(isset($_POST['surveyWeighting'])) {
-            $surveyWeighting = $_POST['surveyWeighting'];
-        }
+            $surveySampleSize = "N/A";
+            if(isset($_POST['surveySampleSize'])) {
+                $surveySampleSize = $_POST['surveySampleSize'];
+            }
 
-        $long = "No";
-        if(isset($_POST['long'])) {
-            $long = $_POST['long'];
-        }
+            $surveyResponseRate = "N/A";
+            if(isset($_POST['surveyResponseRate'])) {
+                $surveyResponseRate = $_POST['surveyResponseRate'];
+            }
 
-        $identifier = "N/A";
-        if(isset($_POST['wid'])) {
-            $identifier = $_POST['wid'];
-        }
+            $surveyWeighting = "N/A";
+            if(isset($_POST['surveyWeighting'])) {
+                $surveyWeighting = $_POST['surveyWeighting'];
+            }
 
-        $username = "";
-        $userObject = Yii::app()->user;
-        $username = $userObject->getName();
+            $long = "No";
+            if(isset($_POST['long'])) {
+                $long = $_POST['long'];
+            }
 
-        $collectionstartdate = "now";
-        $collectionenddate = "now";
-        $dataproduct = "";
-        $dataproductid = "";
-        $created = "now";
-        $short_title = "";
-        $spatialdata = "false";
+            $identifier = "N/A";
+            if(isset($_POST['wid'])) {
+                $identifier = $_POST['wid'];
+            }
 
-        $dbInsert = "INSERT INTO survey(
+            $username = "";
+            $userObject = Yii::app()->user;
+            $username = $userObject->getName();
+
+            $collectionstartdate = "now";
+            $collectionenddate = "now";
+            $dataproduct = "";
+            $dataproductid = "";
+            $created = "now";
+            $short_title = "";
+            $spatialdata = "false";
+
+            $dbInsert = "INSERT INTO survey(
             surveyid, identifier, survey_title, datacollector, collectionstartdate,
             collectionenddate, moc_description, samp_procedure, collectionsituation,
             surveyfrequency, surveystartdate, surveyenddate, des_weighting,
@@ -660,21 +686,26 @@ proj.projectid = so.projectid;";
             long, short_title, spatialdata)
     VALUES (";
 
-        $dbInsert .= "'" . $surveyID . "', '" . $identifier . "', '" . $surveyTitle . "', '" . $surveyCollector . "', Timestamp '" . $collectionstartdate . "', Timestamp '" .
-            $collectionenddate . "', '" . $surveyDataCollectionMethod . "', '" . $surveySamplingProcedure . "', '" . $surveyCollectionSituation . "', '" .
-            $surveyFrequency . "', Timestamp '" . $surveyStart . "', Timestamp '" . $surveyEnd . "', '" . $surveyWeighting . "', '" .
-            $surveySampleSize . "', '" . $surveyResponseRate . "', '" . $surveySamplingError . "', '" . $dataproduct . "', '" .
-            $dataproductid . "', '" . $surveyLocation . "', '" . $surveyURL . "', '" . $surveyNotes . "', '" . $username . "', Timestamp '" .
-            $created . "', Timestamp 'now', '" . $long . "', '" . $short_title . "', '" . $spatialdata;
+            $dbInsert .= "'" . $surveyID . "', '" . $identifier . "', '" . $surveyTitle . "', '" . $surveyCollector . "', Timestamp '" . $collectionstartdate . "', Timestamp '" .
+                $collectionenddate . "', '" . $surveyDataCollectionMethod . "', '" . $surveySamplingProcedure . "', '" . $surveyCollectionSituation . "', '" .
+                $surveyFrequency . "', Timestamp '" . $surveyStart . "', Timestamp '" . $surveyEnd . "', '" . $surveyWeighting . "', '" .
+                $surveySampleSize . "', '" . $surveyResponseRate . "', '" . $surveySamplingError . "', '" . $dataproduct . "', '" .
+                $dataproductid . "', '" . $surveyLocation . "', '" . $surveyURL . "', '" . $surveyNotes . "', '" . $username . "', Timestamp '" .
+                $created . "', Timestamp 'now', '" . $long . "', '" . $short_title . "', '" . $spatialdata;
 
-        $dbInsert .= "');";
+            $dbInsert .= "');";
 
-        Log::toFile($dbInsert);
+            Log::toFile($dbInsert);
 
-        $returnArray['success'] = true;
-        $returnArray['surveyInsert'] = $dbInsert;
+            $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
 
-        $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
+            $returnArray['success'] = "true";
+            $returnArray['surveyInsert'] = $dbInsert;
+
+        } else {
+            $returnArray['success'] = false;
+            $returnArray['message'] = "You do not have permission to perform this action";
+        }
 
         echo json_encode($returnArray);
 
@@ -789,176 +820,194 @@ proj.projectid = so.projectid;";
 
             Log::toFile($dbInsert);
 
-            $returnArray['success'] = true;
-            $returnArray['dcInsert'] = $dbInsert;
-
             $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
 
+            $returnArray['success'] = "true";
+            $returnArray['dcInsert'] = $dbInsert;
+
         } else {
-            $returnArray['failure'] = "no perms";
+            $returnArray['success'] = false;
             $returnArray['message'] = "User permission error";
         }
         echo json_encode($returnArray);
     }
 
     function actioninsertResponse() {
-        $questionID = "N/A";
-        if(isset($_POST['questionID'])) {
-            $questionID = $_POST['questionID'];
-        }
 
-        $responseID = "N/A";
-        if(isset($_POST['responseID'])) {
-            $responseID = $_POST['responseID'];
-        }
+        if ( RoleManager::hasPermission('addResponseToSurvey', null) ) {
 
-        $responseType = "N/A";
-        if(isset($_POST['responseType'])) {
-            $responseType = $_POST['responseType'];
-        }
+            $questionID = "N/A";
+            if(isset($_POST['questionID'])) {
+                $questionID = $_POST['questionID'];
+            }
 
-        $responseText = "N/A";
-        if(isset($_POST['responseText'])) {
-            $responseText = $_POST['responseText'];
-        }
+            $responseID = "N/A";
+            if(isset($_POST['responseID'])) {
+                $responseID = $_POST['responseID'];
+            }
 
-        $responseTableID = "N/A";
-        if(isset($_POST['responseTableID'])) {
-            $responseTableID = $_POST['responseTableID'];
-        }
+            $responseType = "N/A";
+            if(isset($_POST['responseType'])) {
+                $responseType = $_POST['responseType'];
+            }
 
-        $responseChecks = "N/A";
-        if(isset($_POST['responseChecks'])) {
-            $responseChecks = $_POST['responseChecks'];
-        }
+            $responseText = "N/A";
+            if(isset($_POST['responseText'])) {
+                $responseText = $_POST['responseText'];
+            }
 
-        $responseVariables = "N/A";
-        if(isset($_POST['responseVariables'])) {
-            $responseVariables = $_POST['responseVariables'];
-        }
+            $responseTableID = "N/A";
+            if(isset($_POST['responseTableID'])) {
+                $responseTableID = $_POST['responseTableID'];
+            }
 
-        $responseRouting = "N/A";
-        if(isset($_POST['responseRouting'])) {
-            $responseRouting = $_POST['responseRouting'];
-        }
+            $responseChecks = "N/A";
+            if(isset($_POST['responseChecks'])) {
+                $responseChecks = $_POST['responseChecks'];
+            }
 
-        $routetype = "N/A";
+            $responseVariables = "N/A";
+            if(isset($_POST['responseVariables'])) {
+                $responseVariables = $_POST['responseVariables'];
+            }
 
-        $username = "";
-        $userObject = Yii::app()->user;
-        $username = $userObject->getName();
+            $responseRouting = "N/A";
+            if(isset($_POST['responseRouting'])) {
+                $responseRouting = $_POST['responseRouting'];
+            }
 
-        $insertResponseQuery = "INSERT INTO responses(
+            $routetype = "N/A";
+
+            $username = "";
+            $userObject = Yii::app()->user;
+            $username = $userObject->getName();
+
+            $insertResponseQuery = "INSERT INTO responses(
             responseid, responsetext, response_type, routetype, table_ids,
             computed_var, checks, route_notes, user_id, created, updated)
     VALUES ('" . $responseID . "', '" . $responseText . "', '" . $responseType . "', '" . $routetype . "', '" . $responseTableID . "', '" .
-            $responseVariables . "', '" . $responseChecks . "', '" . $responseRouting . "', '" . $username .
-            "', Timestamp 'now', Timestamp 'now');";
-        Log::toFile($insertResponseQuery);
+                $responseVariables . "', '" . $responseChecks . "', '" . $responseRouting . "', '" . $username .
+                "', Timestamp 'now', Timestamp 'now');";
+            Log::toFile($insertResponseQuery);
 
-        $returnArray['success'] = true;
-        $returnArray['questionInsert'] = $insertResponseQuery;
+            $returnArray['questionInsert'] = $insertResponseQuery;
 
-        $results = DataAdapter::DefaultExecuteAndRead($insertResponseQuery, "Survey_Data");
+            $results = DataAdapter::DefaultExecuteAndRead($insertResponseQuery, "Survey_Data");
 
 
-        $questionResponseLinkQuery = "INSERT INTO questions_responses_link( qid, responseid) VALUES ('" .
-            $questionID . "', '" . $responseID . "');";
-        Log::toFile($questionResponseLinkQuery);
-        $results = DataAdapter::DefaultExecuteAndRead($questionResponseLinkQuery, "Survey_Data");
+            $questionResponseLinkQuery = "INSERT INTO questions_responses_link( qid, responseid) VALUES ('" .
+                $questionID . "', '" . $responseID . "');";
+            Log::toFile($questionResponseLinkQuery);
+            $results = DataAdapter::DefaultExecuteAndRead($questionResponseLinkQuery, "Survey_Data");
 
-        $returnArray['resqueslink'] = $questionResponseLinkQuery;
+            $returnArray['resqueslink'] = $questionResponseLinkQuery;
+
+
+            $returnArray['success'] = "true";
+
+        } else {
+            $returnArray['success'] = false;
+            $returnArray['message'] = "User permission error";
+        }
 
         echo json_encode($returnArray);
 
     }
 
     function actioninsertQuestion() {
-        $QuestionSurveyID = "N/A";
-        if(isset($_POST['QuestionSurveyID'])) {
-            $QuestionSurveyID = $_POST['QuestionSurveyID'];
-        }
 
-        $QuestionID = "N/A";
-        if(isset($_POST['QuestionID'])) {
-            $QuestionID = $_POST['QuestionID'];
-        }
-
-        $QuestionNumber = "N/A";
-        if(isset($_POST['QuestionNumber'])) {
-            $QuestionNumber = $_POST['QuestionNumber'];
-        }
-
-        $QuestionText = "N/A";
-        if(isset($_POST['QuestionText'])) {
-            $QuestionText = $_POST['QuestionText'];
-        }
-
-        $QuestionNotesPrompts = "N/A";
-        if(isset($_POST['QuestionNotesPrompts'])) {
-            $QuestionNotesPrompts = $_POST['QuestionNotesPrompts'];
-        }
-
-        $QuestionVariable = "N/A";
-        if(isset($_POST['QuestionVariable'])) {
-            $QuestionVariable = $_POST['QuestionVariable'];
-        }
-
-        $QuestionThematicGroups = "N/A";
-        if(isset($_POST['QuestionThematicGroups'])) {
-            $QuestionThematicGroups = $_POST['QuestionThematicGroups'];
-        }
-
-        $QuestionThematicTags = "N/A";
-        if(isset($_POST['QuestionThematicTags'])) {
-            $QuestionThematicTags = $_POST['QuestionThematicTags'];
-        }
-
-        $QuestionType = "N/A";
-        if(isset($_POST['QuestionType'])) {
-            $QuestionType = $_POST['QuestionType'];
-        }
-
-        $QuestionLinkedFrom = "N/A";
-        if(isset($_POST['QuestionLinkedFrom'])) {
-            $QuestionLinkedFrom = $_POST['QuestionLinkedFrom'];
-        }
-
-        $QuestionSubOf = "N/A";
-        if(isset($_POST['QuestionSubOf'])) {
-            $QuestionSubOf = $_POST['QuestionSubOf'];
-        }
-
-        $qtext_index_function = "to_tsvector('english', '" . $QuestionText . "')";
+        if ( RoleManager::hasPermission('addResponseToSurvey', null) ) {
 
 
-        $username = "";
-        $userObject = Yii::app()->user;
-        $username = $userObject->getName();
+            $QuestionSurveyID = "N/A";
+            if(isset($_POST['QuestionSurveyID'])) {
+                $QuestionSurveyID = $_POST['QuestionSurveyID'];
+            }
 
-        $questionInsertQuery = "INSERT INTO questions(
+            $QuestionID = "N/A";
+            if(isset($_POST['QuestionID'])) {
+                $QuestionID = $_POST['QuestionID'];
+            }
+
+            $QuestionNumber = "N/A";
+            if(isset($_POST['QuestionNumber'])) {
+                $QuestionNumber = $_POST['QuestionNumber'];
+            }
+
+            $QuestionText = "N/A";
+            if(isset($_POST['QuestionText'])) {
+                $QuestionText = $_POST['QuestionText'];
+            }
+
+            $QuestionNotesPrompts = "N/A";
+            if(isset($_POST['QuestionNotesPrompts'])) {
+                $QuestionNotesPrompts = $_POST['QuestionNotesPrompts'];
+            }
+
+            $QuestionVariable = "N/A";
+            if(isset($_POST['QuestionVariable'])) {
+                $QuestionVariable = $_POST['QuestionVariable'];
+            }
+
+            $QuestionThematicGroups = "N/A";
+            if(isset($_POST['QuestionThematicGroups'])) {
+                $QuestionThematicGroups = $_POST['QuestionThematicGroups'];
+            }
+
+            $QuestionThematicTags = "N/A";
+            if(isset($_POST['QuestionThematicTags'])) {
+                $QuestionThematicTags = $_POST['QuestionThematicTags'];
+            }
+
+            $QuestionType = "N/A";
+            if(isset($_POST['QuestionType'])) {
+                $QuestionType = $_POST['QuestionType'];
+            }
+
+            $QuestionLinkedFrom = "N/A";
+            if(isset($_POST['QuestionLinkedFrom'])) {
+                $QuestionLinkedFrom = $_POST['QuestionLinkedFrom'];
+            }
+
+            $QuestionSubOf = "N/A";
+            if(isset($_POST['QuestionSubOf'])) {
+                $QuestionSubOf = $_POST['QuestionSubOf'];
+            }
+
+            $qtext_index_function = "to_tsvector('english', '" . $QuestionText . "')";
+
+
+            $username = "";
+            $userObject = Yii::app()->user;
+            $username = $userObject->getName();
+
+            $questionInsertQuery = "INSERT INTO questions(
             qid, literal_question_text, questionnumber, thematic_groups,
             thematic_tags, link_from, subof, type, variableid, notes, user_id,
             created, updated, qtext_index)
     VALUES ('";
 
-        $questionInsertQuery .= $QuestionID . "', '" . $QuestionText . "', '" . $QuestionNumber . "', '" . $QuestionThematicGroups . "', '" .
-            $QuestionThematicTags . "', '" . $QuestionLinkedFrom . "', '" . $QuestionSubOf . "', '" . $QuestionType . "', '" .
-            $QuestionVariable . "', '" . $QuestionNotesPrompts . "', '" . $username .
-            "', Timestamp 'now', Timestamp 'now', " . $qtext_index_function . ");";
+            $questionInsertQuery .= $QuestionID . "', '" . $QuestionText . "', '" . $QuestionNumber . "', '" . $QuestionThematicGroups . "', '" .
+                $QuestionThematicTags . "', '" . $QuestionLinkedFrom . "', '" . $QuestionSubOf . "', '" . $QuestionType . "', '" .
+                $QuestionVariable . "', '" . $QuestionNotesPrompts . "', '" . $username .
+                "', Timestamp 'now', Timestamp 'now', " . $qtext_index_function . ");";
 
-        Log::toFile($questionInsertQuery);
+            Log::toFile($questionInsertQuery);
 
-        $returnArray['success'] = true;
-        $returnArray['questionInsert'] = $questionInsertQuery;
+            $results = DataAdapter::DefaultExecuteAndRead($questionInsertQuery, "Survey_Data");
 
-        $results = DataAdapter::DefaultExecuteAndRead($questionInsertQuery, "Survey_Data");
+            $surveyQuestionLinkQuery = "INSERT INTO survey_questions_link( surveyid, qid, pk) VALUES ('" .
+                $QuestionSurveyID . "', '" . $QuestionID . "', 0);";
+            $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionLinkQuery, "Survey_Data");
 
+            $returnArray['questionInsert'] = $questionInsertQuery;
+            $returnArray['linkquestionsurveyquery'] = $surveyQuestionLinkQuery;
+            $returnArray['success'] = "true";
 
-        $surveyQuestionLinkQuery = "INSERT INTO survey_questions_link( surveyid, qid, pk) VALUES ('" .
-            $QuestionSurveyID . "', '" . $QuestionID . "', 0);";
-        $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionLinkQuery, "Survey_Data");
-
+        } else {
+            $returnArray['success'] = false;
+            $returnArray['message'] = "User permission error";
+        }
 
         echo json_encode($returnArray);
     }

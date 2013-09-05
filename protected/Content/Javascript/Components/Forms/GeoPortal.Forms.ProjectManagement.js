@@ -197,11 +197,14 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                                     projectName: projectName
                                                 },
                                                 success: function(resp) {
-                                                    alert("Created project " + projectName);
-                                                    this.projectStore.reload();
-                                                },
-                                                failure: function(resp) {
-                                                    alert("Failed ");
+                                                    var responseData = Ext.decode(resp.responseText);
+
+                                                    if(responseData.success == 'true') {
+                                                        alert("Created project " + projectName);
+                                                        this.projectStore.reload();
+                                                    } else {
+                                                        Ext.Msg.alert("Error!", responseData.message);
+                                                    }
                                                 }
                                             });
                                         }
@@ -263,10 +266,14 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                                     projectID: projectID
                                                 },
                                                 success: function(resp) {
-                                                    alert("Added user " + useridVal + " to project " + projectID);
-                                                },
-                                                failure: function(resp) {
-                                                    alert("Failed ");
+                                                    var responseData = Ext.decode(resp.responseText);
+
+                                                    if(responseData.success == 'true') {
+                                                        alert("Added user " + useridVal + " to project " + projectID);
+                                                        this.projectStore.reload();
+                                                    } else {
+                                                        Ext.Msg.alert("Error!", responseData.message);
+                                                    }
                                                 }
                                             });
                                         }
@@ -309,7 +316,7 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                     },
                                     {
                                         xtype: 'button',
-                                        id: 'btnAddUserToProject',
+                                        id: 'btnAddUserToRole',
                                         icon: 'images/silk/application_form_add.png',
                                         text: 'Add',
                                         handler : function() {
@@ -328,10 +335,14 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                                     roleName: roleName
                                                 },
                                                 success: function(resp) {
-                                                    alert("Added user " + useridVal + " to role " + roleName);
-                                                },
-                                                failure: function(resp) {
-                                                    alert("Failed ");
+                                                    var responseData = Ext.decode(resp.responseText);
+
+                                                    if(responseData.success == 'true') {
+                                                        alert("Added user " + useridVal + " to role " + roleName);
+                                                        this.projectStore.reload();
+                                                    } else {
+                                                        Ext.Msg.alert("Error!", responseData.message);
+                                                    }
                                                 }
                                             });
                                         }
@@ -405,11 +416,14 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                                     surveyID: surveyVal
                                                 },
                                                 success: function(resp) {
-                                                    alert("Added " + surveyVal + " to " + projectVal)
-                                                    this.surveyProjectVisibilityStore.reload();
-                                                },
-                                                failure: function(resp) {
-                                                    alert("Failed ");
+                                                    var responseData = Ext.decode(resp.responseText);
+
+                                                    if(responseData.success == 'true') {
+                                                        alert("Added " + surveyVal + " to " + projectVal);
+                                                        this.projectStore.reload();
+                                                    } else {
+                                                        Ext.Msg.alert("Error!", responseData.message);
+                                                    }
                                                 }
                                             });
                                         }
@@ -474,11 +488,14 @@ GeoPortal.Forms.ProjectManagement = Ext.extend(Ext.form.FormPanel, {
                                                     surveyID: surveyVal
                                                 },
                                                 success: function(resp) {
-                                                    alert("Set " + surveyVal + " visibility to " + visibilityComboVal)
-                                                    this.surveyProjectVisibilityStore.reload();
-                                                },
-                                                failure: function(resp) {
-                                                    alert("Failed ");
+                                                    var responseData = Ext.decode(resp.responseText);
+
+                                                    if(responseData.success == 'true') {
+                                                        alert("Set " + surveyVal + " visibility to " + visibilityComboVal);
+                                                        this.projectStore.reload();
+                                                    } else {
+                                                        Ext.Msg.alert("Error!", responseData.message);
+                                                    }
                                                 }
                                             });
                                         }

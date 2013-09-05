@@ -100,15 +100,15 @@ class getDBConnections {
 
             $role = $DR->role;
 
-            // set session details
-            $auth = Yii::app()->authManager; //initializes the authManager
-            if(!$auth->isAssigned($role, $user->UserName)) //checks if the role for this user has already been assigned and if it is NOT than it returns true and continues with assigning it below
-            {
-                if($auth->assign($role, $user->UserName)) //assigns the role to the user
-                {
-                    Yii::app()->authManager->save();
-                }
-            }
+//            // set session details
+//            $auth = Yii::app()->authManager; //initializes the authManager
+//            if(!$auth->isAssigned($role, $user->UserName)) //checks if the role for this user has already been assigned and if it is NOT than it returns true and continues with assigning it below
+//            {
+//                if($auth->assign($role, $user->UserName)) //assigns the role to the user
+//                {
+//                    Yii::app()->authManager->save();
+//                }
+//            }
 
             Yii::app()->session["User"] = $user;
             $identity=new LoggedInUserIdentity($userName, $Password);
