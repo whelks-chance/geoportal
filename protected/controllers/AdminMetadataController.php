@@ -63,7 +63,7 @@ class AdminMetadataController extends Controller
 
         $results = array();
         if ($userID != "" && $roleName != "") {
-            if(RoleManager::hasPermission('addUserToProject', null)) {
+            if(RoleManager::hasPermission('changeUserRole', null)) {
 
                 RoleManager::changeRole($userID, $roleName);
                 $results['success'] = "true";
@@ -299,7 +299,18 @@ proj.projectid = so.projectid;";
 
             $userID = Yii::app()->user->getID();
 
-            $roleArray['authorisedActions'] = RoleManager::getAuthorisedActions($userID);
+            Log::toFile("*" . $userID . "*");
+
+            $auth=Yii::app()->authManager;
+
+            $roleArray['assignments'] = $auth->getAuthAssignments($userID);
+
+            $roleArray['surveyEntry'] = RoleManager::hasPermission("createRecordandDC", null);
+            $roleArray['qualEntry'] = RoleManager::hasPermission("createRecordandDC", null);
+            $roleArray['management'] = RoleManager::hasPermission("hubAdmin", null);
+
+            $roleArray['user'] = Yii::app()->user->getID();
+//            $roleArray['authorisedActions'] = RoleManager::getAuthorisedActions($userID);
             $roleArray['allRoles'] = RoleManager::getAllRoles();
 
             $returnArray['roles'] = $roleArray;

@@ -68,7 +68,13 @@ class TaggingController extends Controller{
         Log::toFile(RDFAPI_INCLUDE_DIR);
 
         Yii::import('application.models.RDFPHP.api.*');
-        require_once("RdfAPI.php");
+        if( ! require_once("RdfAPI.php") ) {
+            Log::toFile("failed to require RdfAPI.php");
+        }
+
+        if( ! include_once("RdfAPI.php") ) {
+            Log::toFile("failed to include RdfAPI.php");
+        }
 
         $taggingText = "";
         if(isset($_POST['tagText'])) {

@@ -267,8 +267,19 @@ GeoPortal.Toolbars.MapToolbar = Ext.extend(Ext.Toolbar, {
             handler: this.OnGuideClick
         });
         toolbarItems.push(btnUserGuide);
-        toolbarItems.push("->");
+        toolbarItems.push("-");
 
+        //Help-User Welcome window
+        btnWelcomeWin = new Ext.Button({
+            icon: 'images/silk/application_home.png',
+            tooltip: "Welcome Window",
+            handler: function() {
+                var welcomeWin = new Geoportal.Windows.WelcomeWin();
+                welcomeWin.show();
+            }
+        });
+        toolbarItems.push(btnWelcomeWin);
+        toolbarItems.push("->");
 
 
         //Search,Print,Save etc

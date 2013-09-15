@@ -13,12 +13,25 @@ GeoPortal.Windows.MyAccount = Ext.extend(Ext.Window, {
         Ext.Ajax.request({
             url: dataOptionLists,
             method : 'POST',
-            params : {
-                role : true
-            },
             success: function(resp) {
                 var responseData = Ext.decode(resp.responseText);
 
+                var acTabPanel = Ext.getCmp('myACtabpanel');
+
+                if ( responseData['roles']['management'] == true) {
+                    acTabPanel.add( new GeoPortal.Forms.ProjectManagement() );
+                }
+                if ( responseData['roles']['surveyEntry'] == true) {
+                    acTabPanel.add( new GeoPortal.Forms.DataEntry.SurveyMainEntry())
+                }
+                if ( responseData['roles']['qualEntry'] == true) {
+                    acTabPanel.add( new GeoPortal.Forms.Tagging() );
+                }
+
+                acTabPanel.doLayout();
+            },
+            params : {
+                roles : true
             },
             failure: function(resp) {
                 console.log('failure!');
@@ -29,6 +42,7 @@ GeoPortal.Windows.MyAccount = Ext.extend(Ext.Window, {
         this.items = [
             {
                 xtype: 'tabpanel',
+                id: 'myACtabpanel',
                 activeTab: 0,
                 title: '',
                 items: [
@@ -45,28 +59,28 @@ GeoPortal.Windows.MyAccount = Ext.extend(Ext.Window, {
                     {
                         xtype: 'panel',
                         title: 'My Uploads'
-                    },
-                    {
-                        xtype: 'panel',
-                        title: 'Data Entry',
-                        layout: 'border',
-                        items : [
-
-                            {
-                                xtype: 'button',
-                                id: 'btnDataEntry',
-                                icon: 'images/silk/application_get.png',
-                                text: 'DataEntry',
-                                type: 'reset',
-                                handler : function() {
-                                    var dataEntryWin = new GeoPortal.Windows.DataEntry();
-                                    dataEntryWin.show();
-                                },
-                                scope : this
-                            }
-
-                        ]
                     }
+//                    {
+//                        xtype: 'panel',
+//                        title: 'Data Entry',
+//                        layout: 'border',
+//                        items : [
+//
+//                            {
+//                                xtype: 'button',
+//                                id: 'btnDataEntry',
+//                                icon: 'images/silk/application_get.png',
+//                                text: 'DataEntry',
+//                                type: 'reset',
+//                                handler : function() {
+//                                    var dataEntryWin = new GeoPortal.Windows.DataEntry();
+//                                    dataEntryWin.show();
+//                                },
+//                                scope : this
+//                            }
+//
+//                        ]
+//                    }
                 ]
             }
         ];

@@ -4,28 +4,51 @@ Geoportal.Windows.WelcomeWin = Ext.extend(Ext.Window, {
     width: Ext.getBody().getViewSize().width * 0.5,
     height: Ext.getBody().getViewSize().height * 0.8,
     resizable: true,
-    modal: true,
+    maximizable: true,
+//    modal: true,
 //    autoScroll: 'true',
     draggable: true,
     initComponent: function () {
         this.items = [
             {
                 xtype: 'tabpanel',
+                id: 'welcometabs',
                 activeTab: 0,
 //                layout:'fit',
 //                width: 600,
 //                height: Ext.getBody().getViewSize().height * 0.78,
-                autoScroll: 'true',
-                padding: 20,
+//                autoScroll: 'true',
+//                padding: 20,
                 items: [
                     {
                         xtype: 'panel',
                         title: 'Introduction',
+                        layout: 'fit',
                         id: 'tabIntro',
                         autoScroll: 'true',
                         autoLoad: 'protected/Content/html/intro.htm'
 
 
+                    },
+                    {
+                        xtype: 'panel',
+                        title: 'User Guide',
+//                        layout: 'fit',
+                        id: 'tabUserGuide',
+                        autoScroll: 'true',
+                        autoWidth: true,
+                        autoHeight: true,
+                        layoutOnTabChange: true,
+//                        listeners : {
+//                            activate: function() {
+//                                console.log('listened to an active');
+//                                var tabs = Ext.getCmp('welcometabs');
+//                                var tab = tabs.getActiveTab();
+//                                var updater = tab.getUpdater();
+//                                updater.refresh();
+//                            }
+//                        },
+                        autoLoad: 'protected/Content/html/data_entry_project_management.html'
                     },
 //                    {
 //                        xtype: 'panel',

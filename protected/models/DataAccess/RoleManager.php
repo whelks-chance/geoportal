@@ -32,6 +32,8 @@ class RoleManager {
         $auth->createOperation('searchPrivateRecords','Search privately visibile records');
         $projectUserRole->addChild('searchPrivateRecords');
 
+
+        $bizRule = 'return RoleManager::isProjectMember($params);';
 //            3
         $auth->createOperation('createRecordandDC','Create records and Dublin Core');
         $dataEntryRole->addChild('createRecordandDC');
@@ -49,7 +51,7 @@ class RoleManager {
         $dataEntryRole->addChild('deleteRecord');
 
 //            4
-        $auth->createOperation('createProject','Create a new Project');
+        $auth->createOperation('createProject','Create a new Project', $bizRule);
         $hubAdminRole->addChild('createProject');
         $auth->createOperation('addUserToProject','Add a user to a Project');
         $hubAdminRole->addChild('addUserToProject');
@@ -94,7 +96,12 @@ class RoleManager {
         RoleManager::init();
         $userID = Yii::app()->user->getID();
 
-        if(Yii::app()->user->checkAccess($task)) {
+        if($params == null) {
+            $params = array();
+        }
+
+        $params['task'] = $task;
+        if(Yii::app()->user->checkAccess($task, $params)) {
             return true;
         } else {
 
@@ -124,8 +131,15 @@ class RoleManager {
     public static function getAuthorisedActions($userID)
     {
         RoleManager::init();
-        $auth=Yii::app()->authManager;
-        return $auth->getAuthAssignments( $userID );
+
+        if($userID == "") {
+            return array();
+        } else {
+
+            $auth=Yii::app()->authManager;
+//        return $auth->getAuthAssignments( $userID );
+            return $auth->getAuthItems($userID);
+        }
     }
 
     public static function getAllRoles()
@@ -146,8 +160,8 @@ class RoleManager {
 
     public static function removeAllAuthorisedActions($userID)
     {
-        $currentActions = RoleManager::getAuthorisedActions($userID);
         $auth=Yii::app()->authManager;
+        $currentActions = $auth->getAuthAssignments( $userID );;
 
         foreach($currentActions as $action=>$actionObject) {
             $auth->revoke($action, $userID);
@@ -159,15 +173,21 @@ class RoleManager {
         RoleManager::init();
         $auth=Yii::app()->authManager;
 
-        Log::toFile(print_r($auth->getRoles(), true));
+//        Log::toFile(print_r($auth->getRoles(), true));
 
         //Users can't hold more than a single role, this tidys up
         RoleManager::removeAllAuthorisedActions($userID);
 
         $auth->assign($roleName, $userID);
         $auth->save();
-        Log::toFile(print_r($auth->getRoles(), true));
+//        Log::toFile(print_r($auth->getRoles(), true));
 
+    }
+
+    public static function isProjectMember($params)
+    {
+        Log::toFile("bizrule for task : " . print_r($params, true));
+        return true;
     }
 
 

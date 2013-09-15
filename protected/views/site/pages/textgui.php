@@ -69,6 +69,27 @@ Ext.onReady(function(){
                 }
             });
 
+            Ext.Ajax.request({
+                url: dataOptionLists,
+                method : 'POST',
+                params : {
+                    visibilities: true,
+                    roles: true,
+                    surveys: true,
+                    users: true
+                },
+                success: function(resp) {
+                    console.log('success!');
+                    var responseData = Ext.decode(resp.responseText);
+                    surveyStore.loadData(responseData);
+                    thematicStore.loadData(responseData);
+                },
+                failure: function(resp) {
+                    console.log('failure!');
+                }
+            });
+
+
             this.items = [
                 {
 
@@ -219,6 +240,9 @@ Ext.onReady(function(){
         closable: false
     });
     frmLogin.show();
+
+    var welcomeWin = new Geoportal.Windows.WelcomeWin();
+    welcomeWin.show();
 
 });
 
