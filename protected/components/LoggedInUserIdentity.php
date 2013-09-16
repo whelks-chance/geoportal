@@ -16,6 +16,7 @@ class LoggedInUserIdentity  extends CUserIdentity
     public function authenticate()
     {
 
+        RoleManager::initUser($this->name);
         $this->errorCode=self::ERROR_NONE;
         return !$this->errorCode;
     }

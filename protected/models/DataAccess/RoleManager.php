@@ -180,7 +180,11 @@ class RoleManager {
 
         $auth->assign($roleName, $userID);
         $auth->save();
-//        Log::toFile(print_r($auth->getRoles(), true));
+
+        $updateRoleQuery = "Update alphausersdetails set role=( Select roleid from roles where name='" .
+            $roleName . "') where username='" . $userID . "';";
+        $results2 = DataAdapter::DefaultExecuteAndRead($updateRoleQuery, "Geoportal");
+
 
     }
 
@@ -188,6 +192,25 @@ class RoleManager {
     {
         Log::toFile("bizrule for task : " . print_r($params, true));
         return true;
+    }
+
+    public static function initUser($username)
+    {
+        RoleManager::init();
+
+        $getRoleQuery = "Select roles.name as rolename From alphausersdetails, roles WHERE username='"
+            . $username . "' and role = roleid;";
+
+        $results2 = DataAdapter::DefaultExecuteAndRead($getRoleQuery, "Geoportal");
+
+        if (sizeof($results2) > 0) {
+            RoleManager::changeRole($username, $results2[0]->rolename);
+
+//            $auth=Yii::app()->authManager;
+//            $auth->assign($results2[0]->rolename, $username);
+//            $auth->save();
+        }
+
     }
 
 

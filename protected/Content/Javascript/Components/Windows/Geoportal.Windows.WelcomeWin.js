@@ -6,7 +6,7 @@ Geoportal.Windows.WelcomeWin = Ext.extend(Ext.Window, {
     resizable: true,
     maximizable: true,
 //    modal: true,
-//    autoScroll: 'true',
+    autoScroll: 'true',
     draggable: true,
     initComponent: function () {
         this.items = [
@@ -35,9 +35,9 @@ Geoportal.Windows.WelcomeWin = Ext.extend(Ext.Window, {
                         title: 'User Guide',
 //                        layout: 'fit',
                         id: 'tabUserGuide',
-                        autoScroll: 'true',
-                        autoWidth: true,
-                        autoHeight: true,
+//                        autoScroll: 'true',
+//                        autoWidth: true,
+//                        autoHeight: true,
                         layoutOnTabChange: true,
 //                        listeners : {
 //                            activate: function() {
