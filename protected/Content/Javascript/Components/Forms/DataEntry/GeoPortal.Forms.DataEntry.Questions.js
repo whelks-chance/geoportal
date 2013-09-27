@@ -81,6 +81,15 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
+                        id: 'btnQsave',
+                        icon: 'images/silk/database_edit.png',
+                        text: 'Insert',
+                        type: 'reset',
+                        handler : this.FormSave,
+                        scope : this
+                    },
+                    {
+                        xtype: 'button',
                         id: 'btnQuestionInsert',
                         icon: 'images/silk/application_form_add.png',
                         text: 'Insert',
@@ -129,6 +138,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'textfield',
                             fieldLabel: 'Survey ID',
                             readOnly: true,
+                            allowBlank:false,
                             anchor: '97%',
                             name: 'QuestionSurveyID',
                             id: 'QuestionSurveyID'
@@ -164,12 +174,6 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                             fieldLabel: 'Variable ID',
                             anchor: '97%',
                             name: 'QuestionVariable'
-                        },
-                        {
-                            xtype: 'textfield',
-                            fieldLabel: 'q_text',
-                            anchor: '97%',
-                            name: 'q_text'
                         }
                     ]
                 },
@@ -244,19 +248,126 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
 //                            valueField: 'id',
                             mode: 'local',
                             store : questionTypeStore
-                        }
-                        ,
-                        {
-                            xtype: 'textfield',
-                            fieldLabel: 'Follows QID',
-                            anchor: '97%',
-                            name: 'QuestionLinkedFrom'
                         },
                         {
-                            xtype: 'textfield',
-                            fieldLabel: 'Sub Of',
-                            anchor: '97%',
-                            name: 'QuestionSubOf'
+                            xtype: 'container',
+                            layout: {
+                                type: 'column'
+                            },
+                            items: [
+                                {
+                                    xtype: 'container',
+                                    layout: {
+                                        type: 'form'
+                                    },
+                                    columnWidth: 0.9,
+                                    items: [
+                                        {
+                                            xtype: 'textfield',
+                                            labelStyle: 'font-weight:bold;',
+                                            id: 'followsQIDfield',
+                                            fieldLabel: 'Follows QID',
+                                            anchor: '97%',
+                                            name: 'QuestionLinkedFrom'
+                                        }
+                                    ]
+                                },
+                                {
+                                    xtype: 'container',
+                                    layout: {
+                                        type: 'form'
+                                    },
+                                    columnWidth: 0.1,
+                                    items: [
+                                        {
+                                            xtype: 'button',
+                                            id: 'btnRouting',
+                                            icon: 'images/silk/magnifier.png',
+                                            text: 'Find QID',
+//                                            type: 'reset',
+                                            handler : function(){
+                                                var surveyField = Ext.getCmp('QuestionSurveyID');
+                                                var surveyID = surveyField.getValue();
+                                                var routingWin = new Ext.Window(
+                                                    { items:[new GeoPortal.Forms.DataEntry.QuestionRouting(
+                                                        {
+                                                            textfieldcmp : 'followsQIDfield',
+                                                            SID : surveyID
+                                                        }
+                                                    )],
+                                                        title:'Load Question',
+                                                        modal:true,
+                                                        width:500,
+                                                        id:'routingWin'
+                                                    });
+                                                routingWin.show();
+
+                                            },
+                                            scope : this
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'container',
+                            layout: {
+                                type: 'column'
+                            },
+                            items: [
+                                {
+                                    xtype: 'container',
+                                    layout: {
+                                        type: 'form'
+                                    },
+                                    columnWidth: 0.9,
+                                    items: [
+                                        {
+                                            xtype: 'textfield',
+                                            labelStyle: 'font-weight:bold;',
+                                            id: 'subOfQIDfield',
+                                            fieldLabel: 'Sub Of',
+                                            anchor: '97%',
+                                            name: 'QuestionSubOf'
+                                        }
+                                    ]
+                                },
+                                {
+                                    xtype: 'container',
+                                    layout: {
+                                        type: 'form'
+                                    },
+                                    columnWidth: 0.1,
+                                    items: [
+                                        {
+                                            xtype: 'button',
+                                            id: 'btnsubOfRouting',
+                                            icon: 'images/silk/magnifier.png',
+                                            text: 'Find QID',
+//                                            type: 'reset',
+                                            handler : function(){
+                                                var surveyField = Ext.getCmp('QuestionSurveyID');
+                                                var surveyID = surveyField.getValue();
+                                                var routingWin = new Ext.Window(
+                                                    { items:[new GeoPortal.Forms.DataEntry.QuestionRouting(
+                                                        {
+                                                            textfieldcmp : 'subOfQIDfield',
+                                                            SID : surveyID
+                                                        }
+                                                    )],
+                                                        title:'Load Question',
+                                                        modal:true,
+                                                        width:500,
+                                                        id:'routingWin'
+                                                    });
+                                                routingWin.show();
+
+                                            },
+                                            scope : this
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 }
@@ -309,6 +420,74 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
             var thisPanel = Ext.getCmp(this.id);
             console.log(thisPanel);
             thisPanel.getForm().reset();
+        },
+        FormSave : function() {
+
+            var qid = Ext.getCmp('QuestionIdField').getValue();
+
+            Ext.Ajax.request({
+                url: checkRecordExists,
+                scope: this,
+                method : 'POST',
+                params : {
+                    recordType: "survey_question",
+                    recordID: qid
+                },
+                success: function(resp) {
+                    var responseData = Ext.decode(resp.responseText);
+                    var qidProjectID = responseData.projectid;
+                    console.log(qidProjectID);
+
+                    if (responseData.exists == true) {
+                        console.log('ok ' + responseData);
+                        Ext.MessageBox.confirm('Status', 'Question qid is already in use, overwrite?', function (btn, text) {
+
+                            if(btn == 'yes') {
+                                Ext.getCmp('frmEntryQuestion').getForm().submit({
+                                    scope: this,
+                                    url: insertQuestion,
+                                    params : {
+                                        update : true,
+                                        projectID : qidProjectID
+                                    },
+                                    waitMsg: 'Inserting Question Data....',
+                                    success: function (form, action) {
+                                        Ext.MessageBox.alert("Success", "Question data overwritten");
+                                    },
+                                    failure: function (form, action) {
+                                        Ext.MessageBox.alert("Failure", action.result.message);
+                                    }
+                                });
+                            } else {
+                                Ext.MessageBox.alert("no, don't overwrite question");
+                            }
+                        });
+                    } else {
+                        if(qid == "") {
+                            Ext.MessageBox.alert('Status', 'Please set a WISERD ID and Survey ID by clicking the \'New Survey\' button.');
+                        } else {
+                            var thisPanel = Ext.getCmp(this.id);
+                            if(thisPanel.isValid()) {
+                                thisPanel.getForm().submit({
+                                    url: insertQuestion,
+                                    waitMsg: 'Inserting Question Data....',
+                                    success: function (form, action) {
+                                        Ext.Msg.alert("Success!",action.result.message);
+                                    },
+                                    failure: function (form, action) {
+                                        Ext.Msg.alert("Error!",action.result.message);
+                                    }
+                                });
+                            } else {
+                                Ext.MessageBox.alert('Status', 'There is an invalid entry on either the Dublin Core or Survey form.');
+                            }
+                        }
+                    }
+                },
+                failure: function(resp) {
+
+                }
+            });
         }
     }
 );

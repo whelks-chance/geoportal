@@ -6,6 +6,12 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
     padding: 10,
 //    layout: 'fit',
     id: 'frmLogin',
+    keys: [{
+        key: [Ext.EventObject.ENTER], handler: function() {
+            Ext.getCmp('btnLogin').handler.call(Ext.getCmp('btnLogin').scope);
+//            Ext.ComponentMgr.get('btnLogin').fireEvent('click');
+        }
+    }],
 
     initComponent: function () {
         Ext.applyIf(this, {
@@ -126,8 +132,8 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
                                 success: function (form, action) {
 
                                     Ext.Msg.alert('', "You are now logged-in!");
-//                                    Ext.getCmp("txtSBUser").getEl().update(Ext.getCmp('txtUsername').getValue());
                                     Ext.getCmp('WinLogin').close();
+                                    Ext.getCmp("txtSBUser").getEl().update(Ext.getCmp('txtUsername').getValue());
 
                                 },
                                 failure: function (form, action) {

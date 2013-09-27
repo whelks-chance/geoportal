@@ -2,6 +2,7 @@
 
 GeoPortal.Panels.TreePanel = Ext.extend(Ext.Panel, {
     autoHeight: true,
+    autoScroll : true,
     initComponent: function () {
         this.items = this.CreateItems();
         GeoPortal.Panels.TreePanel.superclass.initComponent.call(this);
@@ -341,7 +342,7 @@ GeoPortal.Panels.TreePanel = Ext.extend(Ext.Panel, {
             collapseMode: "mini",
             bodyStyle: 'padding: 5px',
             height: Ext.getBody().getViewSize().height * 0.85,
-            autoScroll: true,
+//            autoScroll: true,
             plugins: [
                 new GeoExt.plugins.TreeNodeRadioButton({
                     listeners: {

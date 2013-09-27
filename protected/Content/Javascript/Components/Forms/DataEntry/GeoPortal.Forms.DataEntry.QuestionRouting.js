@@ -1,22 +1,22 @@
 /**
  * Created with JetBrains PhpStorm.
  * User: wiserd
- * Date: 15/08/13
- * Time: 13:58
+ * Date: 21/09/13
+ * Time: 17:06
  * To change this template use File | Settings | File Templates.
  */
 
-GeoPortal.Forms.DataEntry.FindQuestions = Ext.extend(Ext.form.FormPanel, {
-//    width: 300,
-    id: 'frmFindQuestions',
-//    height: 140,
+GeoPortal.Forms.DataEntry.QuestionRouting = Ext.extend(Ext.form.FormPanel, {
+
+    id: 'frmQuestionRouting',
     padding: 5,
     dataset: null,
     SID: null,
+    textfieldcmp : null,
     initComponent: function () {
         var datasetID = "";
 
-        var questionIdStore = new Ext.data.JsonStore ({
+        var routingQuestionIdStore = new Ext.data.JsonStore ({
             fields: [
                 {name: 'name', mapping: 'QuestionName'},
                 {name: 'id',  mapping: 'QuestionID'}],
@@ -30,7 +30,7 @@ GeoPortal.Forms.DataEntry.FindQuestions = Ext.extend(Ext.form.FormPanel, {
             params : {SID : this.SID},
             success: function(resp) {
                 var responseData = Ext.decode(resp.responseText);
-                questionIdStore.loadData(responseData);
+                routingQuestionIdStore.loadData(responseData);
             },
             failure: function(resp) {
                 console.log('failure!');
@@ -47,36 +47,14 @@ GeoPortal.Forms.DataEntry.FindQuestions = Ext.extend(Ext.form.FormPanel, {
                     xtype: 'button',
                     text: 'Load',
                     id: 'loadQuestioninfobtn',
+                    scope: this,
                     handler: function(){
 
-                        var questionID = datasetID;
+                        var txtfieldcmp = Ext.getCmp(this.textfieldcmp);
 
-                        Ext.getCmp("frmEntryQuestion").getForm().load(
-                            {
-                                url: QmetaURL,
-                                waitMsg: 'Loading.......',
-                                method: 'POST',
-                                params: {
-                                    ID: questionID
-                                }
-                            }
-                        );
-                        Ext.getCmp("frmEntryResponse").getForm().load(
-                            {
-                                url: RmetaURL,
-                                waitMsg: 'Loading.......',
-                                method: 'POST',
-                                params: {
-                                    QID: questionID
-                                }
-                            }
-                        );
+                        txtfieldcmp.setValue(datasetID);
 
-                        var breadcrumb = Ext.getCmp('breadcrumb');
-
-                        breadcrumb.updateBreadcrumb(null, null, questionID, "");
-
-                        Ext.getCmp('frmFindQuestions').destroy();
+                        Ext.getCmp('routingWin').destroy();
 
                     }
                 }
@@ -105,10 +83,10 @@ GeoPortal.Forms.DataEntry.FindQuestions = Ext.extend(Ext.form.FormPanel, {
                     }
                 },
                 mode: 'local',
-                store : questionIdStore
+                store : routingQuestionIdStore
             }
         ];
-        GeoPortal.Forms.DataEntry.FindQuestions.superclass.initComponent.call(this);
+        GeoPortal.Forms.DataEntry.QuestionRouting.superclass.initComponent.call(this);
     }
 });
 

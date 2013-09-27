@@ -82,10 +82,10 @@
                             xtype: 'button',
                             text: 'Change Avatar',
                             icon: './images/silk/vcard.png' ,
-                             handler: function () {
+                            handler: function () {
 
-                                 var UploadWin = new Ext.Window({ items: [new genUploadForm()], title: 'Upload Avatar', modal: true, autoHeight: true, width: 310, id: 'UploadAVWin' });
-                               UploadWin.show();
+                                var UploadWin = new Ext.Window({ items: [new genUploadForm()], title: 'Upload Avatar', modal: true, autoHeight: true, width: 310, id: 'UploadAVWin' });
+                                UploadWin.show();
 
 
                             }
@@ -121,50 +121,80 @@
                         anchor: '95%',
                         id: 'txtAddress'
                     }
-                            ]
+                    ]
                 }]
             },
 
 
-          {
-              xtype: 'fieldset',
-              layout: 'fit',
-              anchor: '98%',
-              title: 'My Biography',
-              items: [{
-                  xtype: 'textarea',
-                  id: 'txtBio',
-                  name: 'Bio',
-                  height: 250,
-                  anchor: '98%'
-              }],
+            {
+                xtype: 'fieldset',
+                layout: 'fit',
+                anchor: '98%',
+                title: 'My Biography',
+                items: [{
+                    xtype: 'textarea',
+                    id: 'txtBio',
+                    name: 'Bio',
+                    height: 250,
+                    anchor: '98%'
+                }]
 
-              buttons: [{
-                  xtype: 'button',
-                  text: 'Save',
-                  bodyStyle: 'float: right',
-                  icon: './images/silk/disk.png',
-                  handler: function () {
-                      var bioPanel = Ext.getCmp('frmMyDetails');
-                      bioPanel.getForm().submit({
-                          url: bioUpdateURL,
-                          waitMsg: 'Updating User Details.....',
-                          success: function (form, action) {
-                              Ext.Msg.alert("Sucess!", action.result.message);
-                          },
-                          failure: function (form, action) {
-                              Ext.Msg.alert(action.result.message);
-                          }
-                      })
+//              buttons: [{
+//                  xtype: 'button',
+//                  text: 'Save',
+//                  bodyStyle: 'float: right',
+//                  icon: './images/silk/disk.png',
+//                  handler: function () {
+//                      var bioPanel = Ext.getCmp('frmMyDetails');
+//                      bioPanel.getForm().submit({
+//                          url: bioUpdateURL,
+//                          waitMsg: 'Updating User Details.....',
+//                          success: function (form, action) {
+//                              Ext.Msg.alert("Sucess!", action.result.message);
+//                          },
+//                          failure: function (form, action) {
+//                              Ext.Msg.alert(action.result.message);
+//                          }
+//                      })
+//
+//
+//
+//
+//                  }
+//              }]
+            }
+
+        ];
+
+        this.bbar = [
+            {
+                xtype: 'tbfill'
+            },
+            {
+                xtype: 'button',
+                text: 'Save',
+                bodyStyle: 'float: right',
+                icon: './images/silk/disk.png',
+                handler: function () {
+                    var bioPanel = Ext.getCmp('frmMyDetails');
+                    bioPanel.getForm().submit({
+                        url: bioUpdateURL,
+                        waitMsg: 'Updating User Details.....',
+                        success: function (form, action) {
+                            Ext.Msg.alert("Sucess!", action.result.message);
+                        },
+                        failure: function (form, action) {
+                            Ext.Msg.alert(action.result.message);
+                        }
+                    })
 
 
 
 
-                  }
-              }]
-          }
+                }
+            }
+        ];
 
-          ]
         GeoPortal.Forms.UserDetails.superclass.initComponent.call(this);
     }
 });

@@ -577,6 +577,91 @@ proj.projectid = so.projectid;";
         echo json_encode($returnArray);
     }
 
+    function actioncheckRecordExists() {
+
+        $recordID = "";
+        if(isset($_POST['recordID'])) {
+            $recordID = $_POST['recordID'];
+        }
+
+        $recordType = "";
+        if(isset($_POST['recordType'])) {
+            $recordType = $_POST['recordType'];
+        }
+
+        $returnArray = array();
+        $checkRecordExistsQuery = "";
+
+        switch ($recordType) {
+            case "survey" :
+                //check survey
+                $checkRecordExistsQuery = "Select Count (surveyid) From survey Where surveyid='" . $recordID . "';";
+                break;
+            case "survey_dc" :
+                //check dc exists
+                $checkRecordExistsQuery = "Select Count (identifier) From dc_info Where identifier='" . $recordID . "';";
+                break;
+            case "survey_question" :
+                // check question exists
+                $checkRecordExistsQuery = "Select Count (qid) From questions Where qid='" . $recordID . "';";
+                break;
+            case "survey_response" :
+                // check response
+                $checkRecordExistsQuery = "Select Count (responseid) From responses Where responseid='" . $recordID . "';";
+                break;
+        }
+
+        $result = DataAdapter::DefaultExecuteAndRead($checkRecordExistsQuery, "Survey_Data");
+
+        Log::toFile(print_r($result, true));
+        $count = $result[0]->count;
+
+        if ($count > 0) {
+
+            $returnArray['exists'] = true;
+            $returnArray['success'] = true;
+            $returnArray['msg'] = "Record with id " . trim($recordID) . " already exists.";
+
+            $surveyid = "";
+            switch ($recordType) {
+                case "survey" :
+                    //check survey
+                    $checkRecordExistsQuery = "Select Count (surveyid) From survey Where surveyid='" . $recordID . "';";
+                    break;
+                case "survey_dc" :
+                    //check dc exists
+                    $getSurveyForWIDQuery = "Select surveyid from survey where identifier='" . $recordID . "';";
+                    $result = DataAdapter::DefaultExecuteAndRead($getSurveyForWIDQuery, "Survey_Data");
+
+                    $surveyid = trim( $result[0]->surveyid );
+                    break;
+                case "survey_question" :
+                    $getSurveyForWIDQuery = "Select surveyid from survey_questions_link where qid='" . $recordID . "';";
+                    $result = DataAdapter::DefaultExecuteAndRead($getSurveyForWIDQuery, "Survey_Data");
+
+                    $surveyid = trim( $result[0]->surveyid );
+                    break;
+            }
+
+            $getProjectForRecordQuery = "Select p.projectid, projectname from surveyownership so,
+            project p where so.surveyid='" . $surveyid ."' and p.projectid=so.projectid;";
+            $result = DataAdapter::DefaultExecuteAndRead($getProjectForRecordQuery, "Geoportal");
+
+            if (sizeof($result) > 0) {
+                $returnArray['projectid'] = $result[0]->projectid;
+                $returnArray['projectname'] = $result[0]->projectname;
+            }
+
+        } else {
+            $returnArray['exists'] = false;
+            $returnArray['failure'] = true;
+            $returnArray['msg'] = "No record with id " . $recordID . " found.";
+        }
+
+        echo json_encode($returnArray);
+
+    }
+
     function actioninsertSurvey() {
 
         if(RoleManager::hasPermission('createRecordandDC', null)) {
@@ -728,106 +813,135 @@ proj.projectid = so.projectid;";
     function actionInsertDC (){
         $returnArray = array();
 
+        $username = Yii::app()->user->getName();
+
+        $identifier = "N/A";
+        if(isset($_POST['dcWiserdID'])) {
+            $identifier = $_POST['dcWiserdID'];
+        }
+        $title = "N/A";
+        if(isset($_POST['dcTitle'])) {
+            $title = $_POST['dcTitle'];
+        }
+        $creator = "N/A";
+        if(isset($_POST['dcCreator'])) {
+            $creator = $_POST['dcCreator'];
+        }
+        $subject = "N/A";
+        if(isset($_POST['dcSubject'])) {
+            $subject = $_POST['dcSubject'];
+        }
+        $description = "N/A";
+        if(isset($_POST['dcDescription'])) {
+            $description = $_POST['dcDescription'];
+        }
+        $publisher = "N/A";
+        if(isset($_POST['dcPublisher'])) {
+            $publisher = $_POST['dcPublisher'];
+        }
+        $contributor = "N/A";
+        if(isset($_POST['dcContributor'])) {
+            $contributor = $_POST['dcContributor'];
+        }
+
+        $dateObject = new DateTime('now');
+        $date = $dateObject->format('Y-m-d H:i:s');
+        if(isset($_POST['dcDate'])) {
+            $date = $_POST['dcDate'];
+        }
+        $type = "N/A";
+        if(isset($_POST['dcType'])) {
+            $type = $_POST['dcType'];
+        }
+        $format = "N/A";
+        if(isset($_POST['dcFormat'])) {
+            $format = $_POST['dcFormat'];
+        }
+        $source = "N/A";
+        if(isset($_POST['dcSource'])) {
+            $source = $_POST['dcSource'];
+        }
+        $language = "N/A";
+        if(isset($_POST['dcLanguage'])) {
+            $language = $_POST['dcLanguage'];
+        }
+        $relation = "N/A";
+        if(isset($_POST['dcRelation'])) {
+            $relation = $_POST['dcRelation'];
+        }
+        $coverage = "N/A";
+        if(isset($_POST['dcCoverage'])) {
+            $coverage = $_POST['dcCoverage'];
+        }
+        $rights = "N/A";
+        if(isset($_POST['dcRights'])) {
+            $rights = $_POST['dcRights'];
+        }
+        $user_id = "N/A";
+        if($username != "") {
+            $user_id = $username;
+        }
+        $created = $date;
+        if(isset($_POST['created'])) {
+            $created = $_POST['created'];
+        }
+        $updated = $date;
+        if(isset($_POST['updated'])) {
+            $updated = $_POST['updated'];
+        }
+
         Log::toFile(print_r($_POST, true));
         $project = "";
         if(isset($_POST['projectID'])) {
             $project = $_POST['projectID'];
         }
 
+        $update = false;
+        if(isset($_POST['update'])) {
+            $update = true;
+        }
+
+        Log::toFile("update " . $update);
         $params['projectID'] = $project;
-        if ( RoleManager::hasPermission('insertDC', $params) ) {
+        if ( $update && RoleManager::hasPermission('updateRecordandDC', $params) ) {
+            $allowed = true;
+        } elseif (RoleManager::hasPermission('createRecordandDC', $params)) {
+            $allowed = true;
+        } else {
+            $allowed = false;
+        }
 
-            $username = Yii::app()->user->getName();
+        if ( $allowed ) {
 
-            $identifier = "N/A";
-            if(isset($_POST['dcWiserdID'])) {
-                $identifier = $_POST['dcWiserdID'];
-            }
-            $title = "N/A";
-            if(isset($_POST['dcTitle'])) {
-                $title = $_POST['dcTitle'];
-            }
-            $creator = "N/A";
-            if(isset($_POST['dcCreator'])) {
-                $creator = $_POST['dcCreator'];
-            }
-            $subject = "N/A";
-            if(isset($_POST['dcSubject'])) {
-                $subject = $_POST['dcSubject'];
-            }
-            $description = "N/A";
-            if(isset($_POST['dcDescription'])) {
-                $description = $_POST['dcDescription'];
-            }
-            $publisher = "N/A";
-            if(isset($_POST['dcPublisher'])) {
-                $publisher = $_POST['dcPublisher'];
-            }
-            $contributor = "N/A";
-            if(isset($_POST['dcContributor'])) {
-                $contributor = $_POST['dcContributor'];
-            }
+            if ( $update ) {
+                $dbInsert = "UPDATE dc_info Set " .
 
-            $dateObject = new DateTime('now');
-            $date = $dateObject->format('Y-m-d H:i:s');
-            if(isset($_POST['dcDate'])) {
-                $date = $_POST['dcDate'];
-            }
-            $type = "N/A";
-            if(isset($_POST['dcType'])) {
-                $type = $_POST['dcType'];
-            }
-            $format = "N/A";
-            if(isset($_POST['dcFormat'])) {
-                $format = $_POST['dcFormat'];
-            }
-            $source = "N/A";
-            if(isset($_POST['dcSource'])) {
-                $source = $_POST['dcSource'];
-            }
-            $language = "N/A";
-            if(isset($_POST['dcLanguage'])) {
-                $language = $_POST['dcLanguage'];
-            }
-            $relation = "N/A";
-            if(isset($_POST['dcRelation'])) {
-                $relation = $_POST['dcRelation'];
-            }
-            $coverage = "N/A";
-            if(isset($_POST['dcCoverage'])) {
-                $coverage = $_POST['dcCoverage'];
-            }
-            $rights = "N/A";
-            if(isset($_POST['dcRights'])) {
-                $rights = $_POST['dcRights'];
-            }
-            $user_id = "N/A";
-            if($username != "") {
-                $user_id = $username;
-            }
-            $created = $date;
-            if(isset($_POST['created'])) {
-                $created = $_POST['created'];
-            }
-            $updated = $date;
-            if(isset($_POST['updated'])) {
-                $updated = $_POST['updated'];
-            }
+                    "identifier='" . $identifier . "', title='" . $title . "', creator='" . $creator . "', subject='"
+                    . $subject . "', description='" .
+                    $description . "', publisher='" . $publisher . "', contributor='" . $contributor .
+                    "', date=TIMESTAMP '" . $date . "', type='" . $type . "', format='" . $format . "', source='"
+                    . $source . "', language='" . $language . "', relation='" . $relation . "', coverage='" .
+                    $coverage . "', rights='" . $rights . "', user_id='" . $user_id . "'" .
+                    ", created=TIMESTAMP '" . $created . "', updated=TIMESTAMP 'now' " .
+                    "WHERE identifier='" . $identifier ."';";
+            } else {
 
 
-            $dbInsert = "INSERT INTO dc_info(
+                $dbInsert = "INSERT INTO dc_info(
             identifier, title, creator, subject, description, publisher,
             contributor, date, type, format, source, language, relation,
             coverage, rights, user_id, created, updated)";
-            $dbInsert .= " VALUES ('";
+                $dbInsert .= " VALUES ('";
 
-            $dbInsert .= $identifier . "', '" . $title . "', '" . $creator . "', '" . $subject . "', '" .
-                $description . "', '" . $publisher . "', '" . $contributor . "', TIMESTAMP '" . $date . "', '" .
-                $type . "', '" . $format . "', '" . $source . "', '" . $language . "', '" . $relation . "', '" .
-                $coverage . "', '" . $rights . "', '" . $user_id . "'" .
-                ", TIMESTAMP '" . $created . "', TIMESTAMP 'now"; // . $updated;
+                $dbInsert .= $identifier . "', '" . $title . "', '" . $creator . "', '" . $subject . "', '" .
+                    $description . "', '" . $publisher . "', '" . $contributor . "', TIMESTAMP '" . $date . "', '" .
+                    $type . "', '" . $format . "', '" . $source . "', '" . $language . "', '" . $relation . "', '" .
+                    $coverage . "', '" . $rights . "', '" . $user_id . "'" .
+                    ", TIMESTAMP '" . $created . "', TIMESTAMP 'now"; // . $updated;
 
-            $dbInsert .= "');";
+                $dbInsert .= "');";
+
+            }
 
             Log::toFile($dbInsert);
 
@@ -927,94 +1041,129 @@ proj.projectid = so.projectid;";
 
     function actioninsertQuestion() {
 
-        if ( RoleManager::hasPermission('addResponseToSurvey', null) ) {
+        $QuestionSurveyID = "N/A";
+        if(isset($_POST['QuestionSurveyID'])) {
+            $QuestionSurveyID = $_POST['QuestionSurveyID'];
+        }
+
+        $QuestionID = "N/A";
+        if(isset($_POST['QuestionID'])) {
+            $QuestionID = $_POST['QuestionID'];
+        }
+
+        $QuestionNumber = "N/A";
+        if(isset($_POST['QuestionNumber'])) {
+            $QuestionNumber = trim($_POST['QuestionNumber']);
+        }
+
+        $QuestionText = "N/A";
+        if(isset($_POST['QuestionText'])) {
+            $QuestionText = trim($_POST['QuestionText']);
+        }
+
+        $QuestionNotesPrompts = "N/A";
+        if(isset($_POST['QuestionNotesPrompts'])) {
+            $QuestionNotesPrompts = trim($_POST['QuestionNotesPrompts']);
+        }
+
+        $QuestionVariable = "N/A";
+        if(isset($_POST['QuestionVariable'])) {
+            $QuestionVariable = trim($_POST['QuestionVariable']);
+        }
+
+        $QuestionThematicGroups = "N/A";
+        if(isset($_POST['QuestionThematicGroups'])) {
+            $QuestionThematicGroups = trim($_POST['QuestionThematicGroups']);
+        }
+
+        $QuestionThematicTags = "N/A";
+        if(isset($_POST['QuestionThematicTags'])) {
+            $QuestionThematicTags = trim($_POST['QuestionThematicTags']);
+        }
+
+        $QuestionType = "N/A";
+        if(isset($_POST['QuestionType'])) {
+            $QuestionType = trim($_POST['QuestionType']);
+        }
+
+        $QuestionLinkedFrom = "N/A";
+        if(isset($_POST['QuestionLinkedFrom'])) {
+            $QuestionLinkedFrom = trim($_POST['QuestionLinkedFrom']);
+        }
+
+        $QuestionSubOf = "N/A";
+        if(isset($_POST['QuestionSubOf'])) {
+            $QuestionSubOf = trim($_POST['QuestionSubOf']);
+        }
+
+        $qtext_index_function = "to_tsvector('english', '" . $QuestionText . "')";
+
+        $project = "";
+        if(isset($_POST['projectID'])) {
+            $project = $_POST['projectID'];
+        }
 
 
-            $QuestionSurveyID = "N/A";
-            if(isset($_POST['QuestionSurveyID'])) {
-                $QuestionSurveyID = $_POST['QuestionSurveyID'];
-            }
+        $update = false;
+        if(isset($_POST['update'])) {
+            $update = true;
+        }
+        Log::toFile(print_r($_POST, true));
+        Log::toFile($update);
 
-            $QuestionID = "N/A";
-            if(isset($_POST['QuestionID'])) {
-                $QuestionID = $_POST['QuestionID'];
-            }
+        $params['projectID'] = $project;
+        if ( $update && RoleManager::hasPermission('updateQuestionAndResponse', $params) ) {
+            $allowed = true;
+        } elseif (RoleManager::hasPermission('addQuestionsToSurvey', $params)) {
+            $allowed = true;
+        } else {
+            $allowed = false;
+        }
 
-            $QuestionNumber = "N/A";
-            if(isset($_POST['QuestionNumber'])) {
-                $QuestionNumber = $_POST['QuestionNumber'];
-            }
+        $username = "";
+        $userObject = Yii::app()->user;
+        $username = $userObject->getName();
 
-            $QuestionText = "N/A";
-            if(isset($_POST['QuestionText'])) {
-                $QuestionText = $_POST['QuestionText'];
-            }
+        if ( $allowed ) {
 
-            $QuestionNotesPrompts = "N/A";
-            if(isset($_POST['QuestionNotesPrompts'])) {
-                $QuestionNotesPrompts = $_POST['QuestionNotesPrompts'];
-            }
+            if ( $update ) {
+                $dbUpdateQuery = "UPDATE questions Set " .
 
-            $QuestionVariable = "N/A";
-            if(isset($_POST['QuestionVariable'])) {
-                $QuestionVariable = $_POST['QuestionVariable'];
-            }
+                    "qid='" . $QuestionID . "', literal_question_text='" . $QuestionText .
+                    "', questionnumber='" . $QuestionNumber . "', thematic_groups='" . $QuestionThematicGroups .
+                    "', thematic_tags='" . $QuestionThematicTags . "', link_from='" . $QuestionLinkedFrom .
+                    "', subof='" . $QuestionSubOf ."', type='" . $QuestionType . "', variableid='" . $QuestionVariable .
+                    "', notes='" . $QuestionNotesPrompts . "', user_id='" . $username .
+                    "', updated=TIMESTAMP 'now' , qtext_index=" . $qtext_index_function .
+                    " WHERE qid='" . $QuestionID . "';";
+                $results = DataAdapter::DefaultExecuteAndRead($dbUpdateQuery, "Survey_Data");
 
-            $QuestionThematicGroups = "N/A";
-            if(isset($_POST['QuestionThematicGroups'])) {
-                $QuestionThematicGroups = $_POST['QuestionThematicGroups'];
-            }
+                $returnArray['questionInsert'] = $dbUpdateQuery;
+                $returnArray['success'] = "true";
+            } else {
 
-            $QuestionThematicTags = "N/A";
-            if(isset($_POST['QuestionThematicTags'])) {
-                $QuestionThematicTags = $_POST['QuestionThematicTags'];
-            }
-
-            $QuestionType = "N/A";
-            if(isset($_POST['QuestionType'])) {
-                $QuestionType = $_POST['QuestionType'];
-            }
-
-            $QuestionLinkedFrom = "N/A";
-            if(isset($_POST['QuestionLinkedFrom'])) {
-                $QuestionLinkedFrom = $_POST['QuestionLinkedFrom'];
-            }
-
-            $QuestionSubOf = "N/A";
-            if(isset($_POST['QuestionSubOf'])) {
-                $QuestionSubOf = $_POST['QuestionSubOf'];
-            }
-
-            $qtext_index_function = "to_tsvector('english', '" . $QuestionText . "')";
-
-
-            $username = "";
-            $userObject = Yii::app()->user;
-            $username = $userObject->getName();
-
-            $questionInsertQuery = "INSERT INTO questions(
+                $questionInsertQuery = "INSERT INTO questions(
             qid, literal_question_text, questionnumber, thematic_groups,
             thematic_tags, link_from, subof, type, variableid, notes, user_id,
-            created, updated, qtext_index)
-    VALUES ('";
+            created, updated, qtext_index) VALUES ('";
 
-            $questionInsertQuery .= $QuestionID . "', '" . $QuestionText . "', '" . $QuestionNumber . "', '" . $QuestionThematicGroups . "', '" .
-                $QuestionThematicTags . "', '" . $QuestionLinkedFrom . "', '" . $QuestionSubOf . "', '" . $QuestionType . "', '" .
-                $QuestionVariable . "', '" . $QuestionNotesPrompts . "', '" . $username .
-                "', Timestamp 'now', Timestamp 'now', " . $qtext_index_function . ");";
+                $questionInsertQuery .= $QuestionID . "', '" . $QuestionText . "', '" . $QuestionNumber . "', '" . $QuestionThematicGroups . "', '" .
+                    $QuestionThematicTags . "', '" . $QuestionLinkedFrom . "', '" . $QuestionSubOf . "', '" . $QuestionType . "', '" .
+                    $QuestionVariable . "', '" . $QuestionNotesPrompts . "', '" . $username .
+                    "', Timestamp 'now', Timestamp 'now', " . $qtext_index_function . ");";
 
-            Log::toFile($questionInsertQuery);
+                Log::toFile($questionInsertQuery);
 
-            $results = DataAdapter::DefaultExecuteAndRead($questionInsertQuery, "Survey_Data");
+                $results = DataAdapter::DefaultExecuteAndRead($questionInsertQuery, "Survey_Data");
 
-            $surveyQuestionLinkQuery = "INSERT INTO survey_questions_link( surveyid, qid, pk) VALUES ('" .
-                $QuestionSurveyID . "', '" . $QuestionID . "', 0);";
-            $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionLinkQuery, "Survey_Data");
+                $surveyQuestionLinkQuery = "INSERT INTO survey_questions_link( surveyid, qid, pk) VALUES ('" .
+                    $QuestionSurveyID . "', '" . $QuestionID . "', 0);";
+                $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionLinkQuery, "Survey_Data");
 
-            $returnArray['questionInsert'] = $questionInsertQuery;
-            $returnArray['linkquestionsurveyquery'] = $surveyQuestionLinkQuery;
-            $returnArray['success'] = "true";
-
+                $returnArray['questionInsert'] = $questionInsertQuery;
+                $returnArray['linkquestionsurveyquery'] = $surveyQuestionLinkQuery;
+                $returnArray['success'] = "true";
+            }
         } else {
             $returnArray['success'] = false;
             $returnArray['message'] = "User permission error";

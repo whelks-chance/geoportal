@@ -96,9 +96,9 @@ include('variables.php')
     var insertResponse = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertResponse';
     var getDCids = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDCinfo';
     var getSurveyQuestions = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getSurveyQuestions';
+    var checkRecordExists = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/checkRecordExists';
 
     var buildNewSurveyLinks = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/buildNewSurveyLinks';
-
 
     var geoserverWMS = '<? echo variables::$geoserverRoot ?>';
     var geoportalAddr = '<? echo variables::geoportalAddr() ?>';

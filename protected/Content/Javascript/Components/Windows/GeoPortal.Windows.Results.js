@@ -217,7 +217,7 @@
 						}
 					]
 				}
-			}, { title: 'Qual Data',
+			}, { title: 'Qualitative Data',
 				xtype: 'grid',
 //				width: 780,
                     width: '100%',

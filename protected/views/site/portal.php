@@ -30,7 +30,7 @@ $this->breadcrumbs=array(
         //var latlng = new google.maps.LatLng(-34.397, 150.644);
         var layers = GetLayers();
 
-        var myAC = new GeoPortal.Windows.MyAccount();
+//        var myAC = new GeoPortal.Windows.MyAccount();
         // myAC.show();
 
         //initiate EXT viewport - the foundation class on which EXT application is built

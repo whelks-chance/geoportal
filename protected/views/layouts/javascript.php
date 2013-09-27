@@ -106,6 +106,7 @@ $javascriptFiles = array(
     "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.FindQuestions.js",
     "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.DBlines.js",
     "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.SetupNewSurvey.js",
+    "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.QuestionRouting.js",
     "Components/Forms/DataEntry/SurveyMainEntry.js",
 
     "Components/Forms/GeoPortal.Forms.ProjectManagement.js"

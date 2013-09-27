@@ -20,6 +20,26 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
 
         initComponent : function () {
 
+            var responseTypeStore = new Ext.data.JsonStore ({
+                fields: [
+                    {name: 'name', mapping: 'response_name'},
+                    {name: 'id',  mapping: 'responseid'}
+                ],
+                url: dataOptionLists,
+                baseParams : {
+                    response_type: true
+                },
+                id: "responseTypeStore",
+                root : "responseTypes"
+            });
+            responseTypeStore.on('load', function(store, recs, opt){
+                var restypcmbo = Ext.getCmp('responseTypeCombo');
+                restypcmbo.setValue(responseTypeStore.getAt(0).get('name'));
+
+                this.doLayout();
+            }, this);
+            responseTypeStore.load();
+
             this.on('actioncomplete', function (form,action) {
                 if (action.type=='load') {
                     var responseID = Ext.getCmp('responseIdField').getValue();
@@ -106,11 +126,26 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                             name: 'responseID',
                             id: 'responseIdField'
                         },
+//                        {
+//                            xtype: 'textfield',
+//                            fieldLabel: 'Type',
+//                            anchor: '97%',
+//                            name: 'responseType'
+//                        },
                         {
-                            xtype: 'textfield',
-                            fieldLabel: 'Type',
+                            xtype: 'combo',
+                            forceSelection: true,
+                            editable: false,
+                            id: 'responseTypeCombo',
                             anchor: '97%',
-                            name: 'responseType'
+                            fieldLabel: 'Type',
+                            name: 'responseType',
+                            triggerAction: 'all',
+                            displayField: 'name',
+//                            hiddenName: 'hiddenVariable',
+//                            valueField: 'id',
+                            mode: 'local',
+                            store : responseTypeStore
                         },
                         {
                             xtype: 'textarea',
@@ -141,6 +176,7 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                 {
                     xtype: 'fieldset',
                     title: 'Routing Information',
+                    defaults: { labelStyle: 'font-weight:bold;' },
 //                    collapsed: true,
 //                    collapsible: true,
                     items: [

@@ -47,23 +47,6 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
             }, this);
             frequencyStore.load();
 
-//            Ext.Ajax.request({
-//                url: dataOptionLists,
-//                method : 'POST',
-//                params : {
-//                    survey_frequency: true
-//
-//                },
-//                success: function(resp) {
-//                    var responseData = Ext.decode(resp.responseText);
-//                    frequencyStore.loadData(responseData);
-//
-//                },
-//                failure: function(resp) {
-//                    console.log('failure!');
-//                }
-//            });
-
             this.items = [
                 {
                     xtype: 'fieldset',

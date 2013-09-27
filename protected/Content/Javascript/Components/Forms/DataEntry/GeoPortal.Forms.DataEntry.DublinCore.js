@@ -298,6 +298,15 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
+                        id: 'btnDCsave',
+                        icon: 'images/silk/database_edit.png',
+                        text: 'Insert',
+                        type: 'reset',
+                        handler : this.FormSave,
+                        scope : this
+                    },
+                    {
+                        xtype: 'button',
                         id: 'btnDCInsert',
                         icon: 'images/silk/application_form_add.png',
                         text: 'Insert',
@@ -372,61 +381,115 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
         },
         FormInsert : function() {
 
+        },
+        FormSave : function() {
+
             var wid = Ext.getCmp('dcWiserdIDfield').getValue();
-            var sid = Ext.getCmp('surveyIDfield').getValue();
 
-            var dcForm = Ext.getCmp(this.id).getForm();
-            var surveyForm = Ext.getCmp('frmEntrySurvey').getForm();
+            Ext.Ajax.request({
+                url: checkRecordExists,
+                scope: this,
+                method : 'POST',
+                params : {
+                    recordType: "survey_dc",
+                    recordID: wid
+                },
+                success: function(resp) {
+                    var responseData = Ext.decode(resp.responseText);
+                    var widProjectID = responseData.projectid;
+                    console.log(widProjectID);
 
-            if(wid == "" || sid == "") {
-                Ext.MessageBox.alert('Status', 'Please set a WISERD ID and Survey ID by clicking the \'New Survey\' button.');
-            } else {
-                if(dcForm.isValid() && surveyForm.isValid()) {
+                    if (responseData.exists == true) {
+                        console.log('ok ' + responseData);
+                        Ext.MessageBox.confirm('Status', 'Dublin Core wid is already in use, overwrite?', function (btn, text) {
 
-                    var setupSurveyWin = new Ext.Window(
-                        {
-                            items: [
-                                new GeoPortal.Forms.DataEntry.SetupNewSurvey(
-                                    {
-                                        wid : wid,
-                                        sid : sid,
-                                        DCForm : dcForm,
-                                        SurveyForm : surveyForm
+                            if(btn == 'yes') {
+                                Ext.getCmp('frmEntryDC').getForm().submit({
+                                    scope: this,
+                                    url: insertDC,
+                                    params : {
+                                        update : true,
+                                        projectID : widProjectID
+                                    },
+                                    waitMsg: 'Inserting Dublic Core Data....',
+                                    success: function (form, action) {
+                                        Ext.MessageBox.alert("Success", "Dublin Core data overwritten");
+                                    },
+                                    failure: function (form, action) {
+                                        Ext.MessageBox.alert("Failure", action.result.message);
                                     }
-                                )
-                            ],
-                            title: 'Create Survey',
-                            modal: true,
-                            height: 180,
-                            width: 310,
-                            id: 'setupSurveyWin'
-                        }
-                    );
-                    setupSurveyWin.show();
+                                });
+                            } else {
+                                Ext.MessageBox.alert("no, don't overwrite dc");
+                            }
+                        });
+                    } else {
+                        var sid = Ext.getCmp('surveyIDfield').getValue();
 
-//                var thisPanel = Ext.getCmp(this.id);
-//                console.log(thisPanel);
-//                thisPanel.getForm().submit({
-//                    url: insertDC,
-//                    waitMsg: 'Inserting Dublic Core Data....',
-//                    success: function (form, action) {
-//                        Ext.Msg.alert("Success!",action.result.message);
-////                    Ext.getCmp('ChgPWWin').hide();
-//                    },
-//                    failure: function (form, action) {
-//                        Ext.Msg.alert("Error!",action.result.message);
-//                    }
-//                });
-                } else {
-                    Ext.MessageBox.alert('Status', 'There is an invalid entry on either the Dublin Core or Survey form.');
+                        var dcForm = Ext.getCmp(this.id).getForm();
+                        var surveyForm = Ext.getCmp('frmEntrySurvey').getForm();
+
+                        if(wid == "" || sid == "") {
+                            Ext.MessageBox.alert('Status', 'Please set a WISERD ID and Survey ID by clicking the \'New Survey\' button.');
+                        } else {
+                            if(dcForm.isValid() && surveyForm.isValid()) {
+
+                                var setupSurveyWin = new Ext.Window(
+                                    {
+                                        items: [
+                                            new GeoPortal.Forms.DataEntry.SetupNewSurvey(
+                                                {
+                                                    wid : wid,
+                                                    sid : sid,
+                                                    DCForm : dcForm,
+                                                    SurveyForm : surveyForm
+                                                }
+                                            )
+                                        ],
+                                        title: 'Create Survey',
+                                        modal: true,
+                                        height: 180,
+                                        width: 310,
+                                        id: 'setupSurveyWin'
+                                    }
+                                );
+                                setupSurveyWin.show();
+
+                            } else {
+                                Ext.MessageBox.alert('Status', 'There is an invalid entry on either the Dublin Core or Survey form.');
+                            }
+                        }
+                    }
+                },
+                failure: function(resp) {
+
                 }
-            }
+            });
+
+
         },
         FormUpdate : function() {
-            console.log('reset ' + this.id)
-            var thisPanel = Ext.getCmp(this.id);
-            console.log(thisPanel);
-            thisPanel.getForm().reset();
+            var wid = Ext.getCmp('dcWiserdIDfield').getValue();
+
+            Ext.Ajax.request({
+                url: checkRecordExists,
+                method : 'POST',
+                params : {
+                    recordType: "survey_dc",
+                    recordID: wid
+                },
+                success: function(resp) {
+                    var responseData = Ext.decode(resp.responseText);
+                    console.log('ok ' + responseData);
+                    Ext.MessageBox.confirm('Status', 'SurveyID is already in use, overwrite?');
+
+                },
+                failure: function(resp) {
+                    var responseData = Ext.decode(resp.responseText);
+                    console.log('failure! ' + responseData);
+                    Ext.MessageBox.alert('Status', 'SurveyID is not used');
+                }
+            });
         },
         FormDelete : function() {
             console.log('reset ' + this.id)

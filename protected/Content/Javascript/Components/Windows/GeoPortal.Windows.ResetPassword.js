@@ -28,7 +28,9 @@ GeoPortal.Windows.ResetPassword = Ext.extend(Ext.Window, {
                         Ext.Msg.alert("Email sent", action.result.message);
                     },
                     failure: function (form, action) {
-                        Ext.Msg.alert("Error!", action.result.message);
+                        Ext.Msg.alert("Email address not recognised",
+                            "Please check the address given is typed correctly, " +
+                                "and is the address initially used to sign up to the WISERD DataPortal");
                     }
                 });
             }

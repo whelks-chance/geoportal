@@ -241,8 +241,8 @@ Ext.onReady(function(){
     });
     frmLogin.show();
 
-    var welcomeWin = new Geoportal.Windows.WelcomeWin();
-    welcomeWin.show();
+//    var welcomeWin = new Geoportal.Windows.WelcomeWin();
+//    welcomeWin.show();
 
 });
 
