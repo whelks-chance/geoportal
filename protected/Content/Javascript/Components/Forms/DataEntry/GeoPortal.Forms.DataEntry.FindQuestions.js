@@ -76,7 +76,7 @@ GeoPortal.Forms.DataEntry.FindQuestions = Ext.extend(Ext.form.FormPanel, {
 
                         breadcrumb.updateBreadcrumb(null, null, questionID, "");
 
-                        Ext.getCmp('frmFindQuestions').destroy();
+                        Ext.getCmp('LoadQuestionWin').destroy();
 
                     }
                 }

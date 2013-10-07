@@ -625,20 +625,18 @@ proj.projectid = so.projectid;";
             $surveyid = "";
             switch ($recordType) {
                 case "survey" :
-                    //check survey
-                    $checkRecordExistsQuery = "Select Count (surveyid) From survey Where surveyid='" . $recordID . "';";
+                    $surveyid = $recordID;
                     break;
+
                 case "survey_dc" :
-                    //check dc exists
                     $getSurveyForWIDQuery = "Select surveyid from survey where identifier='" . $recordID . "';";
                     $result = DataAdapter::DefaultExecuteAndRead($getSurveyForWIDQuery, "Survey_Data");
-
                     $surveyid = trim( $result[0]->surveyid );
                     break;
+
                 case "survey_question" :
                     $getSurveyForWIDQuery = "Select surveyid from survey_questions_link where qid='" . $recordID . "';";
                     $result = DataAdapter::DefaultExecuteAndRead($getSurveyForWIDQuery, "Survey_Data");
-
                     $surveyid = trim( $result[0]->surveyid );
                     break;
             }
@@ -664,139 +662,191 @@ proj.projectid = so.projectid;";
 
     function actioninsertSurvey() {
 
-        if(RoleManager::hasPermission('createRecordandDC', null)) {
+        $surveyID = "N/A";
+        if(isset($_POST['surveyID'])) {
+            $surveyID = $_POST['surveyID'];
+        }
 
-            $surveyID = "N/A";
-            if(isset($_POST['surveyID'])) {
-                $surveyID = $_POST['surveyID'];
-            }
+        $surveyTitle = "N/A";
+        if(isset($_POST['surveyTitle'])) {
+            $surveyTitle = $_POST['surveyTitle'];
+        }
 
-            $surveyTitle = "N/A";
-            if(isset($_POST['surveyTitle'])) {
-                $surveyTitle = $_POST['surveyTitle'];
-            }
+        $surveyCollector = "N/A";
+        if(isset($_POST['surveyCollector'])) {
+            $surveyCollector = $_POST['surveyCollector'];
+        }
 
-            $surveyCollector = "N/A";
-            if(isset($_POST['surveyCollector'])) {
-                $surveyCollector = $_POST['surveyCollector'];
-            }
+        $surveyStart = "now";
+        if(isset($_POST['surveyStart'])) {
+            $surveyStart = $_POST['surveyStart'];
+        }
 
-            $surveyStart = "now";
-            if(isset($_POST['surveyStart'])) {
-                $surveyStart = $_POST['surveyStart'];
-            }
+        $surveyEnd = "now";
+        if(isset($_POST['surveyEnd'])) {
+            $surveyEnd = $_POST['surveyEnd'];
+        }
 
-            $surveyEnd = "now";
-            if(isset($_POST['surveyEnd'])) {
-                $surveyEnd = $_POST['surveyEnd'];
-            }
+        $surveyFrequency = "N/A";
+        if(isset($_POST['surveyFrequency'])) {
+            $surveyFrequency = $_POST['surveyFrequency'];
+        }
 
-            $surveyFrequency = "N/A";
-            if(isset($_POST['surveyFrequency'])) {
-                $surveyFrequency = $_POST['surveyFrequency'];
-            }
+        $surveySeries = "N/A";
+        if(isset($_POST['surveySeries'])) {
+            $surveySeries = $_POST['surveySeries'];
+        }
 
-            $surveySeries = "N/A";
-            if(isset($_POST['surveySeries'])) {
-                $surveySeries = $_POST['surveySeries'];
-            }
+        $surveyNotes = "N/A";
+        if(isset($_POST['surveyNotes'])) {
+            $surveyNotes = $_POST['surveyNotes'];
+        }
 
-            $surveyNotes = "N/A";
-            if(isset($_POST['surveyNotes'])) {
-                $surveyNotes = $_POST['surveyNotes'];
-            }
+        $surveyLocation = "N/A";
+        if(isset($_POST['surveyLocation'])) {
+            $surveyLocation = $_POST['surveyLocation'];
+        }
 
-            $surveyLocation = "N/A";
-            if(isset($_POST['surveyLocation'])) {
-                $surveyLocation = $_POST['surveyLocation'];
-            }
+        $surveyURL = "N/A";
+        if(isset($_POST['surveyURL'])) {
+            $surveyURL = $_POST['surveyURL'];
+        }
 
-            $surveyURL = "N/A";
-            if(isset($_POST['surveyURL'])) {
-                $surveyURL = $_POST['surveyURL'];
-            }
+        $surveyDataCollectionMethod = "N/A";
+        if(isset($_POST['surveyDataCollectionMethod'])) {
+            $surveyDataCollectionMethod = $_POST['surveyDataCollectionMethod'];
+        }
 
-            $surveyDataCollectionMethod = "N/A";
-            if(isset($_POST['surveyDataCollectionMethod'])) {
-                $surveyDataCollectionMethod = $_POST['surveyDataCollectionMethod'];
-            }
+        $surveyCollectionSituation = "N/A";
+        if(isset($_POST['surveyCollectionSituation'])) {
+            $surveyCollectionSituation = $_POST['surveyCollectionSituation'];
+        }
 
-            $surveyCollectionSituation = "N/A";
-            if(isset($_POST['surveyCollectionSituation'])) {
-                $surveyCollectionSituation = $_POST['surveyCollectionSituation'];
-            }
+        $surveySamplingProcedure = "N/A";
+        if(isset($_POST['surveySamplingProcedure'])) {
+            $surveySamplingProcedure = $_POST['surveySamplingProcedure'];
+        }
 
-            $surveySamplingProcedure = "N/A";
-            if(isset($_POST['surveySamplingProcedure'])) {
-                $surveySamplingProcedure = $_POST['surveySamplingProcedure'];
-            }
+        $surveySamplingError = "N/A";
+        if(isset($_POST['surveySamplingError'])) {
+            $surveySamplingError = $_POST['surveySamplingError'];
+        }
 
-            $surveySamplingError = "N/A";
-            if(isset($_POST['surveySamplingError'])) {
-                $surveySamplingError = $_POST['surveySamplingError'];
-            }
+        $surveySampleSize = "N/A";
+        if(isset($_POST['surveySampleSize'])) {
+            $surveySampleSize = $_POST['surveySampleSize'];
+        }
 
-            $surveySampleSize = "N/A";
-            if(isset($_POST['surveySampleSize'])) {
-                $surveySampleSize = $_POST['surveySampleSize'];
-            }
+        $surveyResponseRate = "N/A";
+        if(isset($_POST['surveyResponseRate'])) {
+            $surveyResponseRate = $_POST['surveyResponseRate'];
+        }
 
-            $surveyResponseRate = "N/A";
-            if(isset($_POST['surveyResponseRate'])) {
-                $surveyResponseRate = $_POST['surveyResponseRate'];
-            }
+        $surveyWeighting = "N/A";
+        if(isset($_POST['surveyWeighting'])) {
+            $surveyWeighting = $_POST['surveyWeighting'];
+        }
 
-            $surveyWeighting = "N/A";
-            if(isset($_POST['surveyWeighting'])) {
-                $surveyWeighting = $_POST['surveyWeighting'];
-            }
+        $long = "No";
+        if(isset($_POST['long'])) {
+            $long = $_POST['long'];
+        }
 
-            $long = "No";
-            if(isset($_POST['long'])) {
-                $long = $_POST['long'];
-            }
+        $identifier = "N/A";
+        if(isset($_POST['wid'])) {
+            $identifier = $_POST['wid'];
+        }
 
-            $identifier = "N/A";
-            if(isset($_POST['wid'])) {
-                $identifier = $_POST['wid'];
-            }
+        $username = "";
+        $userObject = Yii::app()->user;
+        $username = $userObject->getName();
 
-            $username = "";
-            $userObject = Yii::app()->user;
-            $username = $userObject->getName();
+        Log::toFile(print_r($_POST, true));
+        $project = "";
+        if(isset($_POST['projectID'])) {
+            $project = $_POST['projectID'];
+        }
 
-            $collectionstartdate = "now";
-            $collectionenddate = "now";
-            $dataproduct = "";
-            $dataproductid = "";
-            $created = "now";
-            $short_title = "";
-            $spatialdata = "false";
+        $update = false;
+        if(isset($_POST['update'])) {
+            $update = true;
+        }
 
-            $dbInsert = "INSERT INTO survey(
+        Log::toFile("update " . $update);
+        $params['projectID'] = $project;
+        if ( $update && RoleManager::hasPermission('updateRecordandDC', $params) ) {
+            $allowed = true;
+        } elseif (RoleManager::hasPermission('createRecordandDC', $params)) {
+            $allowed = true;
+        } else {
+            $allowed = false;
+        }
+
+        $collectionstartdate = "now";
+        $collectionenddate = "now";
+        $dataproduct = "";
+        $dataproductid = "";
+        $short_title = "";
+        $spatialdata = "false";
+
+        if ( $allowed ) {
+
+            if ( $update ) {
+
+                $dbInsert = 'UPDATE survey
+        SET survey_title=:surveyTitle, datacollector=:surveyCollector,
+        collectionstartdate=now(), collectionenddate=now(),
+        moc_description=:surveyDataCollectionMethod, samp_procedure=:surveySamplingProcedure,
+        collectionsituation=:surveyCollectionSituation, surveyfrequency=:surveyFrequency,
+        surveystartdate=(cast(:surveyStartDate as timestamp)), surveyenddate=(cast(:surveyEndDate as timestamp)),
+        des_weighting=:surveyWeighting, samplesize=:surveySampleSize, responserate=:surveyResponseRate,
+        descriptionofsamplingerror=:surveySamplingError, dataproduct=:dataProduct, dataproductid=:dataProductID,
+        location=:surveyLocation, link=:surveyURL, notes=:surveyNotes, user_id=:username,
+        updated=now(), "long"=:long, short_title=:shortTitle,
+        spatialdata=:spatialData WHERE surveyid=:surveyID;';
+
+//                created shouldnt change
+// created=(cast(:created as timestamp)),
+
+            } else {
+
+                $dbInsert = "INSERT INTO survey(
             surveyid, identifier, survey_title, datacollector, collectionstartdate,
             collectionenddate, moc_description, samp_procedure, collectionsituation,
             surveyfrequency, surveystartdate, surveyenddate, des_weighting,
             samplesize, responserate, descriptionofsamplingerror, dataproduct,
             dataproductid, location, link, notes, user_id, created, updated,
-            long, short_title, spatialdata)
-    VALUES (";
+            long, short_title, spatialdata) VALUES (
+    :surveyID, :identifier, :surveyTitle, :surveyCollector, now(), now(),
+    :surveyDataCollectionMethod, :surveySamplingProcedure, :surveyCollectionSituation,
+    :surveyFrequency, (cast(:surveyStartDate as timestamp)), (cast(:surveyEndDate as timestamp)),
+    :surveyWeighting, :surveySampleSize,:surveyResponseRate, :surveySamplingError, :dataProduct, :dataProductID,
+    :surveyLocation, :surveyURL, :surveyNotes,:username, now(), now(), :long, :shortTitle, :spatialData);";
 
-            $dbInsert .= "'" . $surveyID . "', '" . $identifier . "', '" . $surveyTitle . "', '" . $surveyCollector . "', Timestamp '" . $collectionstartdate . "', Timestamp '" .
-                $collectionenddate . "', '" . $surveyDataCollectionMethod . "', '" . $surveySamplingProcedure . "', '" . $surveyCollectionSituation . "', '" .
-                $surveyFrequency . "', Timestamp '" . $surveyStart . "', Timestamp '" . $surveyEnd . "', '" . $surveyWeighting . "', '" .
-                $surveySampleSize . "', '" . $surveyResponseRate . "', '" . $surveySamplingError . "', '" . $dataproduct . "', '" .
-                $dataproductid . "', '" . $surveyLocation . "', '" . $surveyURL . "', '" . $surveyNotes . "', '" . $username . "', Timestamp '" .
-                $created . "', Timestamp 'now', '" . $long . "', '" . $short_title . "', '" . $spatialdata;
-
-            $dbInsert .= "');";
-
+            }
             Log::toFile($dbInsert);
 
-            $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
+            $values = array('surveyID' => $surveyID, 'identifier' => $identifier, 'surveyTitle' => $surveyTitle,
+                'surveyCollector' => $surveyCollector,
+//                'collectionStartDate' => $collectionstartdate, 'collectionEndDate' => $collectionenddate,
+                'surveyDataCollectionMethod' => $surveyDataCollectionMethod,
+                'surveySamplingProcedure' => $surveySamplingProcedure,
+                'surveyCollectionSituation' => $surveyCollectionSituation,
+                'surveyFrequency' => $surveyFrequency, 'surveyStartDate' => $surveyStart, 'surveyEndDate' => $surveyEnd,
+                'surveyWeighting' => $surveyWeighting, 'surveySampleSize' => $surveySampleSize,
+                'surveyResponseRate' => $surveyResponseRate, 'surveySamplingError' => $surveySamplingError,
+                'dataProduct' => $dataproduct, 'dataProductID' => $dataproductid, 'surveyLocation' => $surveyLocation,
+                'surveyURL' => $surveyURL, 'surveyNotes' => $surveyNotes, 'username' => $username,
+//                'created' => $created,
+//                'now' => $now,
+                'long' => $long, 'shortTitle' => $short_title, 'spatialData' => $spatialdata);
+
+            $resultObject = DataAdapter::DefaultPDOExecuteAndRead($dbInsert, $values, "Survey_Data");
+//            $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
 
             $returnArray['success'] = "true";
             $returnArray['surveyInsert'] = $dbInsert;
+            $returnArray['changedRows'] = $resultObject->resultObject;
 
         } else {
             $returnArray['success'] = false;
@@ -959,74 +1009,123 @@ proj.projectid = so.projectid;";
 
     function actioninsertResponse() {
 
-        if ( RoleManager::hasPermission('addResponseToSurvey', null) ) {
+        $questionID = "N/A";
+        if(isset($_POST['questionID'])) {
+            $questionID = $_POST['questionID'];
+        }
 
-            $questionID = "N/A";
-            if(isset($_POST['questionID'])) {
-                $questionID = $_POST['questionID'];
-            }
+        $responseID = "N/A";
+        if(isset($_POST['responseID'])) {
+            $responseID = $_POST['responseID'];
+        }
 
-            $responseID = "N/A";
-            if(isset($_POST['responseID'])) {
-                $responseID = $_POST['responseID'];
-            }
+        $responseType = "N/A";
+        if(isset($_POST['responseType'])) {
+            $responseType = $_POST['responseType'];
+        }
 
-            $responseType = "N/A";
-            if(isset($_POST['responseType'])) {
-                $responseType = $_POST['responseType'];
-            }
+        $responseText = "N/A";
+        if(isset($_POST['responseText'])) {
+            $responseText = $_POST['responseText'];
+        }
 
-            $responseText = "N/A";
-            if(isset($_POST['responseText'])) {
-                $responseText = $_POST['responseText'];
-            }
+        $responseTableID = "N/A";
+        if(isset($_POST['responseTableID'])) {
+            $responseTableID = $_POST['responseTableID'];
+        }
 
-            $responseTableID = "N/A";
-            if(isset($_POST['responseTableID'])) {
-                $responseTableID = $_POST['responseTableID'];
-            }
+        $responseChecks = "N/A";
+        if(isset($_POST['responseChecks'])) {
+            $responseChecks = $_POST['responseChecks'];
+        }
 
-            $responseChecks = "N/A";
-            if(isset($_POST['responseChecks'])) {
-                $responseChecks = $_POST['responseChecks'];
-            }
+        $responseVariables = "N/A";
+        if(isset($_POST['responseVariables'])) {
+            $responseVariables = $_POST['responseVariables'];
+        }
 
-            $responseVariables = "N/A";
-            if(isset($_POST['responseVariables'])) {
-                $responseVariables = $_POST['responseVariables'];
-            }
+        $responseRouting = "N/A";
+        if(isset($_POST['responseRouting'])) {
+            $responseRouting = $_POST['responseRouting'];
+        }
 
-            $responseRouting = "N/A";
-            if(isset($_POST['responseRouting'])) {
-                $responseRouting = $_POST['responseRouting'];
-            }
+        $routetype = "N/A";
 
-            $routetype = "N/A";
+        $username = "";
+        $userObject = Yii::app()->user;
+        $username = $userObject->getName();
 
-            $username = "";
-            $userObject = Yii::app()->user;
-            $username = $userObject->getName();
+        Log::toFile(print_r($_POST, true));
+        $project = "";
+        if(isset($_POST['projectID'])) {
+            $project = $_POST['projectID'];
+        }
 
-            $insertResponseQuery = "INSERT INTO responses(
+        $update = false;
+        if(isset($_POST['update'])) {
+            $update = true;
+        }
+
+        Log::toFile("update " . $update);
+        $params['projectID'] = $project;
+        if ( $update && RoleManager::hasPermission('updateQuestionAndResponse', $params) ) {
+            $allowed = true;
+        } elseif (RoleManager::hasPermission('addResponseToSurvey', $params)) {
+            $allowed = true;
+        } else {
+            $allowed = false;
+        }
+
+        if ( $allowed ) {
+
+            $values = array(":responseid" => $responseID, ":responsetext" => $responseText,
+            ":response_type" => $responseType, ":routetype" => $routetype, ":table_ids" => $responseTableID,
+            ":computed_var" => $responseVariables, ":checks" => $responseChecks, ":route_notes" => $responseRouting,
+            ":user_id" => $username);
+
+            if ( $update ) {
+                $dbQuery = "UPDATE responses
+            SET responseid=:responseid, responsetext=:responsetext, response_type=:response_type, routetype=:routetype,
+            table_ids=:table_ids, computed_var=:computed_var, checks=:checks, route_notes=:route_notes,
+            user_id=:user_id, updated=now() WHERE responseid=:responseid;";
+
+                $resultObject = DataAdapter::DefaultPDOExecuteAndRead($dbQuery, $values, "Survey_Data");
+
+            } else {
+
+                $dbQuery = "INSERT INTO responses(
             responseid, responsetext, response_type, routetype, table_ids,
             computed_var, checks, route_notes, user_id, created, updated)
-    VALUES ('" . $responseID . "', '" . $responseText . "', '" . $responseType . "', '" . $routetype . "', '" . $responseTableID . "', '" .
-                $responseVariables . "', '" . $responseChecks . "', '" . $responseRouting . "', '" . $username .
-                "', Timestamp 'now', Timestamp 'now');";
-            Log::toFile($insertResponseQuery);
+            VALUES (:responseid, :responsetext, :response_type, :routetype, :table_ids,
+            :computed_var, :checks, :route_notes, :user_id, now(), now());";
 
-            $returnArray['questionInsert'] = $insertResponseQuery;
+//                $insertResponseQuery = "INSERT INTO responses(
+//                    responseid, responsetext, response_type, routetype, table_ids,
+//                    computed_var, checks, route_notes, user_id, created, updated)
+//                    VALUES ('" . $responseID . "', '" . $responseText . "', '" . $responseType . "', '" .
+//                    $routetype . "', '" . $responseTableID . "', '" .
+//                    $responseVariables . "', '" . $responseChecks . "', '" . $responseRouting . "', '" . $username .
+//                    "', Timestamp 'now', Timestamp 'now');";
+                Log::toFile($dbQuery);
 
-            $results = DataAdapter::DefaultExecuteAndRead($insertResponseQuery, "Survey_Data");
 
+                $returnArray['questionInsert'] = $dbQuery;
 
-            $questionResponseLinkQuery = "INSERT INTO questions_responses_link( qid, responseid) VALUES ('" .
-                $questionID . "', '" . $responseID . "');";
-            Log::toFile($questionResponseLinkQuery);
-            $results = DataAdapter::DefaultExecuteAndRead($questionResponseLinkQuery, "Survey_Data");
+//                $results = DataAdapter::DefaultExecuteAndRead($dbQuery, "Survey_Data");
+                $resultObject = DataAdapter::DefaultPDOExecuteAndRead($dbQuery, $values, "Survey_Data");
 
-            $returnArray['resqueslink'] = $questionResponseLinkQuery;
+                $questionResponseLinkQuery = "INSERT INTO questions_responses_link( qid, responseid)
+                  VALUES (:questionID, :responseID);";
 
+                $values = array(":questionsID" => $questionID, ":responseID" => $responseID);
+//                    $questionID . "', '" . $responseID . "');";
+
+                $resultObject = DataAdapter::DefaultPDOExecuteAndRead($questionResponseLinkQuery, $values, "Survey_Data");
+//                Log::toFile($questionResponseLinkQuery);
+//                $results = DataAdapter::DefaultExecuteAndRead($questionResponseLinkQuery, "Survey_Data");
+
+                $returnArray['resqueslink'] = $questionResponseLinkQuery;
+            }
 
             $returnArray['success'] = "true";
 

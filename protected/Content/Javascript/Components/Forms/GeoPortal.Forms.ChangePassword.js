@@ -16,7 +16,7 @@
                           waitMsg: 'Changing Password.....',
                           success: function (form, action) {
                                              Ext.Msg.alert("Sucess!",action.result.message);
-                                             Ext.getCmp('ChgPWWin').hide();
+                                             Ext.getCmp('ChgPWWin').destroy();
                                         },
                           failure: function (form, action) {
                                              Ext.Msg.alert("Error!",action.result.message);

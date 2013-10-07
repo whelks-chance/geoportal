@@ -324,22 +324,31 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
                     {
                         xtype: 'tbfill'
                     },
+//                    {
+//                        xtype: 'button',
+//                        id: 'btnSurveyInsert',
+//                        icon: 'images/silk/application_form_add.png',
+//                        text: 'Insert',
+//                        type: 'reset',
+//                        handler : this.FormInsert,
+//                        scope : this
+//                    },
+//                    {
+//                        xtype: 'button',
+//                        id: 'btnSurveyUpdate',
+//                        icon: 'images/silk/application_form_edit.png',
+//                        text: 'Update',
+//                        type: 'reset',
+//                        handler : this.FormUpdate,
+//                        scope : this
+//                    },
                     {
                         xtype: 'button',
-                        id: 'btnSurveyInsert',
-                        icon: 'images/silk/application_form_add.png',
-                        text: 'Insert',
+                        id: 'btnSsave',
+                        icon: 'images/silk/database_edit.png',
+                        text: 'Save',
                         type: 'reset',
-                        handler : this.FormInsert,
-                        scope : this
-                    },
-                    {
-                        xtype: 'button',
-                        id: 'btnSurveyUpdate',
-                        icon: 'images/silk/application_form_edit.png',
-                        text: 'Update',
-                        type: 'reset',
-                        handler : this.FormUpdate,
+                        handler : this.FormSave,
                         scope : this
                     },
                     {
@@ -403,6 +412,56 @@ GeoPortal.Forms.DataEntry.Survey = Ext.extend(Ext.form.FormPanel, {
             var thisPanel = Ext.getCmp(this.id);
             console.log(thisPanel);
             thisPanel.getForm().reset();
+        },
+        FormSave : function() {
+
+            var sid = Ext.getCmp('surveyIDfield').getValue();
+
+            Ext.Ajax.request({
+                url: checkRecordExists,
+                scope: this,
+                method : 'POST',
+                params : {
+                    recordType: "survey",
+                    recordID: sid
+                },
+                success: function(resp) {
+                    var responseData = Ext.decode(resp.responseText);
+                    var qidProjectID = responseData.projectid;
+                    console.log(qidProjectID);
+
+                    if (responseData.exists == true) {
+                        console.log('ok ' + responseData);
+                        Ext.MessageBox.confirm('Status', 'Survey sid is already in use, overwrite?', function (btn, text) {
+
+                            if(btn == 'yes') {
+                                Ext.getCmp('frmEntrySurvey').getForm().submit({
+                                    scope: this,
+                                    url: insertSurvey,
+                                    params : {
+                                        update : true,
+                                        projectID : qidProjectID
+                                    },
+                                    waitMsg: 'Inserting Survey Data....',
+                                    success: function (form, action) {
+                                        Ext.MessageBox.alert("Success", "Survey data overwritten");
+                                    },
+                                    failure: function (form, action) {
+                                        Ext.MessageBox.alert("Failure", action.result.message);
+                                    }
+                                });
+                            } else {
+                                Ext.MessageBox.alert("no, don't overwrite survey");
+                            }
+                        });
+                    } else {
+                        Ext.MessageBox.alert('Error', 'Please save new Surveys along with a Dublin Core in the Dublin Core Tab');
+                    }
+                },
+                failure: function(resp) {
+
+                }
+            });
         }
     }
 );

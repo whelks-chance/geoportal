@@ -9,8 +9,6 @@
 
 class DataAdapter {
 
-
-
     public function Fill(DataTable $dataTable)
     {
 
@@ -74,5 +72,40 @@ class DataAdapter {
         }
     }
 
+    public static function DefaultPDOExecuteAndRead($dbQuery, $values, $DBName = "Geoportal")
+    {
+
+        $connString = "host=" . variables::$databaseAddr . " port=". variables::$databasePort .
+            " dbname=" . $DBName . " user=" . variables::$databaseUsername . " password=" . variables::$databasePassword;
+        $pdo = new PDO('pgsql:' . $connString);
+
+        $PDOstatement = $pdo->prepare($dbQuery);
+
+        $statementComplete = $PDOstatement->execute($values);
+
+        $success = ($statementComplete == 1 ? True : False);
+        Log::toFile("PDO output : "
+            . $PDOstatement->queryString . " : errorcode "
+            . $PDOstatement->errorCode() . " : success "
+            . $success
+            . " : errorinfo " . print_r($PDOstatement->errorInfo(), true));
+
+        $returnObject = new QueryObject();
+        $returnObject->resultObject = $PDOstatement->fetchAll(PDO::FETCH_OBJ);
+        $returnObject->errorCode = $PDOstatement->errorCode();
+        $returnObject->errorInfo = $PDOstatement->errorInfo();
+        $returnObject->resultSuccess = $success;
+
+        return $returnObject;
+    }
+
 }
+
+class QueryObject {
+    public $resultObject;
+    public $resultSuccess;
+    public $errorCode;
+    public $errorInfo;
+}
+
 ?>

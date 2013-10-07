@@ -14,13 +14,16 @@ class RegisterController extends Controller {
 
         $dataAdapter = new DataAdapter();
 
-        $userNameQuery = "Select username From alphausersdetails where username='" . $UserName . "';";
+//        $userNameQuery = "Select username From alphausersdetails where username='" . $UserName . "';";
+//        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($userNameQuery, "Geoportal");
 
-        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($userNameQuery, "Geoportal");
+        $userNameQuery = "Select username From alphausersdetails where username=:UserName;";
+        $values = array(":UserName" => $UserName);
+        $surveyNameResultObject = DataAdapter::DefaultPDOExecuteAndRead($userNameQuery, $values);
 
         $toReturn = array();
 
-        if(sizeof($surveyNameResults) > 0 ){
+        if(sizeof($surveyNameResultObject->resultObject) > 0 ){
             $toReturn['success'] = false;
         } else {
             $toReturn['success'] = true;
@@ -83,13 +86,10 @@ class RegisterController extends Controller {
         $reg->Telephone = $Tel;
         $reg->Address = $Address;
 
-        $DBconn = New getDBConnections();
-
-        $conn = $DBconn->getDBConnection("Geoportal");
-
         $result = New jsonMsg();
 
-        if ($DBconn->insertUser($reg, $conn)) {
+        $DBconn = New getDBConnections();
+        if ($DBconn->insertUser($reg)) {
             $result->success = True;
 
             sendEmail::SendRegisterEmail($UserName, $Email, $defaultPassword);

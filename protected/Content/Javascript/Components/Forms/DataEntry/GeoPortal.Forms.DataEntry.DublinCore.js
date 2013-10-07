@@ -300,29 +300,29 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
                         xtype: 'button',
                         id: 'btnDCsave',
                         icon: 'images/silk/database_edit.png',
-                        text: 'Insert',
+                        text: 'Save',
                         type: 'reset',
                         handler : this.FormSave,
                         scope : this
                     },
-                    {
-                        xtype: 'button',
-                        id: 'btnDCInsert',
-                        icon: 'images/silk/application_form_add.png',
-                        text: 'Insert',
-                        type: 'reset',
-                        handler : this.FormInsert,
-                        scope : this
-                    },
-                    {
-                        xtype: 'button',
-                        id: 'btnDCUpdate',
-                        icon: 'images/silk/application_form_edit.png',
-                        text: 'Update',
-                        type: 'reset',
-                        handler : this.FormUpdate,
-                        scope : this
-                    },
+//                    {
+//                        xtype: 'button',
+//                        id: 'btnDCInsert',
+//                        icon: 'images/silk/application_form_add.png',
+//                        text: 'Insert',
+//                        type: 'reset',
+//                        handler : this.FormInsert,
+//                        scope : this
+//                    },
+//                    {
+//                        xtype: 'button',
+//                        id: 'btnDCUpdate',
+//                        icon: 'images/silk/application_form_edit.png',
+//                        text: 'Update',
+//                        type: 'reset',
+//                        handler : this.FormUpdate,
+//                        scope : this
+//                    },
                     {
                         xtype: 'button',
                         id: 'btnDCDelete',
@@ -379,9 +379,9 @@ GeoPortal.Forms.DataEntry.DublinCore = Ext.extend(Ext.form.FormPanel, {
             console.log(thisPanel);
             thisPanel.getForm().reset();
         },
-        FormInsert : function() {
-
-        },
+//        FormInsert : function() {
+//
+//        },
         FormSave : function() {
 
             var wid = Ext.getCmp('dcWiserdIDfield').getValue();

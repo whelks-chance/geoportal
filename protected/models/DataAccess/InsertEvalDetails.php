@@ -10,61 +10,46 @@ class InsertEvalDetails {
     //'function to insert user details into database
 
     Public Function EvalDetailsByInsert(UserDetails4Evaluation $user) {
-//        ByVal user As UserDetails4Evaluation
 
-//        $user = new UserDetails4Evaluation();
+//        $checkUserString = "SELECT COUNT(username) FROM alphausersdetails where username = '" . $user->username . "' AND password = crypt('" . $user->enteredPassword . "', password);";
+//        $rows = DataAdapter::DefaultExecuteAndRead($checkUserString);
 
-        // 'check to see if username and password are correct
+        $checkUserString = "SELECT COUNT(username) FROM alphausersdetails where username =:username AND password = crypt(:enteredPassword, password);";
+        $values = array(":username" => $user->username, ":enteredPassword" => $user->enteredPassword);
 
-//        'define string
-        $checkUserString = "SELECT COUNT(username) FROM alphausersdetails where username = '" . $user->username . "' AND password = crypt('" . $user->enteredPassword . "', password);";
-//        'get DB connection string
-//        $dbCheckUser = new getDBConnections();
-//        'new DB connection
-//        $cnnCheckUser  = $dbCheckUser -> getDBConnection("Geoportal"); // As NpgsqlConnection
-//        $cmdCheckUser = pg_query($cnnCheckUser, $checkUserString);
+        $resultObject = DataAdapter::DefaultPDOExecuteAndRead($checkUserString, $values);
 
-        $rows = DataAdapter::DefaultExecuteAndRead($checkUserString);
-
-//        If ($count <> 1) {
-//            Return False;
-//        } else {
-
-        $row = $rows[0];
+        $row = $resultObject->resultObject[0];
 
         $count = $row->count;
 
-        if(!$count == '1'){
+        if($count != 1){
             Return False;
         }
-//        }
 
 //        'if user exists - continue to insert the data
-        If ($user->browser = "") {
+        If ($user->browser == "") {
             $user->browser = "N/A";
         }
 
         $date = new DateTime();
         $timestamp = $date->format('U = Y-m-d H:i:s');
 
-        $evalInsert = "UPDATE alphausersdetails SET timestamp = '" . $timestamp . "', browser = '" . $user->browser . "', os = '" . $user->os . "', screenres = '" . $user->screenSize . "', browser_ver = '" . $user->versionStr . "', browser_no = '" . $user->versionNo . "' WHERE username = '" . $user->username . "' AND password = crypt('" . $user->enteredPassword . "', password);";
-        $dbEval = New getDBConnections();
-        $cnnEval = $dbEval -> getDBConnection("Geoportal");
-        $cmdEval = pg_query($cnnEval, $evalInsert );
+        $evalInsert = "UPDATE alphausersdetails SET timestamp = :lastLogin, browser = :browser, os = :os,
+        screenres = :screenSize, browser_ver = :versionStr, browser_no = :browserNo
+        WHERE username = :username AND password = crypt(:enteredPassword, password);";
 
-        //Dim cntEval As Integer
-        //cnnEval.Open()
-        //cntEval = cmdEval.ExecuteNonQuery()
-        //cnnEval.Close()
+        $values = array(":lastLogin" => $timestamp, ":browser" => $user->browser, ":os" => $user->os,
+            ":screenSize" => $user->screenSize, ":versionStr" => $user->versionStr, ":browserNo" => $user->versionNo,
+            ":username" => $user->username, ":enteredPassword" => $user->enteredPassword);
 
-        If (pg_affected_rows($cmdEval) != 1) {
+        $dbReturn = DataAdapter::DefaultPDOExecuteAndRead($evalInsert, $values);
+
+//        $evalInsert = "UPDATE alphausersdetails SET timestamp = '" . $timestamp . "', browser = '" . $user->browser . "', os = '" . $user->os . "', screenres = '" . $user->screenSize . "', browser_ver = '" . $user->versionStr . "', browser_no = '" . $user->versionNo . "' WHERE username = '" . $user->username . "' AND password = crypt('" . $user->enteredPassword . "', password);";
+
+        If (sizeof($dbReturn->resultObject) != 1) {
             Return False;
         }Else{
-
-            //TODO warning, prints user data
-//            $user = getDBConnections::getUser($user->username, $user->enteredPassword);
-//            Log::toFile('user : ' . print_r($user, true));
-
             Return True;
         }
 

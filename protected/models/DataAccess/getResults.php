@@ -91,7 +91,7 @@ where aud.username='" . $username . "');";
 
             $getQuestionsSurveyQuery = "SELECT surveyid FROM survey_questions_link where qid='" . trim($row->qid) . "';";
             $thisSurvey = DataAdapter::DefaultExecuteAndRead($getQuestionsSurveyQuery, "Survey_Data");
-            Log::toFile(print_r($thisSurvey, true));
+//            Log::toFile(print_r($thisSurvey, true));
 
             if(sizeof($thisSurvey) > 0){
                 foreach($allowedSurveys as $allowedSurvey) {
@@ -104,7 +104,7 @@ where aud.username='" . $username . "');";
         }
         $rows = $allowed;
 
-        Log::toFile(print_r($rows, true));
+//        Log::toFile(print_r($rows, true));
 
         foreach ($rows as $row) {
 

@@ -44,49 +44,56 @@ class getDBConnections {
 
     }
 
-    Public Function insertUser(regUser $userdetails,  $conn){
+    Public Function insertUser(regUser $userdetails){
 
-        //ByVal userdetails = regUser, ByVal conn = NpgsqlConnection
+//        $insertString = "INSERT INTO alphausersdetails(id, username, password, firstname, lastname, email)".
+//            " VALUES(DEFAULT,'" .
+//            $userdetails->UserName . "'," .
+//            "crypt ('" . $userdetails->Password . "', gen_salt('bf')),'" .
+//            $userdetails->FirstName . "','" .
+//            $userdetails->LastName . "','" .
+//            $userdetails->Email . "')";
 
-        $insertString = "INSERT INTO alphausersdetails(id, username, password, firstname, lastname, email)".
-            " VALUES(DEFAULT,'" .
-            $userdetails->UserName . "'," .
-            "crypt ('" . $userdetails->Password . "', gen_salt('bf')),'" .
-            $userdetails->FirstName . "','" .
-            $userdetails->LastName . "','" .
-            $userdetails->Email . "')";
+        $insertString = "INSERT INTO alphausersdetails(id, username, password, firstname, lastname, email)
+         VALUES(DEFAULT, :UserName, crypt (:Password, gen_salt('bf')), :FirstName, :LastName, :Email)";
 
-        $cmd = pg_query($conn, $insertString);
-//            $cnt = Integer
-//            conn.Open()
-//            cnt = cmd.ExecuteNonQuery()
-//            conn.Close()
+        $values = array(":UserName" => $userdetails->UserName, ":Password" => $userdetails->Password,
+            ":FirstName" => $userdetails->FirstName, ":LastName" => $userdetails->LastName,
+            ":Email" => $userdetails->Email);
 
-        If (pg_num_rows($cmd) <> 0) {
-            Return False;
-        }Else{
+        $cmd = DataAdapter::DefaultPDOExecuteAndRead($insertString, $values);
+
+        If ($cmd->resultSuccess ) {
             Return True;
+        } Else {
+            Return False;
         }
 
     }
 
     Public static Function getUser($userName, $Password) {
 
-        $loginStr = "Select id, username, firstname, lastname, email, r.name as role from alphausersdetails aud, roles r where username = '" . $userName . "' and  password = crypt('" . $Password . "', password) and aud.role = r.roleid";
+//        $loginStr = "Select id, username, firstname, lastname, email, r.name as role from alphausersdetails aud, roles r where username = '" . $userName . "' and  password = crypt('" . $Password . "', password) and aud.role = r.roleid";
 
+        $loginStr = "Select id, username, firstname, lastname, email, r.name as role from alphausersdetails aud,
+        roles r where username = :userName and  password = crypt(:Password, password) and aud.role = r.roleid";
+
+        $values = array(":userName" => $userName, ":Password" => $Password);
 //        $cmd = pg_query($this::getDBConnection(), $loginStr);
 
 //        $DA = new DataAdapter();
-        $DRs = DataAdapter::DefaultExecuteAndRead($loginStr);
+//        $DRs = DataAdapter::DefaultExecuteAndRead($loginStr);
+
+        $resultObject = DataAdapter::DefaultPDOExecuteAndRead($loginStr, $values);
 
 //        Log::toFile('Login string : ' . $loginStr . ' Results : ' . print_r($DRs, true));
 
-        If ( sizeof($DRs) > 0) {
+        If ( sizeof($resultObject->resultObject) > 0) {
 
-            $DR = $DRs[0];
+            $DR = $resultObject->resultObject[0];
 
 //TODO warning : prints user details
-//            Log::toFile('found user : ' . print_r($DR, true));
+//            Log::toFile('found user : ' . print_r($DR, true) . gettype($DR));
 
             $user = New UserDetails();
 
@@ -135,18 +142,21 @@ class getDBConnections {
 //        $myACDetails->Email = $user->Email;
         $myACDetails->UserName = $user->UserName;
 
-        $myACDetailscStr = "SELECT * FROM alphausersdetails WHERE id = " . $user->UID;
+//        $myACDetailscStr = "SELECT * FROM alphausersdetails WHERE id = " . $user->UID;
+        $myACDetailscStr = "SELECT * FROM alphausersdetails WHERE id=:UID";
 
+        $values = array(":UID" => $user->UID);
 //        $cmd = pg_query($this::getDBConnection(), $myACDetailscStr);
 //
 //        $DA = new DataAdapter();
 //        $DRs = $DA->Read($cmd);
 
-        $DRs = DataAdapter::DefaultExecuteAndRead($myACDetailscStr);
+        $resultObject = DataAdapter::DefaultPDOExecuteAndRead($myACDetailscStr, $values);
+//        $DRs = DataAdapter::DefaultExecuteAndRead($myACDetailscStr);
 
-        If ( sizeof($DRs) > 0) {
+        If ( sizeof($resultObject->resultObject) > 0) {
 
-            $DR = $DRs[0];
+            $DR = $resultObject->resultObject[0];
 
 //            Log::toFile(print_r($DR, true));
 
@@ -173,22 +183,30 @@ class getDBConnections {
     Public Function updateMyAccount( $user, $myAccount, $UID) {
 
 
-        $updateUserStr = "UPDATE alphausersdetails SET username='" . $user->UserName . "', firstname='" . $user->FirstName . "', lastname='" . $user->LastName . "', email='" . $user->Email . "'";
+//        $updateUserStr = "UPDATE alphausersdetails SET username='" . $user->UserName . "', firstname='" . $user->FirstName . "', lastname='" . $user->LastName . "', email='" . $user->Email . "'";
+//
+//        $updateUserStr .= ", institution='" . $myAccount->Institution . "', bio='" . $myAccount->Bio . "', telephone='" . $myAccount->Telephone . "', address='" . $myAccount->Address . "'";
+//
+//        $updateUserStr .= " WHERE id='" . $UID . "';";
 
-        $updateUserStr .= ", institution='" . $myAccount->Institution . "', bio='" . $myAccount->Bio . "', telephone='" . $myAccount->Telephone . "', address='" . $myAccount->Address . "'";
+        $updateUserStr = "UPDATE alphausersdetails SET username=:UserName, firstname=:FirstName, lastname=:LastName,
+        email=:Email, institution=:Institution, bio=:Bio, telephone=:Telephone, address=:Address WHERE id=:UID;";
 
-        $updateUserStr .= " WHERE id='" . $UID . "';";
-
-        Log::toFile($updateUserStr);
+        $values = array(":UserName" => $user->UserName, ":FirstName" => $user->FirstName, ":LastName" => $user->LastName,
+        ":Email" => $user->Email, ":Institution" => $myAccount->Institution, ":Bio" => $myAccount->Bio,
+            ":Telephone" => $myAccount->Telephone, ":Address" => $myAccount->Address, ":UID" => $UID);
 
 //        $command = New NpgsqlCommand($updateUserStr & $updateBio, $cnn);
 //
 //
 //        $int = $command->ExecuteNonQuery();
+        $resultObject = DataAdapter::DefaultPDOExecuteAndRead($updateUserStr, $values, "Geoportal");
 
-        $int = DataAdapter::DefaultExecuteAndRead($updateUserStr);
+//        $int = DataAdapter::DefaultExecuteAndRead($updateUserStr);
 
-        If ($int != '0' ) {
+//        If ($resultObject->resultObject != '0' ) {
+
+        If ($resultObject->resultSuccess ) {
             Return True;
         } Else {
             Return False;
@@ -234,7 +252,6 @@ class getDBConnections {
             $message->success = False;
             $message->message = "Please check your old password and try again!";
         }
-        Log::toFile("update db msg " . print_r($message, true));
         Return $message;
 
     }

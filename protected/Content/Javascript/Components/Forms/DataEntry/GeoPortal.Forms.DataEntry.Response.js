@@ -66,22 +66,31 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                     },
                     {
                         xtype: 'button',
-                        id: 'btnResponseInsert',
-                        icon: 'images/silk/application_form_add.png',
-                        text: 'Insert',
+                        id: 'btnRsave',
+                        icon: 'images/silk/database_edit.png',
+                        text: 'Save',
                         type: 'reset',
-                        handler : this.FormInsert,
+                        handler : this.FormSave,
                         scope : this
                     },
-                    {
-                        xtype: 'button',
-                        id: 'btnResponseUpdate',
-                        icon: 'images/silk/application_form_edit.png',
-                        text: 'Update',
-                        type: 'reset',
-                        handler : this.FormUpdate,
-                        scope : this
-                    },
+//                    {
+//                        xtype: 'button',
+//                        id: 'btnResponseInsert',
+//                        icon: 'images/silk/application_form_add.png',
+//                        text: 'Insert',
+//                        type: 'reset',
+//                        handler : this.FormInsert,
+//                        scope : this
+//                    },
+//                    {
+//                        xtype: 'button',
+//                        id: 'btnResponseUpdate',
+//                        icon: 'images/silk/application_form_edit.png',
+//                        text: 'Update',
+//                        type: 'reset',
+//                        handler : this.FormUpdate,
+//                        scope : this
+//                    },
                     {
                         xtype: 'button',
                         id: 'btnResponseDelete',
@@ -237,6 +246,75 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
             var thisPanel = Ext.getCmp(this.id);
             console.log(thisPanel);
             thisPanel.getForm().reset();
+        },
+        FormSave : function() {
+
+            var rid = Ext.getCmp('responseIdField').getValue();
+            var qid = Ext.getCmp('resQuestionIDfield').getValue();
+
+            Ext.Ajax.request({
+                url: checkRecordExists,
+                scope: this,
+                method : 'POST',
+                params : {
+                    recordType: "survey_response",
+                    recordID: rid
+                },
+                success: function(resp) {
+                    var responseData = Ext.decode(resp.responseText);
+                    var ridProjectID = responseData.projectid;
+                    console.log(ridProjectID);
+
+                    if (responseData.exists == true) {
+                        console.log('ok ' + responseData);
+                        Ext.MessageBox.confirm('Status', 'Response RID is already in use, overwrite?', function (btn, text) {
+
+                            if(btn == 'yes') {
+                                Ext.getCmp('frmEntryQuestion').getForm().submit({
+                                    scope: this,
+                                    url: insertResponse,
+                                    params : {
+                                        update : true,
+                                        projectID : ridProjectID
+                                    },
+                                    waitMsg: 'Inserting Question Data....',
+                                    success: function (form, action) {
+                                        Ext.MessageBox.alert("Success", "Response data overwritten");
+                                    },
+                                    failure: function (form, action) {
+                                        Ext.MessageBox.alert("Failure", action.result.message);
+                                    }
+                                });
+                            } else {
+                                Ext.MessageBox.alert("No, don't overwrite response");
+                            }
+                        });
+                    } else {
+                        if(qid == "" || rid == "") {
+                            Ext.MessageBox.alert('Status', 'Please set a Question ID by loading a question and ensure a Response ID is entered.');
+                        } else {
+                            var thisPanel = Ext.getCmp(this.id);
+                            if(thisPanel.getForm().isValid()) {
+                                thisPanel.getForm().submit({
+                                    url: insertResponse,
+                                    waitMsg: 'Inserting Response Data....',
+                                    success: function (form, action) {
+                                        Ext.Msg.alert("Success!",action.result.message);
+                                    },
+                                    failure: function (form, action) {
+                                        Ext.Msg.alert("Error!",action.result.message);
+                                    }
+                                });
+                            } else {
+                                Ext.MessageBox.alert('Status', 'There is an invalid entry in the Response form.');
+                            }
+                        }
+                    }
+                },
+                failure: function(resp) {
+
+                }
+            });
         }
     }
 );

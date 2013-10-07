@@ -83,29 +83,29 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                         xtype: 'button',
                         id: 'btnQsave',
                         icon: 'images/silk/database_edit.png',
-                        text: 'Insert',
+                        text: 'Save',
                         type: 'reset',
                         handler : this.FormSave,
                         scope : this
                     },
-                    {
-                        xtype: 'button',
-                        id: 'btnQuestionInsert',
-                        icon: 'images/silk/application_form_add.png',
-                        text: 'Insert',
-                        type: 'reset',
-                        handler : this.FormInsert,
-                        scope : this
-                    },
-                    {
-                        xtype: 'button',
-                        id: 'btnQuestionUpdate',
-                        icon: 'images/silk/application_form_edit.png',
-                        text: 'Update',
-                        type: 'reset',
-                        handler : this.FormUpdate,
-                        scope : this
-                    },
+//                    {
+//                        xtype: 'button',
+//                        id: 'btnQuestionInsert',
+//                        icon: 'images/silk/application_form_add.png',
+//                        text: 'Insert',
+//                        type: 'reset',
+//                        handler : this.FormInsert,
+//                        scope : this
+//                    },
+//                    {
+//                        xtype: 'button',
+//                        id: 'btnQuestionUpdate',
+//                        icon: 'images/silk/application_form_edit.png',
+//                        text: 'Update',
+//                        type: 'reset',
+//                        handler : this.FormUpdate,
+//                        scope : this
+//                    },
                     {
                         xtype: 'button',
                         id: 'btnQuestionDelete',
@@ -383,7 +383,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
             if (surveyID == "") {
                 alert('No Survey ID defined, please load a previous survey');
             } else {
-                var loadFQWin = new Ext.Window({ items:[new GeoPortal.Forms.DataEntry.FindQuestions({SID:surveyID})], title:'Load Question', modal:true, width:500, id:'LoadDCWin' });
+                var loadFQWin = new Ext.Window({ items:[new GeoPortal.Forms.DataEntry.FindQuestions({SID:surveyID})], title:'Load Question', modal:true, width:500, id:'LoadQuestionWin' });
                 loadFQWin.show();
             }
         },
@@ -423,51 +423,61 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
         },
         FormSave : function() {
 
+            var sid = Ext.getCmp('QuestionSurveyID').getValue();
             var qid = Ext.getCmp('QuestionIdField').getValue();
 
-            Ext.Ajax.request({
-                url: checkRecordExists,
-                scope: this,
-                method : 'POST',
-                params : {
-                    recordType: "survey_question",
-                    recordID: qid
-                },
-                success: function(resp) {
-                    var responseData = Ext.decode(resp.responseText);
-                    var qidProjectID = responseData.projectid;
-                    console.log(qidProjectID);
+            var submit = true;
+            if(sid == "") {
+                submit = false;
+                Ext.MessageBox.alert('Survey ID Error', 'Please load a survey to add a question to');
+            }
+            if(qid == "") {
+                submit = false;
+                Ext.MessageBox.alert('Question ID Error', 'Please enter a Question ID, normally related to the Survey ID');
+            }
+            if (submit) {
 
-                    if (responseData.exists == true) {
-                        console.log('ok ' + responseData);
-                        Ext.MessageBox.confirm('Status', 'Question qid is already in use, overwrite?', function (btn, text) {
+                Ext.Ajax.request({
+                    url: checkRecordExists,
+                    scope: this,
+                    method : 'POST',
+                    params : {
+                        recordType: "survey_question",
+                        recordID: qid
+                    },
+                    success: function(resp) {
+                        var responseData = Ext.decode(resp.responseText);
+                        var qidProjectID = responseData.projectid;
+                        console.log(qidProjectID);
 
-                            if(btn == 'yes') {
-                                Ext.getCmp('frmEntryQuestion').getForm().submit({
-                                    scope: this,
-                                    url: insertQuestion,
-                                    params : {
-                                        update : true,
-                                        projectID : qidProjectID
-                                    },
-                                    waitMsg: 'Inserting Question Data....',
-                                    success: function (form, action) {
-                                        Ext.MessageBox.alert("Success", "Question data overwritten");
-                                    },
-                                    failure: function (form, action) {
-                                        Ext.MessageBox.alert("Failure", action.result.message);
-                                    }
-                                });
-                            } else {
-                                Ext.MessageBox.alert("no, don't overwrite question");
-                            }
-                        });
-                    } else {
-                        if(qid == "") {
-                            Ext.MessageBox.alert('Status', 'Please set a WISERD ID and Survey ID by clicking the \'New Survey\' button.');
+                        if (responseData.exists == true) {
+                            console.log('ok ' + responseData);
+                            Ext.MessageBox.confirm('Status', 'Question qid is already in use, overwrite?', function (btn, text) {
+
+                                if(btn == 'yes') {
+                                    Ext.getCmp('frmEntryQuestion').getForm().submit({
+                                        scope: this,
+                                        url: insertQuestion,
+                                        params : {
+                                            update : true,
+                                            projectID : qidProjectID
+                                        },
+                                        waitMsg: 'Inserting Question Data....',
+                                        success: function (form, action) {
+                                            Ext.MessageBox.alert("Success", "Question data overwritten");
+                                        },
+                                        failure: function (form, action) {
+                                            Ext.MessageBox.alert("Failure", action.result.message);
+                                        }
+                                    });
+                                } else {
+                                    Ext.MessageBox.alert("no, don't overwrite question");
+                                }
+                            });
                         } else {
-                            var thisPanel = Ext.getCmp(this.id);
-                            if(thisPanel.isValid()) {
+
+                            var thisPanel = Ext.getCmp('frmEntryQuestion');
+                            if(thisPanel.getForm().isValid()) {
                                 thisPanel.getForm().submit({
                                     url: insertQuestion,
                                     waitMsg: 'Inserting Question Data....',
@@ -479,15 +489,16 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
                                     }
                                 });
                             } else {
-                                Ext.MessageBox.alert('Status', 'There is an invalid entry on either the Dublin Core or Survey form.');
+                                Ext.MessageBox.alert('Status', 'There is an invalid entry in the Question entry form.');
                             }
-                        }
-                    }
-                },
-                failure: function(resp) {
 
-                }
-            });
+                        }
+                    },
+                    failure: function(resp) {
+
+                    }
+                });
+            }
         }
     }
 );

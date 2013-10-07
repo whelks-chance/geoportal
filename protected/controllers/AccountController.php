@@ -20,6 +20,9 @@ class AccountController extends Controller {
 
             $findUserStr = "Select id, username from alphausersdetails where email='" . $Email . "';";
 
+            $idResultObject = DataAdapter::DefaultPDOExecuteAndRead(
+                "Select id, username from alphausersdetails where email=:email", array(":email" => $Email));
+
             $idSet = DataAdapter::DefaultExecuteAndRead($findUserStr);
 
             Log::toFile('ids ' . print_r($idSet, true));

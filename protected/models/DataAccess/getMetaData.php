@@ -163,7 +163,9 @@ class getMetaData {
 
         $cnn = $db->getDBConnection("Survey_Data");
 
-        $selectStr = "Select * from dc_info WHERE identifier ='wi" . $SID . "';";
+//        $selectStr = "Select * from dc_info WHERE identifier ='wi" . $SID . "';";
+
+        $selectStr = "Select * from dc_info where identifier=(select identifier from survey where surveyid='" . $SID ."')";
 
         Log::toFile($selectStr);
 

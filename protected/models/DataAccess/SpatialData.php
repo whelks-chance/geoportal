@@ -7,7 +7,7 @@ class SpatialData {
 
         $cnn = $dc->getDBConnection("Survey_Data");
 
-        $selectStr = "Select * from survey_spatial_link where surveyid = '" . strtolower($SurveyID) . "';";
+        $selectStr = "Select * from survey_spatial_link where lower(surveyid) = '" . strtolower($SurveyID) . "';";
 
         $results = array();
 
