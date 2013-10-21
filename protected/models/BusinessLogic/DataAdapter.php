@@ -72,28 +72,94 @@ class DataAdapter {
         }
     }
 
-    public static function DefaultPDOExecuteAndRead($dbQuery, $values, $DBName = "Geoportal")
+
+
+    public static function isTrustedTableName( $riskyTableName , $db) {
+
+        $singleNameArray = array();
+        $singleNameArray[] = $riskyTableName;
+        $trustedNames = DataAdapter::areTrustedTableNames($singleNameArray, $db );
+        if (sizeof( $trustedNames ) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function areTrustedTableNames($riskyTablenameArray, $db)
+    {
+        $acceptableTablenameArray = array();
+
+        $allTables = "SELECT table_name FROM information_schema.tables
+        WHERE table_schema='public' AND table_type='BASE TABLE';";
+
+        $results = DataAdapter::DefaultPDOExecuteAndRead($allTables, null, $db);
+
+        //iterate through risky table names, keep ones which match existing table names
+        foreach($riskyTablenameArray as $riskyTablename) {
+
+            //iterate through existing tables, check if matches risky name
+            $acceptableTableName = "";
+            foreach ($results->resultObject as $allowedTablename) {
+                $thisTablename = $allowedTablename->table_name;
+                if ($thisTablename == $riskyTablename) {
+
+                    //if it matches, accept it and move on
+                    $acceptableTableName = $thisTablename;
+                    break;
+                }
+            }
+
+            if($acceptableTableName == "") {
+                // nothing acceptable found
+            } else {
+                $acceptableTablenameArray[] = $acceptableTableName;
+            }
+        }
+
+        Log::toFile(print_r($riskyTablenameArray, true) . print_r($riskyTablenameArray, true));
+        return $acceptableTablenameArray;
+    }
+
+    public static function DefaultPDOExecuteAndRead($dbQuery, $values = null, $DBName = "Geoportal")
     {
 
-        $connString = "host=" . variables::$databaseAddr . " port=". variables::$databasePort .
-            " dbname=" . $DBName . " user=" . variables::$databaseUsername . " password=" . variables::$databasePassword;
-        $pdo = new PDO('pgsql:' . $connString);
+        if ($values == null) {
+            $values = array();
+        }
+//        $connString = "host=" . variables::$databaseAddr . " port=". variables::$databasePort .
+//            " dbname=" . $DBName . " user=" . variables::$databaseUsername . " password=" . variables::$databasePassword;
+//        $pdo = new PDO('pgsql:' . $connString);
+//        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $PDOstatement = $pdo->prepare($dbQuery);
+
+//        $pdo = ConnectionFactory::getFactory()->getConnection($DBName);
+//        $PDOstatement = $pdo->prepare($dbQuery);
+
+        $PDOstatement = ConnectionFactory::getFactory()->getStatement($dbQuery, $DBName);
 
         $statementComplete = $PDOstatement->execute($values);
 
+        $queryResults = $PDOstatement->fetchAll(PDO::FETCH_OBJ);
+
         $success = ($statementComplete == 1 ? True : False);
-        Log::toFile("PDO output : "
-            . $PDOstatement->queryString . " : errorcode "
-            . $PDOstatement->errorCode() . " : success "
-            . $success
-            . " : errorinfo " . print_r($PDOstatement->errorInfo(), true));
+
+        $errorString = "PDO output : "
+            . $PDOstatement->queryString .
+            " : errorcode " . $PDOstatement->errorCode() .
+            " : success " . $success .
+            " : outputSize " . sizeof($queryResults);
+        if($PDOstatement->errorCode() != 0) {
+            $errorString .= " : errorinfo " . print_r($PDOstatement->errorInfo(), true);
+        }
+        Log::toFile($errorString);
 
         $returnObject = new QueryObject();
-        $returnObject->resultObject = $PDOstatement->fetchAll(PDO::FETCH_OBJ);
+        $returnObject->resultObject = $queryResults;
         $returnObject->errorCode = $PDOstatement->errorCode();
+
         $returnObject->errorInfo = $PDOstatement->errorInfo();
+
         $returnObject->resultSuccess = $success;
 
         return $returnObject;
@@ -101,11 +167,66 @@ class DataAdapter {
 
 }
 
+class ConnectionFactory
+{
+    private static $factory;
+    public static function getFactory()
+    {
+        if (!self::$factory)
+            self::$factory = new ConnectionFactory();
+        return self::$factory;
+    }
+
+    private $pdo = array();
+
+    public function getConnection($DBName) {
+//        if (!$this->pdo) {
+
+        if(!array_key_exists($DBName, $this->pdo)) {
+            $connString = "host=" . variables::$databaseAddr . " port=". variables::$databasePort .
+                " dbname=" . $DBName . " user=" . variables::$databaseUsername . " password=" . variables::$databasePassword;
+            $newPDO = new PDO('pgsql:' . $connString);
+            $newPDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo[$DBName] = $newPDO;
+        }
+        return $this->pdo[$DBName];
+    }
+
+    private $statements = array();
+
+    public function getStatement($query, $DBName) {
+
+        if(!array_key_exists($query, $this->statements)) {
+            $pdo = $this->getConnection($DBName);
+            $statement = $pdo->prepare($query);
+            $this->statements[$query] = $statement;
+        }
+//        Log::toFile("statements size : " . sizeof($this->statements));
+        return $this->statements[$query];
+    }
+}
+
 class QueryObject {
-    public $resultObject;
-    public $resultSuccess;
+    public $resultObject = null;
+    public $resultSuccess = false;
     public $errorCode;
-    public $errorInfo;
+    public $errorInfo = null;
+
+    public function hasRows() {
+        if( $this->resultObject != null) {
+            return sizeof($this->resultObject) > 0;
+        } else {
+            return false;
+        }
+    }
+
+    public function numberOfRows() {
+        if ($this->resultObject != null) {
+            return sizeof($this->resultObject);
+        } else {
+            return 0;
+        }
+    }
 }
 
 ?>

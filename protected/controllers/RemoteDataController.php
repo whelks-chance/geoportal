@@ -356,21 +356,21 @@ class RemoteDataController extends Controller {
             $remoteAPI = $_POST['remoteAPI'];
         }
 
-        $dataAdapter = new DataAdapter();
+//        $dataAdapter = new DataAdapter();
 
         //The Survey titles as value, and surveyID for the key
-        $surveyNameQuery = 'insert into question_link(id, wiserd_id, remote_id, remote_api)';
-        $surveyNameQuery .= " values (default, '" . $wiserdID . "', '";
-        $surveyNameQuery .= $remoteID . "', '";
-        $surveyNameQuery .= $remoteAPI . "');";
+        $surveyNameQuery = 'insert into question_link(id, wiserd_id, remote_id, remote_api)
+ values (default, :wiserdID , :remoteID, :remoteAPI);';
 
+        $values = array(":wiserdID" => $wiserdID, ":remoteID" => $remoteID, ":remoteAPI" => $remoteAPI);
 //        Log::toFile($surveyNameQuery);
+        $results = DataAdapter::DefaultPDOExecuteAndRead($surveyNameQuery, $values, "Survey_Data");
 
-        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
+//        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
 
 //        Log::toFile(print_r($surveyNameResults, true));
 
-        $returnArray['success'] = true;
+        $returnArray['success'] = $results->resultSuccess;
 
         echo json_encode($returnArray);
 
@@ -412,12 +412,13 @@ class RemoteDataController extends Controller {
             $remoteID = trim($_POST['remoteID']);
         }
 
-        $dataAdapter = new DataAdapter();
+        $findQuery = 'select id, wiserd_id from question_link where remote_id=:remoteID;';
 
-        $findQuery = 'select id, wiserd_id from question_link where remote_id="' . $remoteID . '";';
+        $values = array(":remoteID" => $remoteID);
+        $results = DataAdapter::DefaultPDOExecuteAndRead($findQuery, $values, "Survey_Data");
 
-        $questionResults = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
+//        $questionResults = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
 
-        echo json_encode($questionResults);
+        echo json_encode($results->resultObject);
     }
 }

@@ -239,26 +239,28 @@ class SearchController extends Controller {
         }
 
         $res = New getResults();
-        $results = $res->getSurveyQuestion($SID);
-        $count = count($results);
+        $results = $res->getSurveyQuestion($SID, $start, $limit);
+//        $count = count($results);
 
-        $resultsset = New results();
+//        $resultsset = New results();
+//
+//        $resultsset->totalCount = $count;
+//        $resultsset->questions = json_encode($results);
+//
+//
+//        $pageResults = array();
+//
+//        $cnt = $start;
+//        $cnt_end = $cnt + $limit;
+//
+////            Do Until cnt = cnt_end Or cnt = results->Count;
+//        while ($cnt <= $cnt_end && $cnt < sizeof($results)) {
+//            $pageResults[] = ($results[$cnt]);
+//            $cnt += 1;
+//        }
 
-        $resultsset->totalCount = $count;
-        $resultsset->questions = json_encode($results);
-
-
-        $pageResults = array();
-
-        $cnt = $start;
-        $cnt_end = $cnt + $limit;
-
-//            Do Until cnt = cnt_end Or cnt = results->Count;
-        while ($cnt <= $cnt_end && $cnt < sizeof($results)) {
-            $pageResults[] = ($results[$cnt]);
-            $cnt += 1;
-        }
-
+    $count = $results->totalCount;
+    $pageResults = $results->questions;
 
         $str = '{"totalCount":"' . $count . '", "questions":' . json_encode($pageResults) . "}";
 

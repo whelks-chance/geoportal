@@ -80,6 +80,7 @@ include('variables.php')
     var getTaggingTags = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/getTags';
     var createTaggingMetadata = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/createTaggingMetadata';
     var getTimeTicks = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/getTimeNowTicks';
+    var saveTaggingMetadata = '<? echo Yii::app()->baseUrl ?>/index.php?r=Tagging/saveTaggingMetadata';
 
     var dataOptionLists = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDataEntryOptionLists';
     var surveyVisibility = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getUserProjectData';

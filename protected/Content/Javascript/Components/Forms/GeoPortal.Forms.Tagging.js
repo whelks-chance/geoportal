@@ -101,7 +101,7 @@ GeoPortal.Forms.Tagging = Ext.extend(Ext.form.FormPanel, {
                                 var wordCountStore = new Ext.data.JsonStore({
                                     fields: [
                                         { name: 'word', type: 'string' },
-                                        { name: 'count', type: 'string' },
+                                        { name: 'count', type: 'string', sortType: 'asInt' },
                                         { name: 'page', type: 'string'}
                                     ],
                                     root: 'wordCounts',

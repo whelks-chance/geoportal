@@ -181,9 +181,12 @@ class RoleManager {
         $auth->assign($roleName, $userID);
         $auth->save();
 
-        $updateRoleQuery = "Update alphausersdetails set role=( Select roleid from roles where name='" .
-            $roleName . "') where username='" . $userID . "';";
-        $results2 = DataAdapter::DefaultExecuteAndRead($updateRoleQuery, "Geoportal");
+        $updateRoleQuery = "Update alphausersdetails set
+        role=( Select roleid from roles where name=:roleName) where username=:userID;";
+
+        $values = array("roleName" => $roleName, ":userID" => $userID);
+//        $results2 = DataAdapter::DefaultExecuteAndRead($updateRoleQuery, "Geoportal");
+        $results = DataAdapter::DefaultPDOExecuteAndRead($updateRoleQuery, $values);
 
 
     }
@@ -198,13 +201,15 @@ class RoleManager {
     {
         RoleManager::init();
 
-        $getRoleQuery = "Select roles.name as rolename From alphausersdetails, roles WHERE username='"
-            . $username . "' and role = roleid;";
+        $getRoleQuery = "Select roles.name as rolename From alphausersdetails, roles
+        WHERE username=:username and role = roleid;";
 
-        $results2 = DataAdapter::DefaultExecuteAndRead($getRoleQuery, "Geoportal");
+        $values = array(":username" => $username);
+//        $results2 = DataAdapter::DefaultExecuteAndRead($getRoleQuery, "Geoportal");
+        $results = DataAdapter::DefaultPDOExecuteAndRead($getRoleQuery, $values);
 
-        if (sizeof($results2) > 0) {
-            RoleManager::changeRole($username, $results2[0]->rolename);
+        if (sizeof($results->resultObject) > 0) {
+            RoleManager::changeRole($username, $results->resultObject[0]->rolename);
 
 //            $auth=Yii::app()->authManager;
 //            $auth->assign($results2[0]->rolename, $username);

@@ -22,6 +22,8 @@ $this->breadcrumbs=array(
 <!--    This page is not designed at all, and should not be used as an example for anything-->
 
 <script type="text/javascript">
+    Ext.Ajax.timeout = 120000; // 60 seconds
+
 Ext.ns('Portal');
 Ext.onReady(function(){
 
@@ -38,6 +40,25 @@ Ext.onReady(function(){
         id: 'advPanel',
 
         initComponent: function () {
+
+            Ext.Ajax.request({
+                url: SpatialSearch,
+                method : 'POST',
+                params : {
+                    geography:'POLYGON((280917.80738979 286378.21637517,304553.93338979 277911.54437517,272803.91338979 253922.64037517,280917.80738979 286378.21637517))',
+                    start:0,
+                    limit:15,
+                    type:'Qual'
+                },
+                success: function(resp) {
+                    console.log('success!');
+                    var responseData = Ext.decode(resp.responseText);
+                    console.log(responseData);
+                },
+                failure: function(resp) {
+                    console.log('failure!');
+                }
+            });
 
             var surveyStore = new Ext.data.JsonStore ({
                 fields: [

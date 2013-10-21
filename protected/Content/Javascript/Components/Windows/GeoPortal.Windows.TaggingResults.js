@@ -40,10 +40,10 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                                     align: 'stretch'
                                 },
                                 columns: [
-                                    {header: "Name", dataIndex: 'name' },
-                                    { header: "Type", dataIndex: 'type' },
-                                    { header: "Latitude", dataIndex: 'latitude' },
-                                    { header: "Longitude", dataIndex: 'longitude' }
+                                    {header: "Name", dataIndex: 'name', sortable: true},
+                                    { header: "Type", dataIndex: 'type', sortable: true },
+                                    { header: "Latitude", dataIndex: 'latitude', sortable: true },
+                                    { header: "Longitude", dataIndex: 'longitude', sortable: true }
                                 ]
                             }
                         ]
@@ -64,9 +64,9 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                                     align: 'stretch'
                                 },
                                 columns: [
-                                    {header: "Word", dataIndex: 'word' },
-                                    {header: "Page", dataIndex: 'page'},
-                                    {header: "Count", dataIndex: 'count'}
+                                    {header: "Word", dataIndex: 'word', sortable: true },
+                                    {header: "Page", dataIndex: 'page', sortable: true},
+                                    {header: "Count", dataIndex: 'count', sortable: true, sortType: 'asInt'}
                                 ]
                             }
                         ]
@@ -79,7 +79,7 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                             {
                                 xtype: 'form',
                                 title: 'formDC',
-                                id: 'frmDC',
+                                id: 'frmQualDCinsert',
                                 headerAsText: false,
                                 padding: 5,
                                 labelWidth: 75,
@@ -264,7 +264,58 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                     new GeoPortal.Charts.QualChart()
                 ]
             }
-        ]
+        ];
+
+        this.bbar = {
+            xtype: 'toolbar',
+            height: 26,
+            items: [
+                {
+                    xtype: 'tbfill'
+                },
+                {
+                    xtype: 'button',
+                    text: 'Save Metadata',
+                    bodyStyle: 'float: right',
+                    scope: this,
+//                    icon: './images/silk/application_edit.png',
+                    handler: function () {
+                        console.log(this.wordCountStore);
+
+                        Ext.Ajax.request({
+                            url: saveTaggingMetadata,
+                            scope: this,
+                            params : {
+                                numbers : this.wordCountStore.reader.Json
+//                                values : this.wordCountStore.proxy.reader.Json
+                            },
+                            method : 'POST',
+                            success: function(resp) {
+                                console.log(this.wordCountStore);
+                            },
+                            failure: function(resp) {
+                                console.log('failure!');
+                            }
+                        });
+
+//                        var taggingPanel = Ext.getCmp('frmQualDCinsert');
+//                        taggingPanel.getForm().submit({
+//                            url: saveTaggingMetadata,
+//                            waitMsg: 'Saving Metadata.....',
+//                            success: function (form, action) {
+//                                console.log(action);
+//
+//                            },
+//                            failure: function (form, action) {
+//                                console.log("nope");
+//                                Ext.Msg.alert(action.result.message);
+//                            }
+//                        })
+                    }
+                }
+            ]
+        }
+
         GeoPortal.Windows.TaggingResults.superclass.initComponent.call(this);
     }
 });

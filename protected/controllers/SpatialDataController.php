@@ -224,7 +224,6 @@ class SpatialDataController extends Controller {
                     case "Quant":
                         $count = intval($res->quantCount);
 //                        Yii::app()->session["quantCount"] = $count;
-//                        Log::toFile("Quant res : Quant session : " . $count . " : " . Yii::app()->session["quantCount"]);
 
                         break;
                     case "Qual":
@@ -238,19 +237,10 @@ class SpatialDataController extends Controller {
 
                 }
 
-                // 'Return "{""quantData"":" . json_encode(res.quantData) . "}";
-
                 Yii::app()->session["spatialResults"] = $results;
 
             }
         }
-
-
-        // '$resultsset = New GeoPortal.Models.BusinessLogic.spatialResults
-
-        // 'resultsset.totalCount = $count
-        // 'resultsset.questions = json_encode(results(0).quantData);
-
 
         $pageResults = array();
 
@@ -263,8 +253,6 @@ class SpatialDataController extends Controller {
 
             case "Quant":
 
-//                Log::toFile('cnt_end and quantCount : ' . $cnt_end . ' : ' . $res->quantCount);
-//                Log::toFile('quantData : ' . print_r($res->quantData, true));
                 $keys = array_keys($res->quantData);
 
                 while ( $cnt < $cnt_end && $cnt < $res->quantCount) {
@@ -273,16 +261,10 @@ class SpatialDataController extends Controller {
                     $cnt ++;
                 }
 
-//                Log::toFile('quantResults ' . print_r($pageResults, true));
-
                 $Str = '{"totalCount":' . $count . ',"quantData":' . json_encode($pageResults) . "}";
-
-
                 break;
             case "Qual":
 
-//                Log::toFile('cnt_end and qualCount : ' . $cnt_end . ' : ' . $res->quantCount);
-//                Log::toFile('qualData : ' . print_r($res->qualData, true));
                 $keys = array_keys($res->qualData);
 
                 while( $cnt < $cnt_end && $cnt < $res->qualCount) {
@@ -290,7 +272,6 @@ class SpatialDataController extends Controller {
                     $pageResults[] = ($res->qualData[$keys[$cnt]]);
                     $cnt ++;
                 }
-//                Log::toFile('quantResults ' . print_r($pageResults, true));
 
                 $Str = '{"qualTotalCount":' . $count . ',"qualData":' . json_encode($pageResults) . '}';
                 break;
@@ -300,7 +281,6 @@ class SpatialDataController extends Controller {
             case "Admin":
                 break;
         }
-
         echo $Str;
 
     }

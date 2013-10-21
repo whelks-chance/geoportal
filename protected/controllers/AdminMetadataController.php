@@ -37,8 +37,12 @@ class AdminMetadataController extends Controller
             if(RoleManager::hasPermission('addUserToProject', null)) {
 
                 $upsetVisibility = "INSERT INTO projectusers(
-            userid, projectid) VALUES ('" . $userID . "', '" . $projectID . "');";
-                $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+            userid, projectid) VALUES (:userID, :projectID);";
+//                $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+
+                $values = array( ":userID" => $userID, ":projectID" => $projectID);
+
+                DataAdapter::DefaultPDOExecuteAndRead($upsetVisibility, $values);
 
                 $results['success'] = "true";
             } else {
@@ -89,11 +93,15 @@ class AdminMetadataController extends Controller
     static function getUsersProjects( $username ) {
         $projectsQuery = "SELECT pu.projectid, p.projectname
             FROM alphausersdetails a, projectusers pu, project p
-            where username='" . $username . "' and CAST (a.id AS text) = pu.userid
+            where username=:username and CAST (a.id AS text) = pu.userid
             and pu.projectid = p.projectid;";
-        $results = DataAdapter::DefaultExecuteAndRead($projectsQuery, "Geoportal");
+
+        $values = array(":username" => $username );
+
+//        $results = DataAdapter::DefaultExecuteAndRead($projectsQuery, "Geoportal");
+        $results = DataAdapter::DefaultPDOExecuteAndRead($projectsQuery, $values);
         $projectsArray = array();
-        foreach ($results as $project) {
+        foreach ($results->resultObject as $project) {
             $projectArray['projectid'] = trim($project->projectid);
             $projectArray['projectname'] = trim($project->projectname);
             $projectsArray[] = $projectArray;
@@ -170,8 +178,13 @@ class AdminMetadataController extends Controller
 
     private function createProject($projectID, $projectName) {
         $upsetVisibility = "INSERT INTO project(
-            projectid, projectname) VALUES ('" . $projectID . "', '" . $projectName . "');";
-        $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+            projectid, projectname) VALUES (:projectID, :projectName);";
+
+        $values = array(":projectID" => $projectID, ":projectName" => $projectName);
+        $results = DataAdapter::DefaultPDOExecuteAndRead($upsetVisibility, $values);
+        return $results->resultSuccess;
+
+//        $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
     }
 
 
@@ -204,13 +217,18 @@ class AdminMetadataController extends Controller
     }
 
     function setVisibility($surveyID, $visibilityID) {
-        $upsetVisibility = "Update surveyvisibility Set visibilitystateid='" . $visibilityID . "'
-            Where surveyid='" . $surveyID . "';
+        $upsetVisibility = "Update surveyvisibility Set visibilitystateid=:visibilityID
+            Where surveyid=:surveyID ;
             Insert into surveyvisibility(surveyid, visibilitystateid)
-                Select '" . $surveyID . "', 'st002' Where Not Exists
+                Select :surveyID, 'st002' Where Not Exists
                 (Select 1 From surveyvisibility Where
-            surveyid='" . $surveyID . "');";
-        $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+            surveyid=:surveyID);";
+
+        $values = array(":visibilityID" => $visibilityID, ":surveyID" => $surveyID);
+
+        $results = DataAdapter::DefaultPDOExecuteAndRead($upsetVisibility, $values);
+        return $results->resultSuccess;
+//        $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
     }
 
 
@@ -245,23 +263,29 @@ class AdminMetadataController extends Controller
     function upsetSurveyProjectAndVisibility($surveyID, $projectID) {
 //        UpSet survey to be owned by project
 
-        $upsetSurveyProject = "Update surveyownership Set projectid='" . $projectID . "' Where
-             surveyid='" . $surveyID . "';
+        $upsetSurveyProject = "Update surveyownership Set projectid=:projectID  Where
+             surveyid=:surveyID ;
             Insert into surveyownership(surveyid, projectid)
-                Select '" . $surveyID . "', '" . $projectID . "' Where Not Exists
+                Select :surveyID , :projectID  Where Not Exists
                 (Select 1 From surveyownership Where
-            surveyid='" . $surveyID . "');";
-        $results1 = DataAdapter::DefaultExecuteAndRead($upsetSurveyProject, "Geoportal");
+            surveyid=:surveyID);";
+
+        $values = array(":projectID" => $projectID, ":surveyID" => $surveyID);
+        $results = DataAdapter::DefaultPDOExecuteAndRead($upsetSurveyProject, $values);
+//        $results1 = DataAdapter::DefaultExecuteAndRead($upsetSurveyProject, "Geoportal");
 
 //      Set visibility of survey
 
         $upsetVisibility = "Update surveyvisibility Set visibilitystateid='st002'
-            Where surveyid='" . $surveyID . "';
+            Where surveyid=:surveyID ;
             Insert into surveyvisibility(surveyid, visibilitystateid)
-                Select '" . $surveyID . "', 'st002' Where Not Exists
+                Select :surveyID, 'st002' Where Not Exists
                 (Select 1 From surveyvisibility Where
-            surveyid='" . $surveyID . "');";
-        $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
+            surveyid=:surveyID);";
+
+                $values = array(":projectID" => $projectID, ":surveyID" => $surveyID);
+            $results = DataAdapter::DefaultPDOExecuteAndRead($upsetVisibility, $values);
+//        $results2 = DataAdapter::DefaultExecuteAndRead($upsetVisibility, "Geoportal");
     }
 
     function actiongetUserProjectData() {
@@ -274,10 +298,12 @@ FROM surveyvisibility servis, visibilitystates visstat, surveyownership so, proj
 servis.visibilitystateid = visstat.visibilitystateid and
 so.surveyid = servis.surveyid and
 proj.projectid = so.projectid;";
-        $results = DataAdapter::DefaultExecuteAndRead($recordedSurveyOwnershipVisibilityQuery, "Geoportal");
+//        $results = DataAdapter::DefaultExecuteAndRead($recordedSurveyOwnershipVisibilityQuery, "Geoportal");
+
+        $results = DataAdapter::DefaultPDOExecuteAndRead($recordedSurveyOwnershipVisibilityQuery);
 
         $visibilityArray = array();
-        foreach ($results as $survey) {
+        foreach ($results->resultObject as $survey) {
             $surveyArray['surveyid'] = trim($survey->surveyid);
             $surveyArray['visibilitystateid'] = trim($survey->visibilitystateid);
             $surveyArray['visibilitystatename'] = trim($survey->visibilitystatename);
@@ -318,9 +344,10 @@ proj.projectid = so.projectid;";
 
         if(isset($_POST['users'])) {
             $userQuery = "SELECT id, username FROM alphausersdetails;";
-            $results = DataAdapter::DefaultExecuteAndRead($userQuery, "Geoportal");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($userQuery);
+//            $results = DataAdapter::DefaultExecuteAndRead($userQuery, "Geoportal");
             $usersArray = array();
-            foreach ($results as $user) {
+            foreach ($results->resultObject as $user) {
                 $userArray['id'] = trim($user->id);
                 $userArray['username'] = trim($user->username);
                 $usersArray[] = $userArray;
@@ -330,9 +357,10 @@ proj.projectid = so.projectid;";
 
         if(isset($_POST['surveys'])) {
             $surveyQuery = "SELECT surveyid FROM survey;";
-            $results = DataAdapter::DefaultExecuteAndRead($surveyQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($surveyQuery, null, "Survey_Data");
+//            $results = DataAdapter::DefaultExecuteAndRead($surveyQuery, "Survey_Data");
             $surveysArray = array();
-            foreach ($results as $survey) {
+            foreach ($results->resultObject as $survey) {
                 $surveyArray['surveyid'] = trim($survey->surveyid);
                 $surveysArray[] = $surveyArray;
             }
@@ -342,9 +370,10 @@ proj.projectid = so.projectid;";
 
         if(isset($_POST['projects'])) {
             $projectsQuery = "SELECT projectid, projectname FROM project;";
-            $results = DataAdapter::DefaultExecuteAndRead($projectsQuery, "Geoportal");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($projectsQuery);
+//            $results = DataAdapter::DefaultExecuteAndRead($projectsQuery, "Geoportal");
             $projectsArray = array();
-            foreach ($results as $project) {
+            foreach ($results->resultObject as $project) {
                 $projectArray['projectid'] = trim($project->projectid);
                 $projectArray['projectname'] = trim($project->projectname);
                 $projectsArray[] = $projectArray;
@@ -355,9 +384,10 @@ proj.projectid = so.projectid;";
 
         if(isset($_POST['visibilities'])) {
             $visStatesQuery = "SELECT visibilitystateid, visibilitystatename FROM visibilitystates;";
-            $results = DataAdapter::DefaultExecuteAndRead($visStatesQuery, "Geoportal");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($visStatesQuery);
+//            $results = DataAdapter::DefaultExecuteAndRead($visStatesQuery, "Geoportal");
             $visArray = array();
-            foreach ($results as $visibility) {
+            foreach ($results->resultObject as $visibility) {
                 $visibilityArray['vis_id'] = trim($visibility->visibilitystateid);
                 $visibilityArray['vis_name'] = trim($visibility->visibilitystatename);
                 $visArray[] = $visibilityArray;
@@ -369,10 +399,11 @@ proj.projectid = so.projectid;";
         if(isset($_POST['route_type'])) {
             //route types
             $routeQuery = "SELECT * FROM route_type;";
-            $results = DataAdapter::DefaultExecuteAndRead($routeQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($routeQuery, null, "Survey_Data");
+//            $results = DataAdapter::DefaultExecuteAndRead($routeQuery, "Survey_Data");
 
             $routeTypes = array();
-            foreach ($results as $routeInfo) {
+            foreach ($results->resultObject as $routeInfo) {
                 $routeArray['routetypeid'] = trim($routeInfo->routetypeid);
                 $routeArray['routetype_description'] = trim($routeInfo->routetype_description);
                 $routeArray['routetype'] = trim($routeInfo->routetype);
@@ -385,10 +416,11 @@ proj.projectid = so.projectid;";
         if(isset($_POST['response_type'])) {
 //response type
             $responseTypeQuery = "SELECT responseid, response_name FROM response_type;";
-            $results = DataAdapter::DefaultExecuteAndRead($responseTypeQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($responseTypeQuery, null, "Survey_Data");
+//            $results = DataAdapter::DefaultExecuteAndRead($responseTypeQuery, "Survey_Data");
 
             $responseTypes = array();
-            foreach ($results as $responseInfo) {
+            foreach ($results->resultObject as $responseInfo) {
                 $responseArray['responseid'] = trim($responseInfo->responseid);
                 $responseArray['response_name'] = trim($responseInfo->response_name);
                 $responseTypes[] = $responseArray;
@@ -400,12 +432,13 @@ proj.projectid = so.projectid;";
         if(isset($_POST['q_type'])) {
 //question type
             $questionTypeQuery = 'SELECT q_typeid, q_type_text, "q_typeDesc" FROM q_type;';
-            $results = DataAdapter::DefaultExecuteAndRead($questionTypeQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($questionTypeQuery, null, "Survey_Data");
 
+//            $results = DataAdapter::DefaultExecuteAndRead($questionTypeQuery, "Survey_Data");
 //            Log::toFile(print_r($results, true));
 
             $questionTypes = array();
-            foreach ($results as $questionInfo) {
+            foreach ($results->resultObject as $questionInfo) {
                 $questionArray['q_typeid'] = trim($questionInfo->q_typeid);
                 $questionArray['q_type_text'] = trim($questionInfo->q_type_text);
                 $questionArray['q_typeDesc'] = trim($questionInfo->q_typeDesc);
@@ -418,10 +451,12 @@ proj.projectid = so.projectid;";
         if(isset($_POST['dublincore_type'])) {
 //dcType type
             $dcTypeQuery = "SELECT dctypeid, dc_type_title FROM dublincore_type;";
-            $results = DataAdapter::DefaultExecuteAndRead($dcTypeQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($dcTypeQuery, null, "Survey_Data");
+
+//            $results = DataAdapter::DefaultExecuteAndRead($dcTypeQuery, "Survey_Data");
 
             $dcTypeTypes = array();
-            foreach ($results as $dcTypeInfo) {
+            foreach ($results->resultObject as $dcTypeInfo) {
                 $dcTypeType['dctypeid'] = trim($dcTypeInfo->dctypeid);
                 $dcTypeType['dc_type_title'] = trim($dcTypeInfo->dc_type_title);
                 $dcTypeTypes[] = $dcTypeType;
@@ -433,10 +468,12 @@ proj.projectid = so.projectid;";
         if(isset($_POST['dublincore_format'])) {
 //dcFormat type
             $dcFormatQuery = "SELECT dcformatid, dc_format_title FROM dublincore_format;";
-            $results = DataAdapter::DefaultExecuteAndRead($dcFormatQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($dcFormatQuery, null, "Survey_Data");
+
+//            $results = DataAdapter::DefaultExecuteAndRead($dcFormatQuery, "Survey_Data");
 
             $dcFormatTypes = array();
-            foreach ($results as $dcFormatInfo) {
+            foreach ($results->resultObject as $dcFormatInfo) {
                 $dcFormatArray['dcformatid'] = trim($dcFormatInfo->dcformatid);
                 $dcFormatArray['dc_format_title'] = trim($dcFormatInfo->dc_format_title);
                 $dcFormatTypes[] = $dcFormatArray;
@@ -448,10 +485,12 @@ proj.projectid = so.projectid;";
         if(isset($_POST['dublincore_language'])) {
 //dcLang type
             $dcLangQuery = "SELECT dclangid, dc_language_title FROM dublincore_language;";
-            $results = DataAdapter::DefaultExecuteAndRead($dcLangQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($dcLangQuery, null, "Survey_Data");
+
+//            $results = DataAdapter::DefaultExecuteAndRead($dcLangQuery, "Survey_Data");
 
             $dcLangTypes = array();
-            foreach ($results as $dcLangInfo) {
+            foreach ($results->resultObject as $dcLangInfo) {
                 $dcLangArray['dclangid'] = trim($dcLangInfo->dclangid);
                 $dcLangArray['dc_language_title'] = trim($dcLangInfo->dc_language_title);
                 $dcLangTypes[] = $dcLangArray;
@@ -463,10 +502,12 @@ proj.projectid = so.projectid;";
         if(isset($_POST['group_tags'])) {
 //group_tags
             $group_tagsQuery = "SELECT tagid, tgroupid, tag_text FROM group_tags;";
-            $results = DataAdapter::DefaultExecuteAndRead($group_tagsQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($group_tagsQuery, null, "Survey_Data");
+
+//            $results = DataAdapter::DefaultExecuteAndRead($group_tagsQuery, "Survey_Data");
 
             $group_tagsTypes = array();
-            foreach ($results as $group_tagsInfo) {
+            foreach ($results->resultObject as $group_tagsInfo) {
                 $group_tagsArray['tagid'] = trim($group_tagsInfo->tagid);
                 $group_tagsArray['tgroupid'] = trim($group_tagsInfo->tgroupid);
                 $group_tagsArray['tag_text'] = trim($group_tagsInfo->tag_text);
@@ -479,10 +520,12 @@ proj.projectid = so.projectid;";
         if(isset($_POST['spatial_level'])) {
 //spatial_level
             $spatial_levelQuery = "SELECT code, level FROM spatial_level;";
-            $results = DataAdapter::DefaultExecuteAndRead($spatial_levelQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($spatial_levelQuery, null, "Survey_Data");
+
+//            $results = DataAdapter::DefaultExecuteAndRead($spatial_levelQuery, "Survey_Data");
 
             $spatial_levelTypes = array();
-            foreach ($results as $group_tagsInfo) {
+            foreach ($results->resultObject as $group_tagsInfo) {
                 $spatial_levelArray['code'] = trim($group_tagsInfo->code);
                 $spatial_levelArray['level'] = trim($group_tagsInfo->level);
                 $spatial_levelTypes[] = $spatial_levelArray;
@@ -494,10 +537,12 @@ proj.projectid = so.projectid;";
         if(isset($_POST['survey_frequency'])) {
 //survey_frequency
             $survey_frequencyQuery = "SELECT svyfreqid, svy_frequency_title FROM survey_frequency;";
-            $results = DataAdapter::DefaultExecuteAndRead($survey_frequencyQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($survey_frequencyQuery, null, "Survey_Data");
+
+//            $results = DataAdapter::DefaultExecuteAndRead($survey_frequencyQuery, "Survey_Data");
 
             $survey_frequencyTypes = array();
-            foreach ($results as $survey_frequencyInfo) {
+            foreach ($results->resultObject as $survey_frequencyInfo) {
                 $survey_frequencyArray['svyfreqid'] = trim($survey_frequencyInfo->svyfreqid);
                 $survey_frequencyArray['svy_frequency_title'] = trim($survey_frequencyInfo->svy_frequency_title);
                 $survey_frequencyTypes[] = $survey_frequencyArray;
@@ -509,10 +554,12 @@ proj.projectid = so.projectid;";
         if(isset($_POST['thematic_groups'])) {
 //thematic_groups
             $thematic_groupsQuery = "SELECT tgroupid, grouptitle, groupdescription FROM thematic_groups;";
-            $results = DataAdapter::DefaultExecuteAndRead($thematic_groupsQuery, "Survey_Data");
+            $results = DataAdapter::DefaultPDOExecuteAndRead($thematic_groupsQuery, null, "Survey_Data");
+
+//            $results = DataAdapter::DefaultExecuteAndRead($thematic_groupsQuery, "Survey_Data");
 
             $thematic_groupsTypes = array();
-            foreach ($results as $thematic_groupsInfo) {
+            foreach ($results->resultObject as $thematic_groupsInfo) {
                 $thematic_groupsArray['tgroupid'] = trim($thematic_groupsInfo->tgroupid);
                 $thematic_groupsArray['grouptitle'] = trim($thematic_groupsInfo->grouptitle);
                 $thematic_groupsArray['groupdescription'] = trim($thematic_groupsInfo->groupdescription);
@@ -529,14 +576,15 @@ proj.projectid = so.projectid;";
     function actiongetDCinfo() {
 
         $dcInfoQuery = "SELECT surveyid, identifier, title FROM dc_info;";
+        $results = DataAdapter::DefaultPDOExecuteAndRead($dcInfoQuery, null, "Survey_Data");
 
-        $results = DataAdapter::DefaultExecuteAndRead($dcInfoQuery, "Survey_Data");
+//        $results = DataAdapter::DefaultExecuteAndRead($dcInfoQuery, "Survey_Data");
 
 //        Log::toFile(print_r($results, true));
 
         $addDCInfoArray = array();
 
-        foreach ($results as $dcInfo) {
+        foreach ($results->resultObject as $dcInfo) {
 //            Log::toFile("Survey : " . print_r($surveyData, true));
             $dcInfoArray['sid'] = trim($dcInfo->surveyid);
             $dcInfoArray['wid'] = trim($dcInfo->identifier);
@@ -557,15 +605,20 @@ proj.projectid = so.projectid;";
 
 //        $dcInfoQuery = "SELECT FROM survey_questions_link, questions where surveyid='" . $SID . "';";
 
-        $surveyQuestionQuery = "select q.qid, q.questionnumber from questions q join survey_questions_link surql on q.qid = surql.qid where surql.surveyid='" . $SID . "';";
+        $surveyQuestionQuery = "select q.qid, q.questionnumber from questions q
+        join survey_questions_link surql on q.qid = surql.qid where surql.surveyid=:SID;";
 
-        $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionQuery, "Survey_Data");
+        $values = array(":SID" => $SID);
+
+        $results = DataAdapter::DefaultPDOExecuteAndRead($surveyQuestionQuery, $values, "Survey_Data");
+
+//        $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionQuery, "Survey_Data");
 
 //        Log::toFile(print_r($results, true));
 
         $allQuestionArray = array();
 
-        foreach ($results as $dcInfo) {
+        foreach ($results->resultObject as $dcInfo) {
 //            Log::toFile("Survey : " . print_r($surveyData, true));
             $questionArray['QuestionName'] = trim($dcInfo->questionnumber);
             $questionArray['QuestionID'] = trim($dcInfo->qid);
@@ -595,26 +648,29 @@ proj.projectid = so.projectid;";
         switch ($recordType) {
             case "survey" :
                 //check survey
-                $checkRecordExistsQuery = "Select Count (surveyid) From survey Where surveyid='" . $recordID . "';";
+                $checkRecordExistsQuery = "Select Count (surveyid) From survey Where surveyid=:recordID;";
                 break;
             case "survey_dc" :
                 //check dc exists
-                $checkRecordExistsQuery = "Select Count (identifier) From dc_info Where identifier='" . $recordID . "';";
+                $checkRecordExistsQuery = "Select Count (identifier) From dc_info Where identifier=:recordID;";
                 break;
             case "survey_question" :
                 // check question exists
-                $checkRecordExistsQuery = "Select Count (qid) From questions Where qid='" . $recordID . "';";
+                $checkRecordExistsQuery = "Select Count (qid) From questions Where qid=:recordID;";
                 break;
             case "survey_response" :
                 // check response
-                $checkRecordExistsQuery = "Select Count (responseid) From responses Where responseid='" . $recordID . "';";
+                $checkRecordExistsQuery = "Select Count (responseid) From responses Where responseid=:recordID;";
                 break;
         }
 
-        $result = DataAdapter::DefaultExecuteAndRead($checkRecordExistsQuery, "Survey_Data");
+        $values = array(":recordID" => $recordID);
+
+        $result = DataAdapter::DefaultPDOExecuteAndRead($checkRecordExistsQuery, $values, "Survey_Data");
+//        $result = DataAdapter::DefaultExecuteAndRead($checkRecordExistsQuery, "Survey_Data");
 
         Log::toFile(print_r($result, true));
-        $count = $result[0]->count;
+        $count = $result->resultObject[0]->count;
 
         if ($count > 0) {
 
@@ -629,25 +685,35 @@ proj.projectid = so.projectid;";
                     break;
 
                 case "survey_dc" :
-                    $getSurveyForWIDQuery = "Select surveyid from survey where identifier='" . $recordID . "';";
-                    $result = DataAdapter::DefaultExecuteAndRead($getSurveyForWIDQuery, "Survey_Data");
-                    $surveyid = trim( $result[0]->surveyid );
+                    $getSurveyForWIDQuery = "Select surveyid from survey where identifier=:recordID;";
+                            $values = array(":recordID" => $recordID);
+                       $result = DataAdapter::DefaultPDOExecuteAndRead($getSurveyForWIDQuery, $values, "Survey_Data");
+//                    $result = DataAdapter::DefaultExecuteAndRead($getSurveyForWIDQuery, "Survey_Data");
+                    $surveyid = trim( $result->resultObject[0]->surveyid );
                     break;
 
                 case "survey_question" :
-                    $getSurveyForWIDQuery = "Select surveyid from survey_questions_link where qid='" . $recordID . "';";
-                    $result = DataAdapter::DefaultExecuteAndRead($getSurveyForWIDQuery, "Survey_Data");
-                    $surveyid = trim( $result[0]->surveyid );
+                    $getSurveyForWIDQuery = "Select surveyid from survey_questions_link where qid=:recordID;";
+                            $values = array(":recordID" => $recordID);
+                    $result = DataAdapter::DefaultPDOExecuteAndRead($getSurveyForWIDQuery, $values, "Survey_Data");
+
+//                    $result = DataAdapter::DefaultExecuteAndRead($getSurveyForWIDQuery, "Survey_Data");
+                    $surveyid = trim( $result->resultObject[0]->surveyid );
                     break;
             }
 
             $getProjectForRecordQuery = "Select p.projectid, projectname from surveyownership so,
-            project p where so.surveyid='" . $surveyid ."' and p.projectid=so.projectid;";
-            $result = DataAdapter::DefaultExecuteAndRead($getProjectForRecordQuery, "Geoportal");
+            project p where so.surveyid=:surveyid and p.projectid=so.projectid;";
 
-            if (sizeof($result) > 0) {
-                $returnArray['projectid'] = $result[0]->projectid;
-                $returnArray['projectname'] = $result[0]->projectname;
+                    $values = array(":surveyid" => $surveyid);
+
+            $result = DataAdapter::DefaultPDOExecuteAndRead($getProjectForRecordQuery, $values);
+
+//            $result = DataAdapter::DefaultExecuteAndRead($getProjectForRecordQuery, "Geoportal");
+
+            if (sizeof($result->resultObject) > 0) {
+                $returnArray['projectid'] = $result->resultObject[0]->projectid;
+                $returnArray['projectname'] = $result->resultObject[0]->projectname;
             }
 
         } else {
@@ -794,7 +860,7 @@ proj.projectid = so.projectid;";
             if ( $update ) {
 
                 $dbInsert = 'UPDATE survey
-        SET survey_title=:surveyTitle, datacollector=:surveyCollector,
+        SET survey_title=:surveyTitle, identifier=:identifier, datacollector=:surveyCollector,
         collectionstartdate=now(), collectionenddate=now(),
         moc_description=:surveyDataCollectionMethod, samp_procedure=:surveySamplingProcedure,
         collectionsituation=:surveyCollectionSituation, surveyfrequency=:surveyFrequency,
@@ -964,40 +1030,55 @@ proj.projectid = so.projectid;";
         if ( $allowed ) {
 
             if ( $update ) {
-                $dbInsert = "UPDATE dc_info Set " .
+                $dbInsert = "UPDATE dc_info Set identifier=:identifier, title=:title ,
+                    creator=:creator , subject=:subject ,
+                    description=:description ,
+                    publisher=:publisher ,
+                    contributor=:contributor, date=(cast(:date as timestamp)),
+                    type=:type , format=:format ,
+                    source=:source, language=:language ,
+                    relation=:relation , coverage=:coverage ,
+                    rights=:rights , user_id=:user_id ,
+                    created=(cast(:created as timestamp)), updated=now()
+                    WHERE identifier=:identifier;";
 
-                    "identifier='" . $identifier . "', title='" . $title . "', creator='" . $creator . "', subject='"
-                    . $subject . "', description='" .
-                    $description . "', publisher='" . $publisher . "', contributor='" . $contributor .
-                    "', date=TIMESTAMP '" . $date . "', type='" . $type . "', format='" . $format . "', source='"
-                    . $source . "', language='" . $language . "', relation='" . $relation . "', coverage='" .
-                    $coverage . "', rights='" . $rights . "', user_id='" . $user_id . "'" .
-                    ", created=TIMESTAMP '" . $created . "', updated=TIMESTAMP 'now' " .
-                    "WHERE identifier='" . $identifier ."';";
+                $values = array(":identifier" => $identifier, ":title" => $title, ":creator" => $creator, ":subject" => $subject,
+                    ":description" => $description, ":publisher" => $publisher,  ":contributor" => $contributor, ":date" => $date,
+                    ":type" => $type, ":format" => $format,  ":source" => $source, ":language" => $language, ":relation" => $relation,
+                    ":coverage" => $coverage, ":rights" => $rights, ":user_id" => $user_id, ":created" => $created);
             } else {
 
 
                 $dbInsert = "INSERT INTO dc_info(
             identifier, title, creator, subject, description, publisher,
             contributor, date, type, format, source, language, relation,
-            coverage, rights, user_id, created, updated)";
-                $dbInsert .= " VALUES ('";
+            coverage, rights, user_id, created, updated) VALUES (identifier, :title , :creator ,
+                 :subject , :description ,
+                  :publisher , :contributor ,
+                   (cast(:date as timestamp)), :type , :format ,
+                    :source , :language ,
+                     :relation , :coverage ,
+                     :rights , :user_id, (cast(:created as timestamp)), now();)"; // . $updated;
 
-                $dbInsert .= $identifier . "', '" . $title . "', '" . $creator . "', '" . $subject . "', '" .
-                    $description . "', '" . $publisher . "', '" . $contributor . "', TIMESTAMP '" . $date . "', '" .
-                    $type . "', '" . $format . "', '" . $source . "', '" . $language . "', '" . $relation . "', '" .
-                    $coverage . "', '" . $rights . "', '" . $user_id . "'" .
-                    ", TIMESTAMP '" . $created . "', TIMESTAMP 'now"; // . $updated;
 
-                $dbInsert .= "');";
+                $values = array(":identifier" => $identifier, ":title" => $title, ":creator" => $creator,
+                    ":subject" => $subject,
+                    ":description" => $description, ":publisher" => $publisher, ":contributor" => $contributor,
+                ":date" => $date, ":type" => $type, ":format" => $format, ":source" => $source,
+                    ":language" => $language,
+                ":relation" => $relation, ":rights" => $rights, ":coverage" => $coverage, ":user_id" => $user_id,
+                    ":created" => $created
+                );
 
             }
 
             Log::toFile($dbInsert);
 
-            $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
+            $result = DataAdapter::DefaultPDOExecuteAndRead($dbInsert, $values, "Survey_Data");
 
-            $returnArray['success'] = "true";
+//            $results = DataAdapter::DefaultExecuteAndRead($dbInsert, "Survey_Data");
+
+            $returnArray['success'] = $result->resultSuccess;
             $returnArray['dcInsert'] = $dbInsert;
 
         } else {
@@ -1089,7 +1170,9 @@ proj.projectid = so.projectid;";
             table_ids=:table_ids, computed_var=:computed_var, checks=:checks, route_notes=:route_notes,
             user_id=:user_id, updated=now() WHERE responseid=:responseid;";
 
-                $resultObject = DataAdapter::DefaultPDOExecuteAndRead($dbQuery, $values, "Survey_Data");
+//                $resultObject = DataAdapter::DefaultPDOExecuteAndRead($dbQuery, $values, "Survey_Data");
+                $result = DataAdapter::DefaultPDOExecuteAndRead($dbQuery, $values, "Survey_Data");
+                $returnArray['success'] = $result->resultSuccess;
 
             } else {
 
@@ -1125,9 +1208,8 @@ proj.projectid = so.projectid;";
 //                $results = DataAdapter::DefaultExecuteAndRead($questionResponseLinkQuery, "Survey_Data");
 
                 $returnArray['resqueslink'] = $questionResponseLinkQuery;
+                $returnArray['success'] = $resultObject->resultSuccess;
             }
-
-            $returnArray['success'] = "true";
 
         } else {
             $returnArray['success'] = false;
@@ -1195,7 +1277,6 @@ proj.projectid = so.projectid;";
             $QuestionSubOf = trim($_POST['QuestionSubOf']);
         }
 
-        $qtext_index_function = "to_tsvector('english', '" . $QuestionText . "')";
 
         $project = "";
         if(isset($_POST['projectID'])) {
@@ -1226,42 +1307,65 @@ proj.projectid = so.projectid;";
         if ( $allowed ) {
 
             if ( $update ) {
-                $dbUpdateQuery = "UPDATE questions Set " .
+                $dbUpdateQuery = "UPDATE questions Set qid=:QuestionID , literal_question_text=:QuestionText ,
+                    questionnumber=:QuestionNumber ,
+                    thematic_groups=:QuestionThematicGroups ,
+                    thematic_tags=:QuestionThematicTags ,
+                    link_from=:QuestionLinkedFrom ,
+                    subof=:QuestionSubOf , type=:QuestionType ,
+                    variableid=:QuestionVariable , notes=:QuestionNotesPrompts , user_id=:username ,
+                    updated=now() ,
+                    qtext_index=to_tsvector('english', :QuestionText ) WHERE qid=:QuestionID;";
 
-                    "qid='" . $QuestionID . "', literal_question_text='" . $QuestionText .
-                    "', questionnumber='" . $QuestionNumber . "', thematic_groups='" . $QuestionThematicGroups .
-                    "', thematic_tags='" . $QuestionThematicTags . "', link_from='" . $QuestionLinkedFrom .
-                    "', subof='" . $QuestionSubOf ."', type='" . $QuestionType . "', variableid='" . $QuestionVariable .
-                    "', notes='" . $QuestionNotesPrompts . "', user_id='" . $username .
-                    "', updated=TIMESTAMP 'now' , qtext_index=" . $qtext_index_function .
-                    " WHERE qid='" . $QuestionID . "';";
-                $results = DataAdapter::DefaultExecuteAndRead($dbUpdateQuery, "Survey_Data");
+                $values = array(":QuestionID" => $QuestionID, ":QuestionText" => $QuestionText, ":QuestionNumber" => $QuestionNumber,
+                ":QuestionThematicGroups" => $QuestionThematicGroups, ":QuestionThematicTags" => $QuestionThematicTags,
+                    ":QuestionLinkedFrom" => $QuestionLinkedFrom, ":QuestionSubOf" => $QuestionSubOf, ":QuestionType" => $QuestionType,
+                ":QuestionVariable" => $QuestionVariable, ":QuestionNotesPrompts" => $QuestionNotesPrompts, ":username" => $username);
+
+                $results = DataAdapter::DefaultPDOExecuteAndRead($dbUpdateQuery, $values, "Survey_Data");
+//                $results = DataAdapter::DefaultExecuteAndRead($dbUpdateQuery, "Survey_Data");
 
                 $returnArray['questionInsert'] = $dbUpdateQuery;
-                $returnArray['success'] = "true";
+                $returnArray['success'] = $results->resultSuccess;
             } else {
 
                 $questionInsertQuery = "INSERT INTO questions(
             qid, literal_question_text, questionnumber, thematic_groups,
             thematic_tags, link_from, subof, type, variableid, notes, user_id,
-            created, updated, qtext_index) VALUES ('";
+            created, updated, qtext_index) VALUES (:QuestionID, :QuestionText , :QuestionNumber ,
+                :QuestionThematicGroups ,
+                :QuestionThematicTags ,
+                :QuestionLinkedFrom ,
+                :QuestionSubOf , :QuestionType ,
+                :QuestionVariable ,
+                :QuestionNotesPrompts , :username ,
+                now(), now(), qtext_index=to_tsvector('english', :QuestionText ) );";
 
-                $questionInsertQuery .= $QuestionID . "', '" . $QuestionText . "', '" . $QuestionNumber . "', '" . $QuestionThematicGroups . "', '" .
-                    $QuestionThematicTags . "', '" . $QuestionLinkedFrom . "', '" . $QuestionSubOf . "', '" . $QuestionType . "', '" .
-                    $QuestionVariable . "', '" . $QuestionNotesPrompts . "', '" . $username .
-                    "', Timestamp 'now', Timestamp 'now', " . $qtext_index_function . ");";
+                $values = array( ":QuestionID" => $QuestionID,
+                    ":QuestionText" => $QuestionText, ":QuestionNumber" => $QuestionNumber, ":QuestionThematicGroups" => $QuestionThematicGroups,
+                    ":QuestionThematicTags" => $QuestionThematicTags, ":QuestionLinkedFrom" => $QuestionLinkedFrom,
+                    ":QuestionSubOf" => $QuestionSubOf, ":QuestionType" => $QuestionType, ":QuestionVariable" => $QuestionVariable,
+                    ":QuestionNotesPrompts" => $QuestionNotesPrompts, ":username" => $username,
+
+                );
 
                 Log::toFile($questionInsertQuery);
+                $results = DataAdapter::DefaultPDOExecuteAndRead($questionInsertQuery, $values, "Survey_Data");
 
-                $results = DataAdapter::DefaultExecuteAndRead($questionInsertQuery, "Survey_Data");
+//                $results = DataAdapter::DefaultExecuteAndRead($questionInsertQuery, "Survey_Data");
 
-                $surveyQuestionLinkQuery = "INSERT INTO survey_questions_link( surveyid, qid, pk) VALUES ('" .
-                    $QuestionSurveyID . "', '" . $QuestionID . "', 0);";
-                $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionLinkQuery, "Survey_Data");
+                $surveyQuestionLinkQuery = "INSERT INTO survey_questions_link( surveyid, qid, pk)
+                VALUES (:QuestionSurveyID , :QuestionID , 0);";
+
+                $values = array(":QuestionSurveyID" => $QuestionSurveyID, ":QuestionID" => $QuestionID);
+
+                $results = DataAdapter::DefaultPDOExecuteAndRead($surveyQuestionLinkQuery, $values, "Survey_Data");
+
+//                $results = DataAdapter::DefaultExecuteAndRead($surveyQuestionLinkQuery, "Survey_Data");
 
                 $returnArray['questionInsert'] = $questionInsertQuery;
                 $returnArray['linkquestionsurveyquery'] = $surveyQuestionLinkQuery;
-                $returnArray['success'] = "true";
+                $returnArray['success'] = $results->resultSuccess;
             }
         } else {
             $returnArray['success'] = false;

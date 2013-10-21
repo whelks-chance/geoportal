@@ -43,22 +43,33 @@ class NomiswebReader implements FeedReaderInterface{
                 $foundWord["id"] = $family->id;
                 $foundWord["name"] = $family->name->value;
 
-                $dataAdapter = new DataAdapter();
-                $findQuery = "select id, wiserd_id from question_link where remote_id='" . $family->id . "';";
+//                $dataAdapter = new DataAdapter();
+                $findQuery = "select id, wiserd_id from question_link where remote_id=:familyID;";
 
                 $foundWord["wiserd"] = "";
                 $foundWord["wiserd_survey"] = "";
 
+                $values = array(":familyID" => $family->id);
                 try {
-                    $results = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
-                    forEach($results as $DR) {
+//                    $results = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
+                    $remoteLinkResults = DataAdapter::DefaultPDOExecuteAndRead($findQuery, $values, "Survey_Data");
+
+
+                    forEach($remoteLinkResults->resultObject as $DR) {
                         $foundWord["wiserd"] = $DR->wiserd_id;
-                        $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . strtolower($DR->wiserd_id) . "');";
+                        $survey_details = "Select * from Survey WHERE surveyid =
+                        (Select surveyid as query from survey_questions_link
+                        WHERE qid = :loweredWID);";
 
-                        $results = $dataAdapter->DefaultExecuteAndRead($survey_details, "Survey_Data");
+                        $loweredWID = strtolower($DR->wiserd_id);
 
-                        if(sizeof($results) > 0 ){
-                            $foundWord["wiserd_survey"] = $results[0]->surveyid;
+                        $surveyValues = array(":loweredWID" => $loweredWID);
+//                        $results = $dataAdapter->DefaultExecuteAndRead($survey_details, "Survey_Data");
+                        $surveyLinkResults = DataAdapter::DefaultPDOExecuteAndRead($survey_details, $surveyValues, "Survey_Data");
+
+
+                        if(sizeof($surveyLinkResults->resultObject) > 0 ){
+                            $foundWord["wiserd_survey"] = $surveyLinkResults->resultObject[0]->surveyid;
                         }
                     }
                 }catch (Exception $ex) {

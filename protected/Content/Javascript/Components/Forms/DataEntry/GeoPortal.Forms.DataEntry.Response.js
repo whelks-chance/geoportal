@@ -277,7 +277,7 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                                         update : true,
                                         projectID : ridProjectID
                                     },
-                                    waitMsg: 'Inserting Question Data....',
+                                    waitMsg: 'Inserting Response Data....',
                                     success: function (form, action) {
                                         Ext.MessageBox.alert("Success", "Response data overwritten");
                                     },

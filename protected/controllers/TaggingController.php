@@ -114,21 +114,26 @@ class TaggingController extends Controller{
 //            }
 //        }
 
-        $remove = array("\n", "\r\n", "\r", "<p>", "</p>", "<h1>", "</h1>", ".", ",", "\"", ":");
+        $remove = array("\n", "\r\n", "\r", "<p>", "</p>", "<h1>", "</h1>", ".", ",", "\"", ":", "-");
         $str = str_replace($remove, ' ', $str);
+
+        $str = preg_replace("/[^A-Za-z ]/", '', $str);
+
         $stringArray = explode(" ", $str);
 
-        $ignoreWords = array("a", "i", "the", "and", "with", "we", "to", "of", "on", "is", "for", "in");
-        array_push($ignoreWords, "that", "this", "each", "are", "all", "it", "its", "you", "think", "but");
-        array_push($ignoreWords, "know", "they", "can", "there", "very", "because", "int", "res", "things");
-        array_push($ignoreWords, "what", "got", "yeah", "be", "were", "has", "was", "at", "from", "our");
-        array_push($ignoreWords, "said", "by", "as", "her");
+//        $ignoreWords = array("a", "i", "the", "and", "with", "we", "to", "of", "on", "is", "for", "in");
+//        array_push($ignoreWords, "that", "this", "each", "are", "all", "it", "its", "you", "think", "but");
+//        array_push($ignoreWords, "know", "they", "can", "there", "very", "because", "int", "res", "things");
+//        array_push($ignoreWords, "what", "got", "yeah", "be", "were", "has", "was", "at", "from", "our");
+//        array_push($ignoreWords, "said", "by", "as", "her");
+
+        $ignoreWords = stopwords::getStopWords();
 
         foreach ($stringArray as $word) {
             if (in_array(($word), $ignoreWords)) {
 
             } else {
-                if( strlen($word) > 0) {
+                if( strlen($word) > 2) {
                     if (array_key_exists($word, $counts)){
                         $counts[$word] = $counts[$word] +1;
                     } else {
@@ -139,8 +144,10 @@ class TaggingController extends Controller{
         }
 
         $popularWords = array();
+        $frequencyModifier = sizeof($stringArray) / sizeof($counts) * 0.9;
+
         foreach ($counts as $key=>$value) {
-            if($counts[$key] > 2) {
+            if($counts[$key] > $frequencyModifier) {
                 $word = array();
                 $word['word'] = $key;
                 $word['count'] = $value;
@@ -150,11 +157,15 @@ class TaggingController extends Controller{
 
         $counts = $popularWords;
 
-        Log::toFile("array length " . sizeof($counts));
-        Log::toFile(json_encode($counts));
+//        Log::toFile("array length " . sizeof($counts));
+//        Log::toFile(json_encode($counts));
 
 //PhraseCount(str)
 
         Return $counts;
+    }
+
+    public function actionsaveTaggingMetadata() {
+        Log::toFile("tagging : " . $_POST);
     }
 }

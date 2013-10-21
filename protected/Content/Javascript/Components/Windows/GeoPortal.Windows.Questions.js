@@ -27,6 +27,13 @@
                 viewConfig: {
                     forceFit: true
                 },
+//                listeners: {
+//                    afterlayout: {
+//                        fn: this.getStore().load,
+//                        single: true,
+//                        scope: this
+//                    }
+//                },
                 columns: [
                     {
                         xtype: 'gridcolumn',

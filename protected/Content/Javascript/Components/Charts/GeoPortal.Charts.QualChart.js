@@ -1,4 +1,5 @@
 ﻿GeoPortal.Charts.QualChart = Ext.extend(Ext.Container, {
+    title: 'Graphs',
     layout: 'fit',
     ID: null,
     place1: null,

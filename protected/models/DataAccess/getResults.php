@@ -80,22 +80,32 @@ surproj.projectid
 in
 ( Select Distinct projectid from projectusers pu join
 alphausersdetails aud on pu.userid = cast (aud.id as text)
-where aud.username='" . $username . "');";
+where aud.username=:username);";
 
-        $allowedSurveys = DataAdapter::DefaultExecuteAndRead($checkViewableQuery, "Geoportal");
+        $allowedSurveyValues = array(":username" => $username);
+//        $allowedSurveys = DataAdapter::DefaultExecuteAndRead($checkViewableQuery, "Geoportal");
+        $allowedSurveysResults = DataAdapter::DefaultPDOExecuteAndRead($checkViewableQuery, $allowedSurveyValues);
 
 //        Log::toFile(print_r($allowedSurveys, true));
 
         $allowed = array();
         foreach ($rows as $row) {
 
-            $getQuestionsSurveyQuery = "SELECT surveyid FROM survey_questions_link where qid='" . trim($row->qid) . "';";
-            $thisSurvey = DataAdapter::DefaultExecuteAndRead($getQuestionsSurveyQuery, "Survey_Data");
-//            Log::toFile(print_r($thisSurvey, true));
+            $getQuestionsSurveyQuery = "SELECT surveyid FROM survey_questions_link where qid=:qid;";
+            $trimmedID = trim($row->qid);
+            $linkValues = array(":qid" => $trimmedID);
+//            $thisSurvey = DataAdapter::DefaultExecuteAndRead($getQuestionsSurveyQuery, "Survey_Data");
+            $thisSurveyResults = DataAdapter::DefaultPDOExecuteAndRead($getQuestionsSurveyQuery, $linkValues, "Survey_Data");
 
-            if(sizeof($thisSurvey) > 0){
-                foreach($allowedSurveys as $allowedSurvey) {
-                    if(trim($allowedSurvey->surveyid) == trim($thisSurvey[0]->surveyid)) {
+//            Log::toFile(print_r($thisSurveyResults->resultObject, true));
+
+            if(sizeof($thisSurveyResults->resultObject) > 0){
+                foreach($allowedSurveysResults->resultObject as $allowedSurvey) {
+                    if(trim($allowedSurvey->surveyid) == trim($thisSurveyResults->resultObject[0]->surveyid)) {
+//                        Log::toFile("*" . trim($allowedSurvey->surveyid) .
+//                            "*=*" .
+//                            trim($thisSurveyResults->resultObject[0]->surveyid). "*");
+
                         $allowed[] = $row;
                     }
                 }
@@ -127,15 +137,22 @@ where aud.username='" . $username . "');";
 //                $survey_ID = Trim($row->link_from);
                 $survey_ID = Trim($row->qid);
 
-                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
+//                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
-                $surveycmd = pg_query($cnn, $survey_details);
+//                $surveycmd = pg_query($cnn, $survey_details);
 
-                $DA = new DataAdapter();
-                $surveyResults = $DA->Read($surveycmd);
+//                $DA = new DataAdapter();
+//                $surveyResults = $DA->Read($surveycmd);
 
-                If (count($surveyResults) > 0) {
-                    $surDRdr = $surveyResults[0];
+                $survey_details = "Select * from Survey WHERE surveyid =
+                (Select surveyid as query from survey_questions_link WHERE qid =:survey_ID);";
+
+                $values = array(":survey_ID" => $survey_ID);
+
+                $surveyResults = DataAdapter::DefaultPDOExecuteAndRead($survey_details, $values, "Survey_Data");
+
+                If (count($surveyResults->resultObject) > 0) {
+                    $surDRdr = $surveyResults->resultObject[0];
 
                     $rootQ->SurveyID = Trim($surDRdr->surveyid);
                     $rootQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
@@ -177,18 +194,24 @@ where aud.username='" . $username . "');";
 //                $survey_ID = Trim($row->link_from);
                 $survey_ID = Trim($row->qid);
 
-                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
+//                $survey_details = "Select * from Survey WHERE surveyid =
+//                (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
+//
+//                $surveycmd = pg_query($cnn, $survey_details);
+//
+//                $DA = new DataAdapter();
+//                $surveyRows = $DA->Read($surveycmd);
 
-                $surveycmd = pg_query($cnn, $survey_details);
-
-                $DA = new DataAdapter();
-                $surveyRows = $DA->Read($surveycmd);
+                $survey_details = "Select * from Survey WHERE surveyid =
+                (Select surveyid as query from survey_questions_link WHERE qid = :survey_ID);";
+                $values = array(":survey_ID" => $survey_ID);
+                $surveyRows = DataAdapter::DefaultPDOExecuteAndRead($survey_details, $values, "Survey_Data");
 
 //                cnn.Open();
 //                $surDRdr = surveycmd.ExecuteReader;
 
-                If (count($surveyRows) > 0) {
-                    $surDRdr = $surveyRows[0];
+                If (count($surveyRows->resultObject) > 0) {
+                    $surDRdr = $surveyRows->resultObject[0];
 
                     $singleQ->SurveyID = Trim($surDRdr->surveyid);
                     $singleQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
@@ -223,18 +246,25 @@ where aud.username='" . $username . "');";
 //                $survey_ID = Trim($row->link_from);
                 $survey_ID = Trim($row->qid);
 
-                $survey_details = "Select * from Survey WHERE lower(surveyid) = lower((Select distinct(surveyid) from survey_questions_link WHERE qid = lower('" . $survey_ID . "')));";
-
-                $surveycmd = pg_query($cnn, $survey_details);
-
-                $DA = new DataAdapter();
-                $surveyResults = $DA->Read($surveycmd);
+//                $survey_details = "Select * from Survey WHERE lower(surveyid) = lower((Select distinct(surveyid) from survey_questions_link WHERE qid = lower('" . $survey_ID . "')));";
+//
+//                $surveycmd = pg_query($cnn, $survey_details);
+//
+//                $DA = new DataAdapter();
+//                $surveyResults = $DA->Read($surveycmd);
 
 //                cnn.Open();
 //                $surDRdr = surveycmd.ExecuteReader;
 
-                If (count($surveyResults) > 0) {
-                    $surDRdr = $surveyResults[0];
+                $survey_details = "Select * from Survey WHERE lower(surveyid) =
+                lower((Select distinct(surveyid) from survey_questions_link WHERE qid = lower(:survey_ID)));";
+
+                $values = array(":survey_ID" => $survey_ID);
+                $surveyResults = DataAdapter::DefaultPDOExecuteAndRead($survey_details, $values, "Survey_Data");
+
+
+                If (count($surveyResults->resultObject) > 0) {
+                    $surDRdr = $surveyResults->resultObject[0];
 
                     $subQ->SurveyID = Trim($surDRdr->surveyid);
                     $subQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
@@ -274,15 +304,21 @@ where aud.username='" . $username . "');";
 //                $survey_ID = Trim($row->link_from);
                 $survey_ID = Trim($row->qid);
 
-                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
+//                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
 
-                $surveycmd = pg_query($cnn, $survey_details);
+//                $surveycmd = pg_query($cnn, $survey_details);
 
-                $DA = new DataAdapter();
-                $surveyResults = $DA->Read($surveycmd);
+//                $DA = new DataAdapter();
+//                $surveyResults = $DA->Read($surveycmd);
 
-                If (count($surveyResults) > 0) {
-                    $surDRdr = $surveyResults[0];
+                $survey_details = "Select * from Survey WHERE surveyid =
+                (Select surveyid as query from survey_questions_link WHERE qid =:survey_ID);";
+                $values = array(":survey_ID" => $survey_ID);
+                $surveyResults = DataAdapter::DefaultPDOExecuteAndRead($survey_details, $values, "Survey_Data");
+
+
+                If (count($surveyResults->resultObject) > 0) {
+                    $surDRdr = $surveyResults->resultObject[0];
 
                     $compoundQ->SurveyID = Trim($surDRdr->surveyid);
                     $compoundQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
@@ -316,15 +352,21 @@ where aud.username='" . $username . "');";
 //                $survey_ID = Trim($row->link_from);
                 $survey_ID = Trim($row->qid);
 
-                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
+//                $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . $survey_ID . "');";
+//
+//                $surveycmd = pg_query($cnn, $survey_details);
+//
+//                $DA = new DataAdapter();
+//                $surveyResults = $DA->Read($surveycmd);
 
-                $surveycmd = pg_query($cnn, $survey_details);
+                $survey_details = "Select * from Survey WHERE surveyid =
+                (Select surveyid as query from survey_questions_link WHERE qid = :survey_ID);";
+                $values = array(":survey_ID" => $survey_ID);
+                $surveyResults = DataAdapter::DefaultPDOExecuteAndRead($survey_details, $values, "Survey_Data");
 
-                $DA = new DataAdapter();
-                $surveyResults = $DA->Read($surveycmd);
 
-                If (count($surveyResults) > 0) {
-                    $surDRdr = $surveyResults[0];
+                If (count($surveyResults->resultObject) > 0) {
+                    $surDRdr = $surveyResults->resultObject[0];
 
                     $subsubQ->SurveyID = Trim($surDRdr->surveyid);
                     $subsubQ->DataSource = $this::getDataSourceType($surDRdr->surveyid);
@@ -397,62 +439,100 @@ where aud.username='" . $username . "');";
         Return $DataSourceType;
     }
 
-    Public Function getSurveyQuestion($SID) {
+    Public Function getSurveyQuestion($SID, $start, $limit) {
 
         $Qs = array();
 
-        $selStr = "SELECT * from survey_questions_link WHERE surveyid ='" . Trim($SID) . "';";
+        $SID = Trim($SID);
+        $selStr = "SELECT qid from survey_questions_link WHERE surveyid = :SID order by qid";
+        //limit :limit offset :start;";
 
-        $db = new getDBConnections();
+        $values = array(":SID" => $SID);//, ":limit" => $limit, ":start" => $start);
+        $rows = DataAdapter::DefaultPDOExecuteAndRead($selStr, $values, "Survey_Data");
 
-        $cnn = $db->getDBConnection("Survey_Data");
+        $rowSubset = array_slice($rows->resultObject, $start, $limit);
 
-//        $DT = new DataTable();
-        $queryResult = pg_query($cnn, $selStr);
+        Log::toFile("start " . $start . " limit " . $limit . " size " . sizeof($rowSubset));
 
-        $DA = new DataAdapter();
-        $rows = $DA->Read($queryResult);
+        $longOrs = "";
+        foreach ($rowSubset as $row) {
+            $longOrs .= "lower(qid) = lower('" . Trim($row->qid) . "') or ";
+        }
+        $longOrs = rtrim($longOrs, "or ");
 
-//        $DA->Fill($DT);
+        $selQ = "Select qid, questionnumber, literal_question_text, thematic_groups, thematic_tags
+                FROM questions WHERE " . $longOrs . ";";
+        $results = DataAdapter::DefaultPDOExecuteAndRead($selQ, null, "Survey_Data");
+        forEach($results->resultObject as $DR) {
 
-        ForEach ($rows as $row) { // row As DataRow In DT.Rows
-            $qid = $row->qid;
+            $question = new allQuestions();
+            $question->qid = Trim($DR->qid);
+            $question->questionNumber = Trim($DR->questionnumber);
+            $question->questionText = Trim($DR->literal_question_text);
+            $question->group = Trim($DR->thematic_groups);
+            $question->tag = Trim($DR->thematic_tags);
 
-            If (!$qid == "") {
-//                $DR = new DataR();
-
-                $selQ = "Select questionnumber, literal_question_text, thematic_groups, thematic_tags FROM questions WHERE qid = '" . Trim($qid) . "';";
-
-//                $cmd = pg_query($cnn, $selQ);
-//                        cnn.Open();
-//                $DR->ExecuteReader($cmd);
-//                        DR.Read();
-                $results = DataAdapter::DefaultExecuteAndRead($selQ, "Survey_Data");
-
-//                $DR = $results[0];
-
-                forEach($results as $DR) {
-
-                    $question = new allQuestions();
-                    $question->qid = $qid;
-                    $question->questionNumber = Trim($DR->questionnumber);
-                    $question->questionText = Trim($DR->literal_question_text);
-                    $question->group = Trim($DR->thematic_groups);
-                    $question->tag = Trim($DR->thematic_tags);
-
-                    $Qs[] = $question;
-
-                }
-
-            }
-
+            $Qs[] = $question;
 
         }
 
-        $db = null;
-        $DA = null;
-//        GC.Collect();
-        Return $Qs;
+
+//        ForEach ($rowSubset as $row) {
+//            $qid = $row->qid;
+//
+//            If (!$qid == "") {
+//
+//                $selQ = "Select questionnumber, literal_question_text, thematic_groups, thematic_tags
+//                FROM questions WHERE qid = :qid;";
+//
+//                $trimmedID = Trim($qid);
+//                $values = array(":qid" => $trimmedID);
+//
+//                $results = DataAdapter::DefaultPDOExecuteAndRead($selQ, $values, "Survey_Data");
+//
+//                if(!$results->hasRows()) {
+//                    Log::toFile("no question for *" . $trimmedID . "*");
+//                    $untrimmedSelQ = "Select questionnumber, literal_question_text, thematic_groups, thematic_tags
+//                      FROM questions WHERE qid = :qid;";
+//                    $values = array(":qid" => $qid);
+//                    $results = DataAdapter::DefaultPDOExecuteAndRead($untrimmedSelQ, $values, "Survey_Data");
+//
+//                    if ($results->hasRows()) {
+//                        Log::toFile("but untrimmed qid *" . $qid . "* does.");
+//                    } else {
+//                        Log::toFile("neither does untrimmed qid *" . $qid . "*");
+//
+//                        $loweredSelQ = "Select questionnumber, literal_question_text, thematic_groups, thematic_tags
+//                          FROM questions WHERE lower(qid) = lower(:qid);";
+//                        $values = array(":qid" => $trimmedID);
+//                        $results = DataAdapter::DefaultPDOExecuteAndRead($loweredSelQ, $values, "Survey_Data");
+//
+//                        if ($results->hasRows()) {
+//                            Log::toFile("but lowercase qid matching trimmed *" . $trimmedID . "* does.");
+//                        } else {
+//                            Log::toFile("and lowercase qid trimmed *" . $trimmedID . "* doesn't either.");
+//                        }
+//                    }
+//                }
+//
+//                forEach($results->resultObject as $DR) {
+//                    $question = new allQuestions();
+//                    $question->qid = $qid;
+//                    $question->questionNumber = Trim($DR->questionnumber);
+//                    $question->questionText = Trim($DR->literal_question_text);
+//                    $question->group = Trim($DR->thematic_groups);
+//                    $question->tag = Trim($DR->thematic_tags);
+//
+//                    $Qs[] = $question;
+//                }
+//            }
+//        }
+
+        $resultAndCount = new results();
+        $resultAndCount->totalCount = sizeof($rows->resultObject);
+        $resultAndCount->questions = $Qs;
+
+        Return $resultAndCount;
 
     }
 
@@ -460,7 +540,7 @@ where aud.username='" . $username . "');";
 
         $keywordsArray = explode(",", $Keywords);
 
-        $SSearch = "SELECT DISTINCT(id), stats, pages FROM qualdata.transcript_data ";
+//        $SSearch = "SELECT DISTINCT(id), stats, pages FROM qualdata.transcript_data ";
 
         If (sizeof($keywordsArray)> 1) {
 
@@ -472,20 +552,25 @@ where aud.username='" . $username . "');";
             }
 
             $multiKeyword = rtrim($multiKeyword, "&");
+            $SSearch = "SELECT DISTINCT(id), stats, pages FROM qualdata.transcript_data
+             WHERE text_index @@ to_tsquery('english', :multiKeyword)";
 
-            $SSearch.=(" WHERE text_index @@ to_tsquery('english','" . $multiKeyword . "')");
+            $values = array(":multiKeyword" => $multiKeyword);
         } Else {
-            $SSearch.=(" WHERE text_index @@ to_tsquery('english','" . $Keywords . "')");
+            $SSearch = "SELECT DISTINCT(id), stats, pages FROM qualdata.transcript_data
+             WHERE text_index @@ to_tsquery('english', :Keywords)";
+
+            $values = array(":Keywords" => $Keywords);
         }
 
-
+        $rows = DataAdapter::DefaultPDOExecuteAndRead($SSearch, $values, "Qual_Data");
 
         // 'keywords = "wales"
         // '$SSearch.Append("SELECT DISTINCT(id), stats, pages ,ts_headline('english',rawtext, query) FROM qualdata.transcript_data, plainto_tsquery('english', '" . keywords . "') query WHERE query @@ to_tsvector(rawtext)");
 
 
-        $db = new getDBConnections();
-        $cnn = $db->getDBConnection("Qual_Data");
+//        $db = new getDBConnections();
+//        $cnn = $db->getDBConnection("Qual_Data");
 //        Npgsql.NpgsqlConnection.ClearAllPools();
 //        $qDT = new DataTable();
 
@@ -494,24 +579,24 @@ where aud.username='" . $username . "');";
 
 //        $DA->Fill($qDT);
 
-        $queryResult = pg_query($cnn, $SSearch);
+//        $queryResult = pg_query($cnn, $SSearch);
 
-        $DA = new DataAdapter();
-        $rows = $DA->Read($queryResult);
+//        $DA = new DataAdapter();
+//        $rows = $DA->Read($queryResult);
 
         $results = array();
 
-        ForEach($rows as $row) { // row As DataRow In qDT.Rows
+        ForEach($rows->resultObject as $row) { // row As DataRow In qDT.Rows
 
             $id = Trim($row->id);
 
-            $DCStr = "SELECT * FROM qualdata.dc_info WHERE identifier = '" . $id . "';";
-
-//            $DR = new DataReader();
-            $cnn = $db->getDBConnection("Qual_Data");
-
-
-            $cmd = pg_query($cnn, $DCStr);
+//            $DCStr = "SELECT * FROM qualdata.dc_info WHERE identifier = '" . $id . "';";
+//
+////            $DR = new DataReader();
+//            $cnn = $db->getDBConnection("Qual_Data");
+//
+//
+//            $cmd = pg_query($cnn, $DCStr);
 //                        If ($cnn.State = ConnectionState.Closed) {
 //                            $cnn.Open();
 //                        } Else {
@@ -520,13 +605,20 @@ where aud.username='" . $username . "');";
 //                            $cnn.Open();
 //                        }
 
-            If ( pg_num_rows($cmd) > 0) {
+            $DCStr = "SELECT * FROM qualdata.dc_info WHERE identifier = :id;";
 
-                $DR = pg_fetch_object($cmd);
+            $values = array(":id" => $id);
+            $resultRows = DataAdapter::DefaultPDOExecuteAndRead($DCStr, $values, "Qual_Data");
+
+
+//            If ( pg_num_rows($cmd) > 0) {
+//
+//                $DR = pg_fetch_object($cmd);
 
 //            } Else {
 
-
+            If (sizeof($resultRows->resultObject) > 0) {
+                $DR = $resultRows->resultObject[0];
 
                 $qData = new QualData();
                 $qData->id = $id;

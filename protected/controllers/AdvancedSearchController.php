@@ -576,13 +576,14 @@ class AdvancedSearchController extends Controller {
 
         Log::toFile($surveyNameQuery);
 
-        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
+//        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
+        $surveyNameResults = DataAdapter::DefaultPDOExecuteAndRead($surveyNameQuery, null, "Survey_Data");
 
         Log::toFile(print_r($surveyNameResults, true));
 
         $surveyDataArray = array();
 
-        foreach ($surveyNameResults as $surveyData) {
+        foreach ($surveyNameResults->resultObject as $surveyData) {
 //            Log::toFile("Survey : " . print_r($surveyData, true));
             $surveyObject['id'] = trim($surveyData->qid);
             $surveyObject['name'] = trim($surveyData->literal_question_text);
@@ -603,13 +604,15 @@ class AdvancedSearchController extends Controller {
         //The Survey titles as value, and surveyID for the key
         $surveyNameQuery = "Select survey_title, identifier, surveyid From Survey";
 
-        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
+        $surveyNameResults = DataAdapter::DefaultPDOExecuteAndRead($surveyNameQuery, null, "Survey_Data");
+
+//        $surveyNameResults = $dataAdapter->DefaultExecuteAndRead($surveyNameQuery, "Survey_Data");
 
 //        Log::toFile("Surveys : " . print_r($surveyNameResults, true));
 
         $surveyDataArray = array();
 
-        foreach ($surveyNameResults as $surveyData) {
+        foreach ($surveyNameResults->resultObject as $surveyData) {
 //            Log::toFile("Survey : " . print_r($surveyData, true));
             $surveyObject['SurveyID'] = trim($surveyData->surveyid);
             $surveyObject['WiserdID'] = trim($surveyData->identifier);
@@ -620,13 +623,14 @@ class AdvancedSearchController extends Controller {
         //Thematic group name and ID
         $thematicQuery = "Select tgroupid, grouptitle, groupdescription From thematic_groups";
 
-        $thematicQueryResults = $dataAdapter->DefaultExecuteAndRead($thematicQuery, "Survey_Data");
+//        $thematicQueryResults = $dataAdapter->DefaultExecuteAndRead($thematicQuery, null, "Survey_Data");
+        $thematicQueryResults = DataAdapter::DefaultPDOExecuteAndRead($thematicQuery, null, "Survey_Data");
 
 //        Log::toFile("Surveys : " . print_r($thematicQueryResults, true));
 
         $thematicDataArray = array();
 
-        foreach ($thematicQueryResults as $thematicData) {
+        foreach ($thematicQueryResults->resultObject as $thematicData) {
 //            Log::toFile("Survey : " . print_r($thematicData, true));
             $thematicObject['tgroupid'] = trim($thematicData->tgroupid);
             $thematicObject['grouptitle'] = trim($thematicData->grouptitle);

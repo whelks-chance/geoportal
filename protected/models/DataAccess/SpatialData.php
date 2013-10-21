@@ -3,23 +3,28 @@ class SpatialData {
 
     Public Function getAvailableUnits($SurveyID) {
 
-        $dc = New getDBConnections();
+//        $dc = New getDBConnections();
 
-        $cnn = $dc->getDBConnection("Survey_Data");
+//        $cnn = $dc->getDBConnection("Survey_Data");
 
-        $selectStr = "Select * from survey_spatial_link where lower(surveyid) = '" . strtolower($SurveyID) . "';";
+        $selectStr = "Select * from survey_spatial_link where
+        lower(surveyid) = :loweredSurveyID;";
+
+        $loweredSurveyID = strtolower($SurveyID);
+
+        $values = array(":loweredSurveyID" => $loweredSurveyID);
 
         $results = array();
-
-        $cmd = pg_query($cnn, $selectStr);
+//        $cmd = pg_query($cnn, $selectStr);
 
         //$cnn->Open();
 
-        $DAresultObjects = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
+//        $DAresultObjects = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
+        $UnitResults = DataAdapter::DefaultPDOExecuteAndRead($selectStr, $values, "Survey_Data");
 
 //        $resultObjects = $DA->Read($cmd);
 
-        ForEach ($DAresultObjects as $DR ) {
+        ForEach ($UnitResults->resultObject as $DR ) {
             $units = New AvailableSpatialUnits();
             $units->spatial_id = Trim($DR->spatial_id);
             $units->long_start = Trim($DR->long_start);
@@ -40,12 +45,14 @@ class SpatialData {
 
     Public Function getSpatialLabels($TableName) {
 
-        $dc = New getDBConnections();
+//        $dc = New getDBConnections();
 
 //        $cnn = $dc->getDBConnection("Survey_Data");
 
-        $selectStr = "Select column_name as name from information_schema.columns where table_name = '" . $TableName . "';";
+        $selectStr = "Select column_name as name from information_schema.columns
+        where table_name = :TableName;";
 
+        $values = array(":TableName" => $TableName);
 
         $results = array();
 
@@ -55,9 +62,11 @@ class SpatialData {
 
 //        $resultObjects = $DA->Read($cmd);
 
-        $resultObjects = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
+//        $resultObjects = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
+        $spatialResults = DataAdapter::DefaultPDOExecuteAndRead($selectStr, $values, "Survey_Data");
 
-        ForEach ($resultObjects as $DR ) {
+
+        ForEach ($spatialResults->resultObject as $DR ) {
             $label = New SpatialLabels();
             $label->Name = Trim($DR->name);
             $results[] = ($label);
@@ -71,33 +80,38 @@ class SpatialData {
 
     Public Function getSpatialSubUnits($TableName) {
 
-        $dc = New getDBConnections();
+//        $dc = New getDBConnections();
 
-        $cnn = $dc->getDBConnection("Survey_Data");
+//        $cnn = $dc->getDBConnection("Survey_Data");
 
-        $selectStr = "Select * from " . $TableName . ";";
+//        $selectStr = "Select * from " . $TableName . ";";
 
 
         $results = array();
-
-        $cmd = pg_query($cnn, $selectStr);
-
 
         $spatialSUAll = New SpatialSubUnits();
         $spatialSUAll->Name = "All";
         $results[] = ($spatialSUAll);
 
-        $DA = new DataAdapter();
+        if (DataAdapter::isTrustedTableName($TableName, "Survey_Data")) {
+            $selectStr = "Select * from " . $TableName . ";";
 
-        $resultObjects = $DA->Read($cmd);
+            $resultObjects = DataAdapter::DefaultPDOExecuteAndRead($selectStr, null, "Survey_Data");
 
-        ForEach ($resultObjects as $DR ) {
-            $spatialSU = New SpatialSubUnits();
+//        $cmd = pg_query($cnn, $selectStr);
 
-            $spatialSU->Name = Trim($DR->Item[1]);
-            $results[] = ($spatialSU);
+
+//        $DA = new DataAdapter();
+
+//        $resultObjects = $DA->Read($cmd);
+
+            ForEach ($resultObjects->resultObject as $DR ) {
+                $spatialSU = New SpatialSubUnits();
+
+                $spatialSU->Name = Trim($DR->Item[1]);
+                $results[] = ($spatialSU);
+            }
         }
-
         Return $results;
 
     }
@@ -105,31 +119,36 @@ class SpatialData {
 
     Public Function getRefSpatialSubUnits($TableName) {
 
-        $dc = New getDBConnections();
+//        $dc = New getDBConnections();
 
-        $cnn = $dc->getDBConnection("Survey_Data");
+//        $cnn = $dc->getDBConnection("Survey_Data");
 
-        $selectStr = "Select * from " . $TableName . ";";
-
+//        $selectStr = "Select * from " . $TableName . ";";
 
         $results = array();
 
-        $cmd = pg_query($cnn, $selectStr);
+//        $cmd = pg_query($cnn, $selectStr);
 
         $spatialSUMap = New SpatialSubUnits();
         $spatialSUMap->Name = "Current Map Extent";
         $results[] = ($spatialSUMap);
 
 
-        $DA = new DataAdapter();
+//        $DA = new DataAdapter();
 
-        $resultObjects = $DA->Read($cmd);
+//        $resultObjects = $DA->Read($cmd);
 
-        ForEach ($resultObjects as $DR ) {
+        if (DataAdapter::isTrustedTableName($TableName, "Survey_Data")) {
+        $selectStr = "Select * from " . $TableName . ";";
+        $resultObjects = DataAdapter::DefaultPDOExecuteAndRead($selectStr, null, "Survey_Data");
+
+
+        ForEach ($resultObjects->resultObject as $DR ) {
             $spatialSU = New SpatialSubUnits();
 
             $spatialSU->Name = Trim($DR->Item[1]);
             $results[] = ($spatialSU);
+        }
         }
 
         Return $results;
@@ -138,13 +157,13 @@ class SpatialData {
 
     Public Function getRefSpatialIndivudalUnits($UnitName, $MajorUnit, $SubUnit, $the_geom, $SID) {
 
-        $dc = New getDBConnections();
+//        $dc = New getDBConnections();
 
-        $cnn = $dc->getDBConnection("Survey_Data");
+//        $cnn = $dc->getDBConnection("Survey_Data");
         $big_geom = "";
         $suffix = "";
 
-        If ( $the_geom = "N/A" ) {
+        If ( $the_geom == "N/A" ) {
 
             $suffix = $this::getTableName($SID, $MajorUnit);
 
@@ -160,18 +179,20 @@ class SpatialData {
 
         $results = array();
 
-        $cmd = pg_query($cnn, $selectStr);
+//        $cmd = pg_query($cnn, $selectStr);
 
 
         $spatialSUAll = New SpatialSubUnits();
         $spatialSUAll->Name = "All";
         $results[] = ($spatialSUAll);
 
-        $DA = new DataAdapter();
+//        $DA = new DataAdapter();
 
-        $resultObjects = $DA->Read($cmd);
+//        $resultObjects = $DA->Read($cmd);
 
-        ForEach ($resultObjects as $DR ) {
+        $resultObjects = DataAdapter::DefaultPDOExecuteAndRead($selectStr, null, "Survey_Data");
+
+        ForEach ($resultObjects->resultObject as $DR ) {
             $spatialSU = New SpatialSubUnits();
             $spatialSU->Name = Trim($DR->Item[1]);
             $results[] = ($spatialSU);
@@ -188,8 +209,10 @@ class SpatialData {
 
 //        $cnn = $dc->getDBConnection("Survey_Data");
 
-        $selectStr = "Select column_name as name from information_schema.columns where table_name = '" . $TableName . "';";
+        $selectStr = "Select column_name as name from information_schema.columns
+        where table_name = :TableName;";
 
+        $values = array(":TableName" => $TableName);
         $results = array();
 
 //        $cmd = pg_query($cnn, $selectStr);
@@ -207,13 +230,14 @@ class SpatialData {
 
 //        $resultObjects = $DA->Read($cmd);
 
-        $resultObjects = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
+//        $resultObjects = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
+        $chloroResults = DataAdapter::DefaultPDOExecuteAndRead($selectStr, $values, "Survey_Data");
 
 
         //      unset($resultObjects[0]);
         //      unset($resultObjects[1]);
 
-        ForEach ($resultObjects as $DR ) {
+        ForEach ($chloroResults->resultObject as $DR ) {
             $label = New SpatialLabels;
             $label->Name = Trim($DR->name);
             $results[] = ($label);
@@ -254,32 +278,52 @@ class SpatialData {
 
         $results = array();
 
-        $db = New getDBConnections();
-
-        $cnn = $db->getDBConnection("Survey_Data");
-
-//            $DT = New DataTable;
-
-        $Link_ID = "";
+//        $db = New getDBConnections();
+//
+//        $cnn = $db->getDBConnection("Survey_Data");
+//
+////            $DT = New DataTable;
+//
+//        $Link_ID = "";
 
         $Link_ID = $this::getTableName($SurveyID, $Unit);
 
+        $loweredLink = $Link_ID->ToLower;
 
-        If ( $SubUnit = "All" ) {
-            $queryStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other, response_rate, adjusted_rr, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->001)) as the_geom FROM " . $Link_ID->ToLower . ";";
+        if(!DataAdapter::isTrustedTableName($loweredLink, "Survey_Data")) {
+            return null;
+        }
+
+
+        If ( $SubUnit == "All" ) {
+//            $queryStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other, response_rate, adjusted_rr, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->001)) as the_geom FROM " . $Link_ID->ToLower . ";";
+
+            $queryStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other,
+            response_rate, adjusted_rr, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->001))
+            as the_geom FROM '" . $loweredLink . "';";
+
+            $values = array();
 
         } Else {
-            $queryStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other, response_rate, adjusted_rr, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->001)) as the_geom FROM " . $Link_ID->ToLower . " WHERE area_name= '" . $SubUnit . "';";
+//            $queryStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other, response_rate, adjusted_rr, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->001)) as the_geom FROM " . $Link_ID->ToLower . " WHERE area_name= '" . $SubUnit . "';";
+
+            $queryStr = "SELECT area_name, total, successful, refused, no_contact, ineligible, other,
+            response_rate, adjusted_rr, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->001))
+            as the_geom FROM '" . $loweredLink . "' WHERE area_name= :SubUnit;";
+
+            $values = array(":SubUnit" => $SubUnit);
 
         }
 
-        $resultRows = pg_query($cnn, $queryStr);
+//        $resultRows = pg_query($cnn, $queryStr);
+//
+//        $DA = new DataAdapter();
+//
+//        $resultObjects = $DA->Read($resultRows);
 
-        $DA = new DataAdapter();
+        $resultObjects = DataAdapter::DefaultPDOExecuteAndRead($queryStr, $values, "Survey_Data");
 
-        $resultObjects = $DA->Read($resultRows);
-
-        $cnt = sizeof($resultObjects);
+        $cnt = sizeof($resultObjects->resultObject);
 
 
         If ( $cnt > 0 ) {
@@ -290,7 +334,7 @@ class SpatialData {
             // '}
 
 
-            ForEach ( $resultObjects as $row ) {
+            ForEach ( $resultObjects->resultObject as $row ) {
                 $total = $row->total;// 'DT->Compute("Sum(" . $ChoroplethField . ")", Nothing);
 
                 $colorList = $this::generateColourRange($fromColour, $toColour, $this::generateEqualInterval($total, $Interval), $Interval);
@@ -407,25 +451,26 @@ class SpatialData {
     Public Function VerifySpatialSearch($coords, $type, $dist ){
 
 
+//        $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
+//
+//        $DB = New getDBConnections();
+//        $cnn = $DB->getDBConnection("Survey_Data");
+//
+//        $DA = pg_query($cnn, $getTables);
+//
+//        $DT = New DataTable;
+//
+//        $DA->Fill($DT);
+
         $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
+        $DT = DataAdapter::DefaultPDOExecuteAndRead($getTables, null, "Survey_Data");
 
-        $DB = New getDBConnections();
-        $cnn = $DB->getDBConnection("Survey_Data");
-
-        $DA = pg_query($cnn, $getTables);
-
-        $DT = New DataTable;
-
-        $DA->Fill($DT);
-
-
-        ForEach ( $DT->rows as $row ) {
+        ForEach ( $DT->resultObject as $row ) {
 
             $tableName = $row->f_table_name;
             $geom_col = $row->f_geometry_column;
 
-            $selStr = "";
-            $selStr .= ("SELECT * from  ");
+            $selStr = ("SELECT * from  ");
             $selStr .= ($tableName . " ");
             $selStr .= ("WHERE ST_DWithin(ST_Transform(ST_SetSRID(ST_MakePoint(");
             $selStr .= ($coords);
@@ -433,20 +478,21 @@ class SpatialData {
             $selStr .= ($tableName . "->" . $geom_col . ",");
             $selStr .= (" 4326)," . $dist . ") LIMIT 1;");
 
+            $values = array(":coords" => $coords);
 
-            $cmd = pg_query($cnn, $selStr);
+            $results = DataAdapter::DefaultPDOExecuteAndRead($selStr, $values, "Survey_Data");
+
+//            $cmd = pg_query($cnn, $selStr);
 
             //$cnn->Open();
-            $DR = $cmd->ExecuteReader();
+//            $DR = $cmd->ExecuteReader();
 
-            If ( $DR->Read ) {
-                $cnn->Close();
+            If ( $results->resultSuccess ) {
+//                $cnn->Close();
                 Return True;
             }
 
 //               $cnn->Close();
-
-
 
         }
 
@@ -462,38 +508,46 @@ class SpatialData {
         $results = array();
         $SS = New SpatialSearch2();
 
-        $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
-
-        $DB = New getDBConnections();
-
-        $cnn = $DB->getDBConnection("Survey_Data");
-
-        $query = pg_query($cnn, $getTables);
-
-        $DA = New DataAdapter();
-
-        $DT = $DA->Read($query);
+//        $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
+//
+//        $DB = New getDBConnections();
+//
+//        $cnn = $DB->getDBConnection("Survey_Data");
+//
+//        $query = pg_query($cnn, $getTables);
+//
+//        $DA = New DataAdapter();
+//
+//        $DT = $DA->Read($query);
 
         $tableMinMax = array();
 
-        ForEach ( $DT as $row ) {
+        Log::toFile("preparing survey db query " . date("Y-m-d H:i:s"));
+
+        $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
+        $DT = DataAdapter::DefaultPDOExecuteAndRead($getTables, null, "Survey_Data");
+
+        ForEach ( $DT->resultObject as $row ) {
             $selStr = "";
             $tableName = $row->f_table_name;
             $geom_col = $row->f_geometry_column;
 
 
             $selStr .= ("SELECT area_name from " . $tableName);
-            $selStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326)," . $geom_col . ");");
+//            $selStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326)," . $geom_col . ");");
+            $selStr .= (" WHERE ST_Intersects(ST_Transform(ST_GeometryFromText(:geography, 27700), 4326)," . $geom_col . ");");
 
 
-            $queryResult = pg_query($cnn, $selStr);
+//            $queryResult = pg_query($cnn, $selStr);
 //            $DA = New DataAdapter();
-            $resultsTable = $DA->Read($queryResult);
+//            $resultsTable = $DA->Read($queryResult);
+            $values = array(":geography" => $geography);
+            $resultsTable = DataAdapter::DefaultPDOExecuteAndRead($selStr, $values, "Survey_Data");
 
             $surveyDetails = $this::getSurveyNameYear($tableName);
 
 
-            ForEach ( $resultsTable as $datarow ) {
+            ForEach ( $resultsTable->resultObject as $datarow ) {
                 $quantsData = New quantDataRecord2();
 
                 If ( sizeof($surveyDetails) == 0 ) {
@@ -523,13 +577,21 @@ class SpatialData {
 //                       $minMax[1] ;
 //                    $DA = new DataAdapter();
 //                    $res = $DA->Read($cmd);
-                    $quantsData->min = $DA->execute_scalar($cnn, $min);
+//                    $quantsData->min = $DA->execute_scalar($cnn, $min);
 
+                    $minResult = DataAdapter::DefaultPDOExecuteAndRead($min, null, "Survey_Data");
+                    if($minResult->hasRows()) {
+                        $quantsData->min = $minResult->resultObject[0]->min;
+                    }
 //                    $quantsData->min = $cmd->ExecuteScalar();
 
 //                    $cmd->CommandText = $max;
 
-                    $quantsData->max = $DA->execute_scalar($cnn, $max);
+//                    $quantsData->max = $DA->execute_scalar($cnn, $max);
+                    $maxResult = DataAdapter::DefaultPDOExecuteAndRead($max, null, "Survey_Data");
+                    if($maxResult->hasRows()) {
+                        $quantsData->max = $maxResult->resultObject[0]->max;
+                    }
 //                    $quantsData->max = $cmd->ExecuteScalar();
 
 //                       $cnn->Close();
@@ -545,8 +607,6 @@ class SpatialData {
                     $quantsData->min = $tableMinMax[$tableName][0];
                     $quantsData->max = $tableMinMax[$tableName][1];
                 }
-
-
 
                 $quantsData->gName = $datarow->area_name;
 
@@ -566,19 +626,29 @@ class SpatialData {
         }
         // ' Qual(Data);
 
-        $qcnn = $DB->getDBConnection("Qual_Data");
-
-        $QselStr = ("SELECT * FROM qualdata.dc_info WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" . $geography . "', 27700), 4326), qualdata.dc_info.the_geom);");
+//        $qcnn = $DB->getDBConnection("Qual_Data");
+//
+//        $QselStr = ("SELECT * FROM qualdata.dc_info WHERE ST_Intersects(ST_Transform(ST_GeometryFromText('" .
+//        $geography . "', 27700), 4326), qualdata.dc_info.the_geom);");
 
 //        Log::toFile('Intersects query : ' . $QselStr);
 
-        $QDataAdapter = pg_query($qcnn, $QselStr);
+//        $QDataAdapter = pg_query($qcnn, $QselStr);
 //        $QresultsTable = New DataTable();
 //        $QDataAdapter->Fill($QresultsTable);
 
-        $res = $DA->Read($QDataAdapter);
+//        $res = $DA->Read($QDataAdapter);
 
-        ForEach ( $res as $Qdatarow ) {
+        $QselStr = "SELECT * FROM qualdata.dc_info
+                WHERE ST_Intersects(ST_Transform(ST_GeometryFromText(:geography, 27700), 4326),
+                 qualdata.dc_info.the_geom);";
+
+        $values = array(":geography" => $geography);
+
+        $res = DataAdapter::DefaultPDOExecuteAndRead($QselStr, $values, "Qual_Data");
+
+
+        ForEach ( $res->resultObject as $Qdatarow ) {
 
             $coverage = $Qdatarow->coverage;
 
@@ -588,7 +658,9 @@ class SpatialData {
             $word_stats = "";
 
             ForEach ($items as $place ) //items;
-                If ( !$place == "") {
+
+            If ( !$place == "") {
+//                Log::toFile("each qual place " . $place . " " . date("Y-m-d H:i:s"));
 
 //                    $wordStatArray = explode("wordStats", $place);
 //
@@ -661,41 +733,54 @@ class SpatialData {
 
         $details = array();
 
-        $db = New getDBConnections();
-        $cnn = $db->getDBConnection("Survey_Data");
+//        $db = New getDBConnections();
+//        $cnn = $db->getDBConnection("Survey_Data");
+//
+//
+//        $selSurveyStr = "Select surveyid from survey_spatial_link where lower(spatial_id) = '" . Trim(strtolower($tableName)) . "'";
+////            $DR1 As$Npgsql->NpgsqlDataReader;
+//
+//        $cmd1 = pg_query($cnn, $selSurveyStr);
+//
+//        //$cnn->Open();
+//
+//        $DA = new DataAdapter();
+//        $DR = $DA->Read($cmd1);
+//        $DT = $DR[0];
 
-
-        $selSurveyStr = "Select surveyid from survey_spatial_link where lower(spatial_id) = '" . Trim(strtolower($tableName)) . "'";
-//            $DR1 As$Npgsql->NpgsqlDataReader;
-
-        $cmd1 = pg_query($cnn, $selSurveyStr);
-
-        //$cnn->Open();
-
-        $DA = new DataAdapter();
-        $DR = $DA->Read($cmd1);
-        $DT = $DR[0];
+        $selSurveyStr = "Select surveyid from survey_spatial_link where lower(spatial_id) = :tablename";
+        $values = array(":tablename" => Trim(strtolower($tableName)));
+        $results = DataAdapter::DefaultPDOExecuteAndRead($selSurveyStr, $values, "Survey_Data");
 
         $SID = "";
-        If ( $DT ) {
-            $SID = $DT->surveyid;
+
+        if ($results->hasRows()) {
+            $SID = $results->resultObject[0]->surveyid;
         }
+
+//        If ( $DT ) {
+//            $SID = $DT->surveyid;
+//        }
 
 //        $cnn->Close();
 
 
-        $selstr = "Select short_title, collectionenddate from survey WHERE lower(surveyid) = '" . Trim(strtolower($SID)) . "'";
+        $selstr = "Select short_title, collectionenddate from survey WHERE lower(surveyid) = :SID";
+        $values = array(":SID" => Trim(strtolower($SID)));
+        $results = DataAdapter::DefaultPDOExecuteAndRead($selstr, $values, "Survey_Data");
 
-        $cmd = pg_query($cnn, $selstr);
+//        $cmd = pg_query($cnn, $selstr);
 
         //$cnn->Open();
 
-        $DA = new DataAdapter();
-        $DR = $DA->Read($cmd);
+//        $DA = new DataAdapter();
+//        $DR = $DA->Read($cmd);
 
-        $DT = $DR[0];
-        If ( $DT ) {
+//        $DT = $DR[0];
+//        If ( $DT ) {
 
+        if ($results->hasRows()) {
+            $DT = $results->resultObject[0];
 //            Log::toFile('surveyYear' . print_r($DT, true));
 
             $sName = $DT->short_title;
@@ -719,24 +804,27 @@ class SpatialData {
     Public Function generateQualSpatialData($colour, $ID) {
 
         $results = array();
+//
+//        $db = New getDBConnections();
+//
+//        $selStr = "Select coverage from qualdata.dc_info WHERE identifier = '" . $ID . "'";
+//
+//        $cnn = $db->getDBConnection("Qual_Data");
+//
+//        $coverage = "";
+//
+//
+//
+//        $cmd = pg_query($cnn, $selStr);
+//        $DA = new DataAdapter();
+//
+//        $resultRows = $DA->Read($cmd);
 
-        $db = New getDBConnections();
+        $selStr = "Select coverage from qualdata.dc_info WHERE identifier = :ID";
+        $values = array(":ID" => $ID);
+        $resultRows = DataAdapter::DefaultPDOExecuteAndRead($selStr, $values, "Qual_Data");
 
-        $selStr = "Select coverage from qualdata.dc_info WHERE identifier = '" . $ID . "'";
-
-        $cnn = $db->getDBConnection("Qual_Data");
-
-        $coverage = "";
-
-
-
-        $cmd = pg_query($cnn, $selStr);
-        $DA = new DataAdapter();
-
-        $resultRows = $DA->Read($cmd);
-
-
-        $coverage = Trim($resultRows[0]->coverage);
+        $coverage = Trim($resultRows->resultObject[0]->coverage);
 
 //        $cnn->Close();
 
@@ -797,12 +885,20 @@ class SpatialData {
         $DB = New getDBConnections();
         $cnn = $DB->getDBConnection("Survey_Data");
 
+//        TODO only allow trusted table names in query
+//        $untrustedNames = array();
+//
+//        foreach($layers as $layer) {
+//            $untrustedNames[] = $layer->Value->id;
+//        }
+//
+//        $allowedTablesNames = DataAdapter::areTrustedTableNames($untrustedNames, "Survey_Data");
+
         ForEach ($layers as $layer) {//layers;
 
             $geographies = explode(";", $layer->Value->geographies);
 
-            $selStr = "";
-            $selStr .= ("SELECT area_name, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->000225)) as the_geom from " . $layer->Value->id);
+            $selStr = ("SELECT area_name, ST_AsEWKT(st_simplifypreservetopology(the_geom,$0->000225)) as the_geom from " . $layer->Value->id);
             $selStr .= (" WHERE ");
 
             ForEach ($geographies as $geog ) { //geographies;

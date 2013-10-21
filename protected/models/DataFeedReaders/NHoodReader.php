@@ -53,20 +53,29 @@ class NHoodReader implements FeedReaderInterface {
                         $foundWord["name"] = $name;
 
                         $dataAdapter = new DataAdapter();
-                        $findQuery = "select id, wiserd_id from question_link where remote_id='" . $id . "';";
+                        $findQuery = "select id, wiserd_id from question_link where remote_id=:id;";
 
-                        $results = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
+                        $values = array(":id" => $id);
+//                        $results = $dataAdapter->DefaultExecuteAndRead($findQuery, "Survey_Data");
+                        $results = DataAdapter::DefaultPDOExecuteAndRead($findQuery, $values, "Survey_Data");
+
 
                         $foundWord["wiserd"] = "";
                         $foundWord["wiserd_survey"] = "";
-                        forEach($results as $DR) {
+                        forEach($results->resultObject as $DR) {
                             $foundWord["wiserd"] = $DR->wiserd_id;
-                            $survey_details = "Select * from Survey WHERE surveyid = (Select surveyid as query from survey_questions_link WHERE qid ='" . strtolower($DR->wiserd_id) . "');";
+                            $survey_details = "Select * from Survey WHERE surveyid =
+                            (Select surveyid as query from survey_questions_link WHERE
+                            qid = :loweredWID;";
 
-                            $results = $dataAdapter->DefaultExecuteAndRead($survey_details, "Survey_Data");
+                            $loweredWID = strtolower($DR->wiserd_id);
+                            $values = array(":loweredWID" => $loweredWID);
 
-                            if(sizeof($results) > 0 ){
-                                $foundWord["wiserd_survey"] = $results[0]->surveyid;
+//                            $results = $dataAdapter->DefaultExecuteAndRead($survey_details, "Survey_Data");
+                            $surveyDetailsResults = DataAdapter::DefaultPDOExecuteAndRead($survey_details, $values, "Survey_Data");
+
+                            if(sizeof($surveyDetailsResults->resultObject) > 0 ){
+                                $foundWord["wiserd_survey"] = $surveyDetailsResults->resultObject[0]->surveyid;
                             }
                         }
 

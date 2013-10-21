@@ -120,7 +120,7 @@ class getDBConnections {
             Yii::app()->session["User"] = $user;
             $identity=new LoggedInUserIdentity($userName, $Password);
             $identity->authenticate();
-            Yii::app()->user->login($identity, 0);
+            Yii::app()->user->login($identity, 31557600);
 
 
             Return $user;
@@ -193,7 +193,7 @@ class getDBConnections {
         email=:Email, institution=:Institution, bio=:Bio, telephone=:Telephone, address=:Address WHERE id=:UID;";
 
         $values = array(":UserName" => $user->UserName, ":FirstName" => $user->FirstName, ":LastName" => $user->LastName,
-        ":Email" => $user->Email, ":Institution" => $myAccount->Institution, ":Bio" => $myAccount->Bio,
+            ":Email" => $user->Email, ":Institution" => $myAccount->Institution, ":Bio" => $myAccount->Bio,
             ":Telephone" => $myAccount->Telephone, ":Address" => $myAccount->Address, ":UID" => $UID);
 
 //        $command = New NpgsqlCommand($updateUserStr & $updateBio, $cnn);
@@ -219,11 +219,19 @@ class getDBConnections {
 
         $change = false;
         if($CheckOldPW) {
-            $checkoldPWstr = "Select id from alphausersdetails where id = '" . $UID . "' and  password = crypt('" . $oldPW . "', password)";
-            $message = New jsonMsg();
-            $cmd = pg_query($this::getDBConnection(), $checkoldPWstr);
+//            $checkoldPWstr = "Select id from alphausersdetails where id = '" . $UID . "' and  password = crypt('" . $oldPW . "', password)";
+//            $message = New jsonMsg();
+//            $cmd = pg_query($this::getDBConnection(), $checkoldPWstr);
 
-            If (!pg_num_rows($cmd) == 0) {
+            $checkoldPWstr = "Select id from alphausersdetails
+            where id = :UID and  password = crypt(:oldPW, password)";
+
+            $values = array(":UID" => $UID, ":oldPW" => $oldPW);
+            $results = DataAdapter::DefaultPDOExecuteAndRead($checkoldPWstr, $values);
+
+
+//            If (!pg_num_rows($cmd) == 0) {
+            If (sizeof($results->resultObject) != 0){
                 $change = true;
             }
 
@@ -234,12 +242,15 @@ class getDBConnections {
         $message = new jsonMsg();
 
         if ($change) {
-            $updatePWStr = "Update alphausersdetails set password = crypt('" . $newPW . "', gen_salt('bf')) where id = '" . $UID . "'";
-            $cmd = pg_query($this::getDBConnection(), $updatePWStr );
+//            $updatePWStr = "Update alphausersdetails set password = crypt('" . $newPW . "', gen_salt('bf')) where id = '" . $UID . "'";
+//            $cmd = pg_query($this::getDBConnection(), $updatePWStr );
 
+            $updatePWStr = "Update alphausersdetails set password = crypt(:newPW, gen_salt('bf')) where id = :UID";
+            $values = array(":UID" => $UID, ":newPW" => $newPW);
+            $results = DataAdapter::DefaultPDOExecuteAndRead($updatePWStr, $values);
 
-            If (pg_affected_rows($cmd) == 1) {
-
+//            If (pg_affected_rows($cmd) == 1) {
+            If (sizeof($results->resultObject) == 1) {
                 $message->success = True;
                 $message->message = "Sucessfully changed password!";
             } Else {

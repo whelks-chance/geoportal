@@ -18,19 +18,18 @@ class AccountController extends Controller {
 
         if ($Email && $Email != "") {
 
-            $findUserStr = "Select id, username from alphausersdetails where email='" . $Email . "';";
+//            $findUserStr = "Select id, username from alphausersdetails where email='" . $Email . "';";
+//            $idSet = DataAdapter::DefaultExecuteAndRead($findUserStr);
 
             $idResultObject = DataAdapter::DefaultPDOExecuteAndRead(
                 "Select id, username from alphausersdetails where email=:email", array(":email" => $Email));
 
-            $idSet = DataAdapter::DefaultExecuteAndRead($findUserStr);
+//            Log::toFile('ids ' . print_r($idResultObject->resultObject, true));
 
-            Log::toFile('ids ' . print_r($idSet, true));
+            if(sizeof($idResultObject->resultObject) == 1) {
 
-            if(sizeof($idSet) == 1) {
-
-                $ID = $idSet[0]->id;
-                $Username = $idSet[0]->username;
+                $ID = $idResultObject->resultObject[0]->id;
+                $Username = $idResultObject->resultObject[0]->username;
 
                 $newPW = Users::randomPassword();
 

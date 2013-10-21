@@ -19,6 +19,7 @@ $this->breadcrumbs=array(
 <script type="text/javascript">
 
     Ext.Ajax.timeout = 60000; // 60 seconds
+//    Ext.Ajax.timeout = 60000; // 60 seconds
 
     //wait until ext/DOM has loaded before executing JavaScript
     Ext.onReady(function () {
