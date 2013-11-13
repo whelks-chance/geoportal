@@ -18,14 +18,218 @@ $this->breadcrumbs=array(
 ?>
 
 <h1>textgui testing</h1>
+<!--    <div id="editor-grid"/>-->
 
 <!--    This page is not designed at all, and should not be used as an example for anything-->
 
 <script type="text/javascript">
-    Ext.Ajax.timeout = 120000; // 60 seconds
+
+function formatDate(value){
+    return value ? value.dateFormat('M d, Y') : '';
+}
+
+Ext.Ajax.timeout = 120000; // 60 seconds
 
 Ext.ns('Portal');
 Ext.onReady(function(){
+
+//
+//
+//
+//
+//
+//    var fm = Ext.form;
+//
+//    var cm = new Ext.grid.ColumnModel({
+//        // specify any defaults for each column
+//        defaults: {
+//            sortable: true // columns are not sortable by default
+//        },
+//        columns: [
+////        {
+////        id: 'name',
+////        header: 'Common Name',
+////        dataIndex: 'name',
+////        width: 220,
+////        // use shorthand alias defined above
+////        editor: new fm.TextField({
+////            allowBlank: false
+////        })
+////    },
+//            {
+//                id: 'name',
+//                header: 'Common Name',
+//                dataIndex: 'name',
+//                width: 220,
+//                // use shorthand alias defined above
+//                editor: new fm.TextField({
+////                allowBlank: false
+//                })
+//            },
+//            {
+//                id: 'type',
+//                header: 'type',
+//                dataIndex: 'type',
+//                width: 220,
+//                // use shorthand alias defined above
+//                editor: new fm.TextField({
+////                allowBlank: false
+//                })
+//            },
+//            {
+//                id: 'latitude',
+//                header: 'latitude',
+//                dataIndex: 'latitude',
+//                width: 220,
+//                // use shorthand alias defined above
+//                editor: new fm.TextField({
+////                allowBlank: false
+//                })
+//            },
+//            {
+//                id: 'longitude',
+//                header: 'longitude',
+//                dataIndex: 'longitude',
+//                width: 220,
+//                // use shorthand alias defined above
+//                editor: new fm.TextField({
+////                allowBlank: false
+//                })
+//            },
+////        {
+////        header: 'Light',
+////        dataIndex: 'light',
+////        width: 130,
+////        editor: new fm.ComboBox({
+////            typeAhead: true,
+////            triggerAction: 'all',
+////            // transform the data already specified in html
+////            transform: 'light',
+////            lazyRender: true,
+////            listClass: 'x-combo-list-small'
+////        })
+////    }, {
+////        header: 'Price',
+////        dataIndex: 'price',
+////        width: 70,
+////        align: 'right',
+////        renderer: 'usMoney',
+////        editor: new fm.NumberField({
+////            allowBlank: false,
+////            allowNegative: false,
+////            maxValue: 100000
+////        })
+////    }, {
+////        header: 'Available',
+////        dataIndex: 'availDate',
+////        width: 95,
+////        renderer: formatDate,
+////        editor: new fm.DateField({
+////            format: 'm/d/y',
+////            minValue: '01/01/06',
+////            disabledDays: [0, 6],
+////            disabledDaysText: 'Plants are not available on the weekends'
+////        })
+////    },
+//            {
+//                xtype: 'checkcolumn',
+//                header: 'save',
+//                dataIndex: 'save',
+//                width: 55
+//            }
+//        ]
+//    });
+//
+//// create the Data Store
+//    var store = new Ext.data.Store({
+//        // destroy the store if the grid is destroyed
+//        autoDestroy: true,
+//
+//        // load remote data using HTTP
+//        url: saveTaggingMetadata,
+//
+//        // specify a XmlReader (coincides with the XML format of the returned data)
+//        reader: new Ext.data.JsonReader({
+//            // records will have a 'plant' tag
+////            record: 'plant',
+//            root: 'tags',
+//            // use an Array of field definition objects to implicitly create a Record constructor
+//            fields: [
+//                // the 'name' below matches the tag name to read, except 'availDate'
+//                // which is mapped to the tag 'availability'
+////                {name: 'common', type: 'string'},
+////                {name: 'botanical', type: 'string'},
+////                {name: 'light'},
+////                {name: 'price', type: 'float'},
+////                // dates can be automatically converted by specifying dateFormat
+////                {name: 'availDate', mapping: 'availability', type: 'date', dateFormat: 'm/d/Y'},
+////                {name: 'indoor', type: 'bool'}
+//
+//                { name: 'name', type: 'string' },
+//                { name: 'type', type: 'string' },
+//                { name: 'latitude', type: 'string'},
+//                { name: 'longitude', type: 'string'},
+//                {name: 'save', type: 'boolean'}
+//            ]
+//        }),
+//
+//        sortInfo: {field:'name', direction:'ASC'}
+//    });
+//
+//// create the editor grid
+//    var grid = new Ext.grid.EditorGridPanel({
+//        store: store,
+//        cm: cm,
+////        renderTo: 'editor-grid',
+//        width: 600,
+//        height: 300,
+//        autoExpandColumn: 'name', // column with this id will be expanded
+//        title: 'Edit Plants?',
+//        frame: true,
+//        clicksToEdit: 1
+////        tbar: [{
+////            text: 'Add Plant',
+////            handler : function(){
+////                // access the Record constructor through the grid's store
+////                var Word = grid.getStore().recordType;
+////                var w = new Word({
+////                    name: 'name',
+////                    type: 'type',
+////                    latitude: '0',
+////                    longitude: '0',
+////                    save: true
+////                });
+////                grid.stopEditing();
+////                store.insert(0, p);
+////                grid.startEditing(0, 0);
+////            }
+////        }]
+//    });
+//
+//// manually trigger the data store load
+//    store.load({
+//        // store loading is asynchronous, use a load listener or callback to handle results
+//        callback: function(){
+//            Ext.Msg.show({
+//                title: 'Store Load Callback',
+//                msg: 'store was loaded, data available for processing',
+//                modal: false,
+//                icon: Ext.Msg.INFO,
+//                buttons: Ext.Msg.OK
+//            });
+//        }
+//    });
+
+
+
+
+
+
+
+
+
+
+
 
     Portal.Innerpanel = Ext.extend(Ext.form.FormPanel, {
 //            width: 500,
@@ -212,6 +416,7 @@ Ext.onReady(function(){
 //                        border: false,
                 activeTab: 0,
                 items: [
+                        new GeoPortal.Forms.ONSAPI(),
                     new GeoPortal.Forms.ProjectManagement(),
                     new GeoPortal.Forms.AdvancedSearch(),
 //                    new GeoPortal.Forms.Tagging(),
@@ -222,28 +427,84 @@ Ext.onReady(function(){
                         xtype: 'panel',
                         title: 'My Messages'
                     },
+//                    {
+//                        xtype: 'panel',
+//                        title: 'Data Entry',
+//                        layout: 'border',
+//                        items : [
+//                            {
+//                                xtype: 'button',
+//                                region: 'center',
+//                                height: '10%',
+//                                width: '20%',
+//                                id: 'btnDataEntry',
+//                                icon: 'images/silk/application_get.png',
+//                                text: 'DataEntry',
+//                                type: 'reset',
+//                                handler : function() {
+//                                    var dataEntryWin = new GeoPortal.Windows.DataEntry();
+//                                    dataEntryWin.show();
+//                                }
+//                            }
+//
+//                        ]
+//                    }
+//                    new GeoPortal.Windows.DataEntry()
                     {
                         xtype: 'panel',
                         title: 'Data Entry',
                         layout: 'border',
                         items : [
                             {
-                                xtype: 'button',
-                                region: 'center',
-                                height: '10%',
-                                width: '20%',
-                                id: 'btnDataEntry',
-                                icon: 'images/silk/application_get.png',
-                                text: 'DataEntry',
-                                type: 'reset',
-                                handler : function() {
-                                    var dataEntryWin = new GeoPortal.Windows.DataEntry();
-                                    dataEntryWin.show();
-                                }
-                            }
+                                xtype: 'field',
+                                region: 'north',
+                                id: 'breadcrumb',
+                                readOnly: 'true',
+                                value: 'DC -> Survey -> Question -> Response',
+                                width: '100%',
+//                                    anchor: '97%',
+                                name: 'breadcrumb',
+                                updateBreadcrumb : function(wid, sid, qid, rid){
+                                    var surveyField = Ext.getCmp('breadcrumb');
 
+                                    var previous = surveyField.getValue().split("  =>  ")
+
+                                    if(wid != null) {
+                                        previous[0] = "DC " + wid;
+                                    }
+                                    if(sid != null) {
+                                        previous[1] = "Survey " + sid;
+                                    }
+                                    if(qid != null) {
+                                        previous[2] = "Question " + qid;
+                                    }
+                                    if(rid != null) {
+                                        previous[3] = "Response " + rid;
+                                    }
+                                    surveyField.setValue(previous[0] + '  =>  ' + previous[1] + '  =>  ' + previous[2] + '  =>  ' + previous[3]);
+                                }
+                            },
+                            {
+                                xtype: 'tabpanel',
+                                region: 'center',
+//                                    title: 'Data Entry',
+//                                    tabPosition: 'top',
+                                activeTab: 0,
+//                                    height: '100%',
+//                                    layout: 'fit',
+                                items: [
+                                    new GeoPortal.Forms.DataEntry.DublinCore(),
+                                    new GeoPortal.Forms.DataEntry.Survey(),
+                                    new GeoPortal.Forms.DataEntry.Questions(),
+                                    new GeoPortal.Forms.DataEntry.Response(),
+                                    new GeoPortal.Forms.DataEntry.ResponseTable()
+//                                    new GeoPortal.Forms.DataEntry.DBlines()
+                                ]
+                            }
                         ]
-                    }
+                    },
+                    new GeoPortal.Forms.Tagging()
+
                 ]
             }
         ]

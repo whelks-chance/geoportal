@@ -9,6 +9,86 @@
 class OpenCalais2
 {
 
+    public function textToMemModel($content) {
+        $licence = "4h756axxwfktmfpdpyqqj7d3";
+
+        $xmlParams = "";
+        $xmlParams .= ('<c:params xmlns:c="http://s.opencalais.com/1/pred/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">');
+        $xmlParams .= ('<c:processingDirectives c:contentType="text/txt" c:enableMetadataType="GenericRelations,SocialTags" c:omitOutputtingOriginalText="TRUE" c:outputFormat="xml/rdf" c:docRDFaccesible="false" c:calculateRelevanceScore="true">');
+        $xmlParams .= ('</c:processingDirectives>');
+        $xmlParams .= ('<c:userDirectives c:allowDistribution="false" c:allowSearch="false" c:externalID="17cabs901" c:submitter="ABC">');
+        $xmlParams .= ('</c:userDirectives>');
+        $xmlParams .= ('</c:params>');
+
+        $fields = array(
+            'licenseID' => $licence,
+            'content' => urlencode($content),
+            'paramsXML' => html_entity_decode($xmlParams)
+        );
+
+        $response = $this::postToURL("http://api.opencalais.com/enlighten/calais.asmx/Enlighten", $fields);
+
+        $responseDecoded = $this->stripResponse($response);
+
+        $memModel = new MemModel();
+        $memModel->loadFromString($responseDecoded, 'rdf');
+        return $memModel;
+    }
+
+    public function getAllTags(MemModel $memModel) {
+        $it = $memModel->getStatementIterator();
+        $found = array();
+
+        while ($it->hasNext()) {
+            $statement = $it->next();
+
+            $subj = $statement->getLabelSubject();
+            $pred = substr($statement->getLabelPredicate(), (strrpos($statement->getLabelPredicate(), "/") + 1));
+
+            if ( array_key_exists($subj, $found) ) {
+                $found[$subj][$pred] = $statement->getLabelObject();
+            } else {
+                $labels = array();
+                $labels[$pred] = $statement->getLabelObject();
+                $found[$subj] = $labels;
+            }
+
+            if( $statement->getLabelPredicate() == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") {
+
+                $type = substr($statement->getLabelObject(), (strrpos($statement->getLabelObject(), "/") + 1));
+
+                $found[$subj]['type'] = $type;
+            }
+
+        }
+
+        $items = $found;
+
+        $toReturn = array();
+        foreach ($items as $key=>$value ) {
+            // Working on the assumption that dochash entries are junk
+            if(strpos($key, "http://d.opencalais.com/dochash") === false) {
+                $toReturn[] = $items[$key];
+            }
+        }
+//        $toReturn['length'] = sizeof($toReturn);
+        return $toReturn;
+    }
+
+    public function getGeoWords($tagArray) {
+
+        Log::toFile(print_r($tagArray, true));
+
+        $toReturn = array();
+        foreach ($tagArray as $taggedThing) {
+
+            if($taggedThing['type'] == "ProvinceOrState" or $taggedThing['type'] == "City") {
+                $toReturn[] = strtolower($taggedThing['name']);
+            }
+        }
+        return $toReturn;
+    }
+
     public function getTags($licence, $content) {
 
         $licence = "4h756axxwfktmfpdpyqqj7d3";

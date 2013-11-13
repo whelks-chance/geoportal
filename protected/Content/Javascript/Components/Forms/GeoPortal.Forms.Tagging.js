@@ -91,7 +91,8 @@ GeoPortal.Forms.Tagging = Ext.extend(Ext.form.FormPanel, {
                                         { name: 'name', type: 'string' },
                                         { name: 'type', type: 'string' },
                                         { name: 'latitude', type: 'string'},
-                                        { name: 'longitude', type: 'string'}
+                                        { name: 'longitude', type: 'string'},
+                                        {name: 'save', type: 'boolean'}
                                     ],
                                     root: 'tags',
                                     id: 'tagStore'
@@ -102,9 +103,11 @@ GeoPortal.Forms.Tagging = Ext.extend(Ext.form.FormPanel, {
                                     fields: [
                                         { name: 'word', type: 'string' },
                                         { name: 'count', type: 'string', sortType: 'asInt' },
-                                        { name: 'page', type: 'string'}
+                                        { name: 'page', type: 'string'},
+                                        {name: 'save', type: 'boolean'}
                                     ],
-                                    root: 'wordCounts',
+                                    sortInfo: {field:'count', direction:'ASC'},
+                                    root: 'wordCounts.counts',
                                     id: 'wordCountStore'
                                 });
                                 wordCountStore.loadData(Ext.decode(action.response.responseText));

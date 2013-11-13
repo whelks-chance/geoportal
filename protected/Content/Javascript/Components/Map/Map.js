@@ -48,7 +48,7 @@ function CreateMap() {
 							new OpenLayers.Control.Navigation({zoomWheelEnabled:false}),
 							new OpenLayers.Control.PanPanel(),
 							new OpenLayers.Control.ZoomPanel()],
-		theme:null,
+		theme:null
 		//maxResolution:156543.0339
 			 
 	};
@@ -398,7 +398,7 @@ function getQualData() {
 	var QualData = [];
 	for (var i = 0; i < map.layers.length; i++) {
 		if (map.layers[i].attribution == 'QualData') {
-			QuantsData.push(map.layers[i]);
+			QualData.push(map.layers[i]);
 
 		}
 

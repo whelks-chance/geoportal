@@ -66,7 +66,7 @@ class NHoodReader implements FeedReaderInterface {
                             $foundWord["wiserd"] = $DR->wiserd_id;
                             $survey_details = "Select * from Survey WHERE surveyid =
                             (Select surveyid as query from survey_questions_link WHERE
-                            qid = :loweredWID;";
+                            qid = :loweredWID);";
 
                             $loweredWID = strtolower($DR->wiserd_id);
                             $values = array(":loweredWID" => $loweredWID);

@@ -508,21 +508,8 @@ class SpatialData {
         $results = array();
         $SS = New SpatialSearch2();
 
-//        $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
-//
-//        $DB = New getDBConnections();
-//
-//        $cnn = $DB->getDBConnection("Survey_Data");
-//
-//        $query = pg_query($cnn, $getTables);
-//
-//        $DA = New DataAdapter();
-//
-//        $DT = $DA->Read($query);
-
         $tableMinMax = array();
 
-        Log::toFile("preparing survey db query " . date("Y-m-d H:i:s"));
 
         $getTables = "SELECT * FROM geometry_columns where f_table_schema = 'public';";
         $DT = DataAdapter::DefaultPDOExecuteAndRead($getTables, null, "Survey_Data");
@@ -804,21 +791,6 @@ class SpatialData {
     Public Function generateQualSpatialData($colour, $ID) {
 
         $results = array();
-//
-//        $db = New getDBConnections();
-//
-//        $selStr = "Select coverage from qualdata.dc_info WHERE identifier = '" . $ID . "'";
-//
-//        $cnn = $db->getDBConnection("Qual_Data");
-//
-//        $coverage = "";
-//
-//
-//
-//        $cmd = pg_query($cnn, $selStr);
-//        $DA = new DataAdapter();
-//
-//        $resultRows = $DA->Read($cmd);
 
         $selStr = "Select coverage from qualdata.dc_info WHERE identifier = :ID";
         $values = array(":ID" => $ID);
@@ -826,14 +798,12 @@ class SpatialData {
 
         $coverage = Trim($resultRows->resultObject[0]->coverage);
 
-//        $cnn->Close();
-
         $items = explode(";", $coverage);
 
         $locDetails = "";
         $word_stats = "";
 
-        ForEach ($items as $place ) {//items;
+        ForEach ($items as $place ) {
             If ( !$place == "") {
 
                 $pattern = "/\"{name:(.*), data/";
@@ -845,19 +815,6 @@ class SpatialData {
                 $result = substr($result, 0, -2) . "}";
 
                 $places = json_decode($result);
-
-//                $wordStatArray = explode("wordStats", $place);
-//
-//                $locDetails = $wordStatArray[0];
-//                $word_stats = $wordStatArray[1];
-//
-//                $word_stats = substr($word_stats, strpos($word_stats, "["));
-//
-//                $word_stats = substr($word_stats, -3);
-//
-//                $locDetails .= "wordsStats" . ":" . $word_stats . "}";
-//
-//                $places = json_decode($locDetails);
 
                 If ( !$places == null ) {
 

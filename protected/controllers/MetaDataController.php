@@ -2,6 +2,26 @@
 
 class MetaDataController extends Controller {
 
+    Function actiongetResponseOptionsTable() {
+        $QID = "";
+
+        //POST for panel submit
+        if(isset($_POST['QID'])) {
+            $QID = $_POST['QID'];
+        }
+
+        $getMeta = New getMetaData();
+
+        $RMetaData = $getMeta->getResponseOptionsTable($QID);
+
+        If( ! $RMetaData == null) {
+            echo '{"success": true, "data": ' . json_encode($RMetaData) . '}';
+        } Else {
+
+            echo '{"success": false, "message": "Error loading form - please try again"}';
+        }
+    }
+
     Function actiongetQMetaDataRecords() {
 
         $ID = "";

@@ -106,33 +106,18 @@ class getMetaData {
 
     Public Function getResponseMetaData($QID) {
 
-//        $db = New getDBConnections();
-//
-//        $cnn = $db->getDBConnection("Survey_Data");
-//
-//        $selectStr = "SELECT * FROM questions_responses_link where qid ='" . $QID . "';";
-//
-//        $cmd = pg_query($cnn, $selectStr);
-//
-//        $DA = new DataAdapter();
-//        $resultRows = $DA->Read($cmd);
-
         $selectStr = "SELECT * FROM questions_responses_link where qid =:QID;";
         $values = array(":QID" => $QID);
         $resultLinks = DataAdapter::DefaultPDOExecuteAndRead($selectStr, $values, "Survey_Data");
 
         If (sizeof($resultLinks->resultObject) > 0) {
 
-            $DR = $resultLinks[0];
+            $DR = $resultLinks->resultObject[0];
             $responseID = Trim($DR->responseid);
-//                        $responsesCmd = "SELECT * FROM responses WHERE responseid = '" . $responseID . "';";
-//            $cmd = pg_query($cnn, $responsesCmd);
-//            $DA = new DataAdapter();
-//            $resultRows = $DA->Read($cmd);
 
             $responsesCmd = "SELECT * FROM responses WHERE responseid = :responseID;";
             $values = array(":responseID" => $responseID);
-            $resultRows = DataAdapter::DefaultPDOExecuteAndRead($selectStr, $values, "Survey_Data");
+            $resultRows = DataAdapter::DefaultPDOExecuteAndRead($responsesCmd, $values, "Survey_Data");
 
             If (sizeof($resultRows->resultObject) > 0) {
 
@@ -172,27 +157,9 @@ class getMetaData {
 
     Public Function getDublinCore($SID) {
 
-//        $db = new getDBConnections();
-//
-//        $cnn = $db->getDBConnection("Survey_Data");
-//
-////        $selectStr = "Select * from dc_info WHERE identifier ='wi" . $SID . "';";
-//
-//        $selectStr = "Select * from dc_info where identifier=(select identifier from survey where surveyid='" . $SID ."');";
-//
-//        Log::toFile($selectStr);
-//
-//        $cmd = pg_query($cnn, $selectStr);
-//
-//        $DA = new DataAdapter();
-//
-//        $resultRows = $DA->Read($cmd);
-
         $selectStr = "Select * from dc_info where identifier=(select identifier from survey where surveyid=:SID);";
         $values = array(":SID" => $SID);
         $resultRows = DataAdapter::DefaultPDOExecuteAndRead($selectStr, $values, "Survey_Data");
-
-//        Log::toFile(print_r($resultRows, true));
 
         If (count($resultRows->resultObject) > 0) {
 
@@ -260,16 +227,11 @@ class getMetaData {
 
         }
 
-//        Log::toFile(print_r($responses, true));
         Return $responses;
 
     }
 
     Public Function getFields( $SID, $unit ) {
-//        $dc = New getDBConnections();
-
-//        $cnn = $dc->getDBConnection("Survey_Data");
-
 
         $TableName = $this::getTableName($SID, $unit);
 
@@ -279,13 +241,6 @@ class getMetaData {
         $values = array(":TableName" => $TableName);
         $results = array();
 
-//        $cmd = pg_query($cnn, $selectStr);
-//
-//        $DA = new DataAdapter();
-
-//        $resultRows = $DA->Read($cmd);
-
-//        $resultRows = DataAdapter::DefaultExecuteAndRead($selectStr, "Survey_Data");
         $fieldResults = DataAdapter::DefaultPDOExecuteAndRead($selectStr, $values, "Survey_Data");
 
         ForEach ($fieldResults->resultObject as $DR) {
@@ -327,20 +282,6 @@ class getMetaData {
 
 
     Public Function getQDublinCore( $SID  ) {
-
-//        $db = New getDBConnections();
-//
-//        $cnn = $db->getDBConnection("Qual_Data");
-//
-//        $selStr = "Select * from qualdata.dc_info WHERE identifier ='" . $SID . "';";
-//
-//        Log::toFile("DC query : " . $selStr);
-//
-//        $cmd = pg_query($cnn, $selStr);
-//
-//        $DA = new DataAdapter();
-//
-//        $resultRows = $DA->Read($cmd);
 
         $selStr = "Select * from qualdata.dc_info WHERE identifier = :SID;";
         $values = array(":SID" => $SID);
@@ -584,19 +525,6 @@ class getMetaData {
 
         $placeNames = array();
 
-//        $db = New getDBConnections();
-//
-//        $cnn = $db->getDBConnection("Qual_Data");
-//
-//
-//        $selStr = "Select coverage from qualdata.dc_info WHERE identifier ='" . $ID . "';";
-//
-//        $cmd = pg_query($cnn, $selStr);
-//
-//        $DA = new DataAdapter();
-//
-//        $resultRows = $DA->Read($cmd);
-
         $selStr = "Select coverage from qualdata.dc_info WHERE identifier = :ID;";
         $values = array(":ID" => $ID);
         $resultRows = DataAdapter::DefaultPDOExecuteAndRead($selStr, $values, "Qual_Data");
@@ -641,19 +569,6 @@ class getMetaData {
 
         $Tags = array();
 
-//        $db = New getDBConnections();
-//
-//        $cnn = $db->getDBConnection("Qual_Data");
-//
-//        $selStr = "Select calais from qualdata.dc_info WHERE identifier ='" . $ID . "';";
-//
-//
-//        $cmd = pg_query($cnn, $selStr);
-//
-//        $DA = new DataAdapter();
-//
-//        $resultRows = $DA->Read($cmd);
-
         $selStr = "Select calais from qualdata.dc_info WHERE identifier =:ID;";
 
         $values = array(":ID" => $ID);
@@ -680,6 +595,50 @@ class getMetaData {
         }
         Return '{"tags":[' . $tagsDetails . ']}';
 
+    }
+
+    public function getResponseOptionsTable($QID)
+    {
+
+        $selectStr = "Select table_name, column_name from information_schema.columns
+        where lower(table_name) in
+        (select lower(table_ids) from responses where responseID =
+        ( SELECT responseID FROM questions_responses_link where qid = :QID)
+                )
+                and column_name != 'table_pk' and column_name != 'user_id' and
+        column_name != 'date_time' and column_name != 'res_table_id';";
+        $values = array(":QID" => $QID);
+        $responseColumns = DataAdapter::DefaultPDOExecuteAndRead($selectStr, $values, "Survey_Data");
+
+        If (sizeof($responseColumns->resultObject) > 0) {
+
+            $columns = "";
+            $columnArray = array();
+            $tablename = "";
+
+            ForEach ($responseColumns->resultObject as $columnName) {
+
+                $columns .= $columnName->column_name . ",";
+                $columnArray[] = $columnName->column_name;
+                $tablename = $columnName->table_name;
+            }
+            $columns = rtrim($columns, ",");
+
+            $responseValuesQuery = "Select " . $columns . " from " . $tablename;
+
+            Log::toFile($responseValuesQuery);
+
+            $responseValues = DataAdapter::DefaultPDOExecuteAndRead($responseValuesQuery, null, "Survey_Data");
+
+            Log::toFile(print_r($responseValues, true));
+
+            $returnArray = array();
+            $returnArray['headers'] = $columnArray;
+            $returnArray['data'] = $responseValues->resultObject;
+
+            return $returnArray;
+        }
+        return null;
     }
 
 }

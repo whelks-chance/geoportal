@@ -40,6 +40,7 @@ $javascriptFiles = array(
     "Components/Forms/GeoPortal.Forms.QuestionMatching.js",
     "Components/Forms/GeoPortal.Forms.RemoteData.js",
     "Components/Windows/GeoPortal.Windows.RemoteDataResults.js",
+    "Components/Forms/GeoPortal.Forms.ONSAPI.js",
 
     "Components/Forms/GeoPortal.Forms.Register.js",
     "Components/Map/GeoLocate.js",
@@ -55,6 +56,7 @@ $javascriptFiles = array(
     "Libraries/Ext/Ux/RowExpander.js",
     "Libraries/Ext/Ux/RowActions.js",
     "Libraries/Ext/Ux/ColorPicker.js",
+    "Libraries/Ext/Ux/CheckColumn.js",
 //    "Libraries/ext-4.1.1a/examples/ux/RowExpander.js",
 //    "Libraries/ext-4.1.1a/examples/ux/RowActions.js",
 //    "Libraries/ext-4.1.1a/examples/ux/ColorPicker.js",
@@ -107,6 +109,7 @@ $javascriptFiles = array(
     "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.DBlines.js",
     "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.SetupNewSurvey.js",
     "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.QuestionRouting.js",
+    "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.ResponseTable.js",
     "Components/Forms/DataEntry/SurveyMainEntry.js",
 
     "Components/Forms/GeoPortal.Forms.ProjectManagement.js"

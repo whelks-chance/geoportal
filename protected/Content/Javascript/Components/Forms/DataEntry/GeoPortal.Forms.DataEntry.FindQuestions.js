@@ -78,6 +78,26 @@ GeoPortal.Forms.DataEntry.FindQuestions = Ext.extend(Ext.form.FormPanel, {
 
                         Ext.getCmp('LoadQuestionWin').destroy();
 
+                        Ext.Ajax.request({
+                            url: responseOptionsTableURL,
+                            method : 'POST',
+                            params : {
+                                QID : questionID
+                            },
+                            success: function(resp) {
+                                var responseData = Ext.decode(resp.responseText);
+
+                                var headers = responseData.data.headers;
+
+                                
+
+                                console.log(responseData);
+                            },
+                            failure: function(resp) {
+                                console.log('failure!');
+                            }
+                        });
+
                     }
                 }
             ]

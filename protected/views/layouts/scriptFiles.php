@@ -69,6 +69,7 @@ include('variables.php')
     var DCmetaURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getDCMetaDataRecords';
     var QDCmetaURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getQDCMetaDataRecords';
     var responseTableURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getResponseTable';
+    var responseOptionsTableURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getResponseOptionsTable';
     var fieldsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=MetaData/getFields';
     var QuestionsURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=Search/getQuestions';
     var genQualSpatialDataURL = '<? echo Yii::app()->baseUrl ?>/index.php?r=SpatialData/GenerateQualSpatialData';
@@ -95,6 +96,7 @@ include('variables.php')
     var insertSurvey = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertSurvey';
     var insertQuestion = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertQuestion';
     var insertResponse = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertResponse';
+    var insertResponseTable = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/insertResponseTable';
     var getDCids = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getDCinfo';
     var getSurveyQuestions = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/getSurveyQuestions';
     var checkRecordExists = '<? echo Yii::app()->baseUrl ?>/index.php?r=AdminMetadata/checkRecordExists';

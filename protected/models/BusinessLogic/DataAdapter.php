@@ -180,7 +180,6 @@ class ConnectionFactory
     private $pdo = array();
 
     public function getConnection($DBName) {
-//        if (!$this->pdo) {
 
         if(!array_key_exists($DBName, $this->pdo)) {
             $connString = "host=" . variables::$databaseAddr . " port=". variables::$databasePort .

@@ -40,6 +40,7 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                                     align: 'stretch'
                                 },
                                 columns: [
+                                    {header: "Save", dataIndex: 'save', sortable: true, xtype: 'checkcolumn'},
                                     {header: "Name", dataIndex: 'name', sortable: true},
                                     { header: "Type", dataIndex: 'type', sortable: true },
                                     { header: "Latitude", dataIndex: 'latitude', sortable: true },
@@ -64,6 +65,7 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                                     align: 'stretch'
                                 },
                                 columns: [
+                                    {header: "Save", dataIndex: 'save', sortable: true, xtype: 'checkcolumn'},
                                     {header: "Word", dataIndex: 'word', sortable: true },
                                     {header: "Page", dataIndex: 'page', sortable: true},
                                     {header: "Count", dataIndex: 'count', sortable: true, sortType: 'asInt'}
@@ -89,7 +91,7 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                                     {
                                         xtype: 'fieldset',
                                         title: 'Dublin Core',
-                                        defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                        defaults: {labelStyle: 'font-weight:bold;' },
                                         collapsible: true,
                                         items: [
                                             {
@@ -97,6 +99,7 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                                                 fieldLabel: 'WISERD ID',
                                                 anchor: '97%',
                                                 name: 'dcWiserdID',
+                                                allowBlank:false,
                                                 value: this.wid
                                             },
                                             {
@@ -104,6 +107,7 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                                                 anchor: '97%',
                                                 fieldLabel: 'Title',
                                                 name: 'dcTitle',
+                                                allowBlank:false,
                                                 autoHeight: true
                                             },
                                             {
@@ -111,6 +115,7 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                                                 anchor: '97%',
                                                 fieldLabel: 'Subject',
                                                 name: 'dcSubject',
+                                                allowBlank:false,
                                                 autoHeight: true
                                             },
                                             {
@@ -280,41 +285,57 @@ GeoPortal.Windows.TaggingResults = Ext.extend(Ext.Window, {
                     scope: this,
 //                    icon: './images/silk/application_edit.png',
                     handler: function () {
-                        console.log(this.wordCountStore);
 
-                        Ext.Ajax.request({
+                        var qualDCinsertPanel = Ext.getCmp('frmQualDCinsert');
+
+                        if(qualDCinsertPanel.getForm().isValid()) {
+
+//                        console.log("workcountstore : ");
+//                        console.log(this.wordCountStore);
+                        console.log("jsondata : ");
+                        var jsonDataWordCount = Ext.encode(Ext.pluck(this.wordCountStore.data.items, 'data'));
+
+                        var jsonDataTags = Ext.encode(Ext.pluck(this.tagStore.data.items, 'data'));
+                        qualDCinsertPanel.getForm().submit({
                             url: saveTaggingMetadata,
-                            scope: this,
                             params : {
-                                numbers : this.wordCountStore.reader.Json
-//                                values : this.wordCountStore.proxy.reader.Json
+                                wordCount : jsonDataWordCount,
+                                tags : jsonDataTags
                             },
-                            method : 'POST',
-                            success: function(resp) {
-                                console.log(this.wordCountStore);
+                            waitMsg: 'Saving Metadata.....',
+                            success: function (form, action) {
+                                console.log(action);
+
                             },
-                            failure: function(resp) {
-                                console.log('failure!');
+                            failure: function (form, action) {
+                                console.log("nope");
+                                Ext.Msg.alert(action.result.message);
                             }
                         });
 
-//                        var taggingPanel = Ext.getCmp('frmQualDCinsert');
-//                        taggingPanel.getForm().submit({
+//                        Ext.Ajax.request({
 //                            url: saveTaggingMetadata,
-//                            waitMsg: 'Saving Metadata.....',
-//                            success: function (form, action) {
-//                                console.log(action);
-//
+//                            scope: this,
+//                            params : {
+//                                numbers : this.wordCountStore.reader.Json
+////                                values : this.wordCountStore.proxy.reader.Json
 //                            },
-//                            failure: function (form, action) {
-//                                console.log("nope");
-//                                Ext.Msg.alert(action.result.message);
+//                            method : 'POST',
+//                            success: function(resp) {
+//                                console.log(this.wordCountStore);
+//                            },
+//                            failure: function(resp) {
+//                                console.log('failure!');
 //                            }
-//                        })
+//                        });
+                        } else {
+                            Ext.MessageBox.alert('Input Error', 'Invalid fields in Dublin Core tab');
+                        }
+
                     }
                 }
             ]
-        }
+        };
 
         GeoPortal.Windows.TaggingResults.superclass.initComponent.call(this);
     }

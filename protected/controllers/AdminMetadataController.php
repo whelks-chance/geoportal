@@ -662,6 +662,8 @@ proj.projectid = so.projectid;";
                 // check response
                 $checkRecordExistsQuery = "Select Count (responseid) From responses Where responseid=:recordID;";
                 break;
+            case "response_table" :
+                $checkRecordExistsQuery = "Select Count (qid) From responseTable Where qid=:recordID;";
         }
 
         $values = array(":recordID" => $recordID);
@@ -1217,6 +1219,15 @@ proj.projectid = so.projectid;";
         }
 
         echo json_encode($returnArray);
+
+    }
+
+    function actioninsertResponseTable() {
+
+        $QuestionSurveyID = "N/A";
+        if(isset($_POST['QuestionSurveyID'])) {
+            $QuestionSurveyID = $_POST['QuestionSurveyID'];
+        }
 
     }
 

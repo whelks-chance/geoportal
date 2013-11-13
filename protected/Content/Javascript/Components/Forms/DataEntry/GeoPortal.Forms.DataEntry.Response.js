@@ -73,24 +73,6 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
                         handler : this.FormSave,
                         scope : this
                     },
-//                    {
-//                        xtype: 'button',
-//                        id: 'btnResponseInsert',
-//                        icon: 'images/silk/application_form_add.png',
-//                        text: 'Insert',
-//                        type: 'reset',
-//                        handler : this.FormInsert,
-//                        scope : this
-//                    },
-//                    {
-//                        xtype: 'button',
-//                        id: 'btnResponseUpdate',
-//                        icon: 'images/silk/application_form_edit.png',
-//                        text: 'Update',
-//                        type: 'reset',
-//                        handler : this.FormUpdate,
-//                        scope : this
-//                    },
                     {
                         xtype: 'button',
                         id: 'btnResponseDelete',

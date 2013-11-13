@@ -855,7 +855,7 @@
 
                 var unitWin = new Ext.Window({
                                 width: 400,
-                                animateTarget: Ext.getCmp('btnFindPlacename').el,
+//                                animateTarget: Ext.getCmp('btnFindPlacename').el,
                                 bodyStyle: 'Padding: 5px',
                                 autoDestroy: true,
                                 id: 'placeWin',

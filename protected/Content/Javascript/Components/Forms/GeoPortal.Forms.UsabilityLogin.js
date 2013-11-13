@@ -132,8 +132,9 @@ GeoPortal.Forms.UsabilityLogin = Ext.extend(Ext.form.FormPanel, {
                                 success: function (form, action) {
 
                                     Ext.Msg.alert('', "You are now logged-in!");
+                                    var username = Ext.getCmp('txtUsername').getValue();
                                     Ext.getCmp('WinLogin').close();
-                                    Ext.getCmp("txtSBUser").getEl().update(Ext.getCmp('txtUsername').getValue());
+                                    Ext.getCmp("txtSBUser").getEl().update(username);
 
                                 },
                                 failure: function (form, action) {
