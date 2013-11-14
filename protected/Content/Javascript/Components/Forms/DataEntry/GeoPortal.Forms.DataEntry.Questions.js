@@ -378,7 +378,7 @@ GeoPortal.Forms.DataEntry.Questions = Ext.extend(Ext.form.FormPanel, {
         FormLoad : function() {
             var surveyField = Ext.getCmp('QuestionSurveyID');
             var surveyID = surveyField.getValue();
-            console.log('surveyID : ' + surveyID);
+//            console.log('surveyID : ' + surveyID);
 
             if (surveyID == "") {
                 alert('No Survey ID defined, please load a previous survey');

@@ -186,12 +186,12 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
         FormLoad : function() {
             var surveyField = Ext.getCmp('QuestionSurveyID');
             var surveyID = surveyField.getValue();
-            console.log('surveyID : ' + surveyID);
+//            console.log('surveyID : ' + surveyID);
 
             if (surveyID == "") {
                 alert('No Survey ID defined, please load a previous survey');
             } else {
-                var loadFQWin = new Ext.Window({ items:[new GeoPortal.Forms.DataEntry.FindQuestions({SID:surveyID})], title:'Load Question', modal:true, width:500, id:'LoadDCWin' });
+                var loadFQWin = new Ext.Window({ items:[new GeoPortal.Forms.DataEntry.FindQuestions({SID:surveyID})], title:'Load Question', modal:true, width:500, id:'LoadQuestionWin' });
                 loadFQWin.show();
             }
         },

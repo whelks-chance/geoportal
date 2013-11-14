@@ -88,10 +88,44 @@ GeoPortal.Forms.DataEntry.FindQuestions = Ext.extend(Ext.form.FormPanel, {
                                 var responseData = Ext.decode(resp.responseText);
 
                                 var headers = responseData.data.headers;
+                                var tableData = responseData.data.data;
 
-                                
+//                                var gridHeaders = [];
+//                                var storeFields = [];
+//                                for (var i = 0; i < headers.length; i++) {
+//                                    if(headers.hasOwnProperty(i)) {
+//                                        var header = headers[i];
+//                                        var heading = {'header' : header, 'dataIndex' : header};
+//                                        var field = {'name' : header, 'mapping' : header};
+//
+//                                        gridHeaders.push(heading);
+//                                        storeFields.push(field);
+//                                    }
+//                                }
 
-                                console.log(responseData);
+                                var gridBody = [];
+                                gridBody.length = 0;
+                                for (var line in tableData) {
+                                    if (tableData.hasOwnProperty(line)) {
+
+                                        gridBody.push(tableData[line]);
+
+                                    }
+                                }
+
+//                                var fieldsVar = JSON.stringify(storeFields);
+//                                var responseStore = new Ext.data.JsonStore ({
+//                                    fields: Ext.decode(fieldsVar),
+//                                    id: "responseStore"
+//                                });
+//                                var columnModel = new Ext.grid.ColumnModel(Ext.decode(JSON.stringify(gridHeaders)));
+//                                var responseGrid = Ext.getCmp('responseGrid');
+//                                responseGrid.reconfigure(responseStore, columnModel);
+//                                responseStore.loadData(Ext.decode(JSON.stringify(gridBody)));
+
+                                var responseGridForm = Ext.getCmp('frmEntryResponseTable');
+                                responseGridForm.UpdateGrid(headers, gridBody);
+
                             },
                             failure: function(resp) {
                                 console.log('failure!');

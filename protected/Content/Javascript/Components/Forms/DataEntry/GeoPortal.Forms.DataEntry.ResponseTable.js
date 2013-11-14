@@ -55,7 +55,7 @@ GeoPortal.Forms.DataEntry.ResponseTable = Ext.extend(Ext.form.FormPanel, {
                             allowBlank:false,
                             name: 'responseCSV',
                             id: 'responseCSVarea',
-                            height          : "200",
+                            height          : "150",
                             autoScroll      : true,
                             value: "category,number"
 //                                            autoHeight: true
@@ -71,29 +71,32 @@ GeoPortal.Forms.DataEntry.ResponseTable = Ext.extend(Ext.form.FormPanel, {
                                 var csvText = csvArea.getValue();
                                 var csvArray = this.CSVToArray(csvText, ",");
 
-                                console.log(csvArray);
+//                                console.log(csvArray);
 
-                                var headers = csvArray[0];
+//                                var headers = csvArray[0];
+                                var headers = csvArray.shift();
 
-                                console.log(headers);
+//                                console.log(headers);
+//
+//                                var gridHeaders = [];
+//                                var storeFields = [];
+//                                for (var i = 0; i < headers.length; i++) {
+//                                    if(headers.hasOwnProperty(i)) {
+//                                        var header = headers[i];
+//                                        var heading = {'header' : header, 'dataIndex' : header};
+//                                        var field = {'name' : header, 'mapping' : header};
+//
+//                                        gridHeaders.push(heading);
+//                                        storeFields.push(field);
+//                                    }
+//                                }
+//                                console.log(gridHeaders);
+//                                console.log(JSON.stringify(gridHeaders));
 
-                                var gridHeaders = [];
-                                var storeFields = [];
-                                for (var i = 0; i < headers.length; i++) {
-                                    if(headers.hasOwnProperty(i)) {
-                                        var header = headers[i];
-                                        var heading = {'header' : header, 'dataIndex' : header};
-                                        var field = {'name' : header, 'mapping' : header};
+//                                var theHeader = csvArray.shift();
 
-                                        gridHeaders.push(heading);
-                                        storeFields.push(field);
-                                    }
-                                }
-                                console.log(gridHeaders);
-                                console.log(JSON.stringify(gridHeaders));
-                                var theHeader = csvArray.shift();
-                                var csvData = JSON.stringify(csvArray);
-                                console.log(csvData);
+//                                var csvData = JSON.stringify(csvArray);
+//                                console.log(csvData);
 
 
                                 var dataRowsArray = [];
@@ -114,28 +117,24 @@ GeoPortal.Forms.DataEntry.ResponseTable = Ext.extend(Ext.form.FormPanel, {
                                     }
                                 }
 
-                                var dataJson = JSON.stringify(dataRowsArray);
+//                                var dataJson = JSON.stringify(dataRowsArray);
+//
+//                                var fieldsVar = JSON.stringify(storeFields);
+//                                var responseStore = new Ext.data.JsonStore ({
+//                                    fields: Ext.decode(fieldsVar),
+//                                    id: "responseStore"
+//                                });
 
-                                var fieldsVar = JSON.stringify(storeFields);
-                                var responseStore = new Ext.data.JsonStore ({
-                                    fields: Ext.decode(fieldsVar),
-                                    id: "responseStore"
-                                });
+//                                var responseGrid = Ext.getCmp('responseGrid');
+//
+//                                var headersText = JSON.stringify(gridHeaders);
+//                                var columnModel = new Ext.grid.ColumnModel(Ext.decode(headersText));
+//                                responseGrid.reconfigure(responseStore, columnModel);
+//                                responseStore.loadData(Ext.util.JSON.decode(dataJson));
 
-                                var responseGrid = Ext.getCmp('responseGrid');
+                                this.UpdateGrid(headers, dataRowsArray);
 
-                                var headersText = JSON.stringify(gridHeaders);
-                                var columnModel = new Ext.grid.ColumnModel(Ext.decode(headersText));
-                                responseGrid.reconfigure(responseStore, columnModel);
-                                responseStore.loadData(Ext.util.JSON.decode(dataJson));
 
-                                var gridDef = {};
-                                gridDef['headers'] = Ext.decode(headersText);
-                                gridDef['data'] = Ext.decode(dataJson);
-
-                                console.log(JSON.stringify(gridDef));
-
-                                this.JSONdata = gridDef;
 
                             },
                             scope : this
@@ -146,7 +145,7 @@ GeoPortal.Forms.DataEntry.ResponseTable = Ext.extend(Ext.form.FormPanel, {
                             id: 'responseGrid',
                             stripeRows: true,
                             width: '100%',
-                            height: '200',
+                            height: 200,
                             viewConfig: {
                                 forceFit: true,
                                 type: 'vbox',
@@ -208,6 +207,37 @@ GeoPortal.Forms.DataEntry.ResponseTable = Ext.extend(Ext.form.FormPanel, {
 
 
             GeoPortal.Forms.DataEntry.ResponseTable.superclass.initComponent.call(this);
+        },
+        UpdateGrid : function(headers, rows){
+            var gridHeaders = [];
+            var storeFields = [];
+            for (var i = 0; i < headers.length; i++) {
+                if(headers.hasOwnProperty(i)) {
+                    var header = headers[i];
+                    var heading = {'header' : header, 'dataIndex' : header};
+                    var field = {'name' : header, 'mapping' : header};
+
+                    gridHeaders.push(heading);
+                    storeFields.push(field);
+                }
+            }
+            var responseStore = new Ext.data.JsonStore ({
+                fields: Ext.decode(JSON.stringify(storeFields)),
+                id: "responseStore"
+            });
+
+            var responseGrid = Ext.getCmp('responseGrid');
+
+            var headersText = JSON.stringify(gridHeaders);
+            var columnModel = new Ext.grid.ColumnModel(Ext.decode(headersText));
+            responseGrid.reconfigure(responseStore, columnModel);
+            responseStore.loadData(Ext.util.JSON.decode(JSON.stringify(rows)));
+
+            var gridDef = {};
+            gridDef['headers'] = headers;
+            gridDef['data'] = Ext.decode(JSON.stringify(rows));
+            console.log(JSON.stringify(gridDef));
+            this.JSONdata = gridDef;
         },
         FormLoad : function() {
             var surveyField = Ext.getCmp('QuestionSurveyID');
