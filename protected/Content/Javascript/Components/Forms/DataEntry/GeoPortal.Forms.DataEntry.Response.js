@@ -46,6 +46,8 @@ GeoPortal.Forms.DataEntry.Response = Ext.extend(Ext.form.FormPanel, {
 
                     var breadcrumb = Ext.getCmp('breadcrumb');
                     breadcrumb.updateBreadcrumb(null, null, null, responseID);
+
+                    Ext.getCmp('responseTableRIdField').setValue(responseID);
                 }
             });
 

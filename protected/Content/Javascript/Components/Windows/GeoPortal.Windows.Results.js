@@ -109,7 +109,7 @@
 					Ext.getCmp("frmSurvey").getForm().load({ url: SmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { SID: SID} });
 					Ext.getCmp("frmResponse").getForm().load({ url: RmetaURL, waitMsg: 'Loading.......', method: 'POST', params: { QID: QID} });
 					Ext.getCmp("frmDC").getForm().load({ url: DCmetaURL, waitMsg: 'Loading.......', method: 'POST', sucess: metaWindow.show(), params: { SID: SID} });
-
+                    Ext.getCmp('MetadataResponseGrid').loadFromQID(QID);
 				}
 
 

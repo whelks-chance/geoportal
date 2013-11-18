@@ -9,6 +9,7 @@ class getResults {
 //ByVal start As Integer, ByVal limit As Integer, ByVal keywords As String, ByVal verify As Boolean, ByVal mappable As Boolean
 //        $dt = New DataTable();
 
+        $keywords = str_replace(" ", ",", $keywords);
         $keywordsArray = explode(",", $keywords);
 
         $SSearch = "";
@@ -538,6 +539,7 @@ where aud.username=:username);";
 
     Public Function getQualData($Keywords) {
 
+        $Keywords = str_replace(" ", ",", $Keywords);
         $keywordsArray = explode(",", $Keywords);
 
 //        $SSearch = "SELECT DISTINCT(id), stats, pages FROM qualdata.transcript_data ";

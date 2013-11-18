@@ -9,25 +9,25 @@
     maximizable: true,
     hideBorders: true,
     initComponent: function () {
-     this.UnitStore = new Ext.data.JsonStore({
+        this.UnitStore = new Ext.data.JsonStore({
             fields: ['spatial_id', 'Name', 'long_start', 'long_finish'],
             root: 'rows',
             id: 'spatial_units',
             url: SpatialUnitsURL
         });
-    this.chartPanel = new GeoPortal.Charts.MetaChart({SID: this.SID, unit: 'Police Region', type: 'Bar', field1: 'total', field2: 'successful'});;
-    this.UnitStore.load({params: {surveyID: this.SID}});
-    this.ChartTypes =  [['Bar'],['Pie'],['Line']];
-    this.ChartStore = new Ext.data.SimpleStore({
+        this.chartPanel = new GeoPortal.Charts.MetaChart({SID: this.SID, unit: 'Police Region', type: 'Bar', field1: 'total', field2: 'successful'});;
+        this.UnitStore.load({params: {surveyID: this.SID}});
+        this.ChartTypes =  [['Bar'],['Pie'],['Line']];
+        this.ChartStore = new Ext.data.SimpleStore({
             fields: ['Chart'],
             data: this.ChartTypes
         });
-     this.FieldStore = new Ext.data.JsonStore({
+        this.FieldStore = new Ext.data.JsonStore({
             fields: ['Name'],
             root: 'rows',
             id: 'dsName',
             url: fieldsURL
-            });
+        });
         this.FieldStore.load({params: {SID: this.SID, unit: 'Police Region'}});
         this.items = [
             {
@@ -410,7 +410,7 @@
                                     {
                                         xtype: 'fieldset',
                                         title: 'General',
-                                         defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                        defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
                                         collapsible: true,
                                         items: [
                                             {
@@ -437,12 +437,12 @@
                                                 fieldLabel: 'Response Text',
                                                 name: 'responseText'
                                             },
-                                            {
-                                                xtype: 'textfield',
-                                                fieldLabel: 'Response Table ID',
-                                                anchor: '97%',
-                                                name: 'responseTableID'
-                                            },
+//                                            {
+//                                                xtype: 'textfield',
+//                                                fieldLabel: 'Response Table ID',
+//                                                anchor: '97%',
+//                                                name: 'responseTableID'
+//                                            },
                                             {
                                                 xtype: 'textarea',
                                                 anchor: '97%',
@@ -477,6 +477,24 @@
                     },
                     {
                         xtype: 'panel',
+                        title: 'Response Table',
+                        autoScroll: true,
+                        padding : 5,
+//                        layout: 'fit',
+                        items: [
+                            {
+                                xtype: 'fieldset',
+                                title: 'Response Table',
+                                defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                collapsible: true,
+                                items: [
+                                    new GeoPortal.Grids.ResponseGrid({id : "MetadataResponseGrid"})
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        xtype: 'panel',
                         title: 'Dublin Core',
                         autoScroll: true,
                         items: [
@@ -493,7 +511,7 @@
                                     {
                                         xtype: 'fieldset',
                                         title: 'Dublin Core',
-                                         defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                        defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
                                         collapsible: true,
                                         items: [
                                             {
@@ -534,7 +552,7 @@
                                                         xtype: 'container',
                                                         columnWidth: 0.5,
                                                         layout: 'form',
-                                                         defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                                        defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
                                                         labelWidth: 75,
                                                         items: [
                                                             {
@@ -562,7 +580,7 @@
                                                         xtype: 'container',
                                                         columnWidth: 0.5,
                                                         layout: 'form',
-                                                         defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                                        defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
                                                         labelWidth: 75,
                                                         items: [
                                                             {
@@ -576,7 +594,7 @@
                                                     {
                                                         xtype: 'container',
                                                         columnWidth: 0.5,
-                                                         defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
+                                                        defaults: { readOnly: true, labelStyle: 'font-weight:bold;' },
                                                         layout: 'form',
                                                         items: [
                                                             {
@@ -668,129 +686,129 @@
                         xtype: 'panel',
                         title: 'Statistics',
                         autoScroll: true,
-                        id: 'stats',  
-                        autoLoad: true,  
+                        id: 'stats',
+                        autoLoad: true,
                         items: [{xtype: 'panel',
-                                bodyStyle: 'padding: 5px',
-                                 items: [ { xtype: 'container',
-                                            layout: 'column',
-                                            items: [{   xtype: 'container',
-                                                        layout: 'form',
-                                                        labelWidth: 75,
-                                                        columnWidth: '.4',
-                                                        items: [{
-                                                                xtype: 'combo',
-                                                                fieldLabel: 'Geography',
-                                                                value: 'Police Region',
-                                                                anchor: '95%',
-                                                                store: this.UnitStore,
-                                                                name: 'Unit',
-                                                                mode: 'remote' ,
-                                                                displayField: 'Name',
-                                                                valueField: 'Name' ,
-                                                                triggerAction: 'all',
-                                                                lastQuery: '',
-                                                                id: 'unit',
-                                                                forceSelection: true
-                                                                }]
-                                                    },{   xtype: 'container',
-                                                        layout: 'form',
-                                                        columnWidth: '.2',
-                                                        labelWidth: 75,
-                                                        items: [{
-                                                                xtype: 'combo',
-                                                                fieldLabel: 'Chart Type',
-                                                                id: 'chartType',
-                                                                value: 'Bar',
-                                                                anchor: '95%',
-                                                                store: this.ChartStore,
-                                                                name: 'Chart',
-                                                                mode: 'remote' ,
-                                                                displayField: 'Chart',
-                                                                valueField: 'Chart',
-                                                                triggerAction: 'all',
-                                                                lastQuery: '',
-                                                                forceSelection: true,
-                                                                listeners:{ 
-                                                                    select: { fn: function (combo, value) { 
-                                                                       if (combo.value =='Pie') {
-                                                                         Ext.getCmp('cmboField2').setDisabled = true;                                                                       
-                                                                       } else {
-                                                                        Ext.getCmp('cmboField2').setDisabled = false; 
-                                                                        }   
-                                                                    }
-                                                                  } 
-                                                               }      
-                                                            }]
-                                                        },
-                                                    {   xtype: 'container',
-                                                        layout: 'form',
-                                                        columnWidth: '.2',
-                                                        labelWidth: 50,
-                                                        items: [{
-                                                                xtype: 'combo',
-                                                                fieldLabel: 'Field 1',
-                                                                anchor: '95%' ,
-                                                                value: 'total',
-                                                                store: this.FieldStore, 
-                                                                loadingText: 'Loading....',
-                                                                mode: 'remote',
-                                                                anchor: '95%',
-                                                                name: 'Field1',
-                                                                forceSelection: true,
-                                                                submitValue: true,
-                                                                displayField: 'Name',
-                                                                valueField: 'Name',
-                                                                triggerAction: 'all',
-                                                                lastQuery: '',
-                                                                id: 'cmboField1'
-                                                            }]                   
-                                                    },{
-                                                        xtype: 'container',
-                                                        layout: 'form',
-                                                        labelWidth: 50,
-                                                        columnWidth: '.2',
-                                                        items: [{
-                                                                xtype: 'combo',
-                                                                fieldLabel: 'Field 2',
-                                                                anchor: '95%',
-                                                                value: 'successful',
-                                                                store: this.FieldStore,
-                                                                loadingText: 'Loading....',
-                                                                mode: 'remote',
-                                                                anchor: '95%',
-                                                                name: 'Field2',
-                                                                forceSelection: true,
-                                                                submitValue: true,
-                                                                displayField: 'Name',
-                                                                valueField: 'Name',
-                                                                triggerAction: 'all',
-                                                                lastQuery: '',
-                                                                id: 'cmboField2'
-                                                                }]   
-                                                    },{
-                                                        xtype: 'button',
-                                                        text: 'Redraw',
-                                                        handler: function(){
-                                                            var SID = Ext.getCmp('winMeta').SID;
-                                                            var Chart = Ext.getCmp('chartType').value;
-                                                            var field1  = Ext.getCmp('cmboField1').value;
-                                                            var field2 = Ext.getCmp('cmboField2').value;
-                                                            var unit = Ext.getCmp('unit').value;
-                                                            var charts = Ext.getCmp('charts');
+                            bodyStyle: 'padding: 5px',
+                            items: [ { xtype: 'container',
+                                layout: 'column',
+                                items: [{   xtype: 'container',
+                                    layout: 'form',
+                                    labelWidth: 75,
+                                    columnWidth: '.4',
+                                    items: [{
+                                        xtype: 'combo',
+                                        fieldLabel: 'Geography',
+                                        value: 'Police Region',
+                                        anchor: '95%',
+                                        store: this.UnitStore,
+                                        name: 'Unit',
+                                        mode: 'remote' ,
+                                        displayField: 'Name',
+                                        valueField: 'Name' ,
+                                        triggerAction: 'all',
+                                        lastQuery: '',
+                                        id: 'unit',
+                                        forceSelection: true
+                                    }]
+                                },{   xtype: 'container',
+                                    layout: 'form',
+                                    columnWidth: '.2',
+                                    labelWidth: 75,
+                                    items: [{
+                                        xtype: 'combo',
+                                        fieldLabel: 'Chart Type',
+                                        id: 'chartType',
+                                        value: 'Bar',
+                                        anchor: '95%',
+                                        store: this.ChartStore,
+                                        name: 'Chart',
+                                        mode: 'remote' ,
+                                        displayField: 'Chart',
+                                        valueField: 'Chart',
+                                        triggerAction: 'all',
+                                        lastQuery: '',
+                                        forceSelection: true,
+                                        listeners:{
+                                            select: { fn: function (combo, value) {
+                                                if (combo.value =='Pie') {
+                                                    Ext.getCmp('cmboField2').setDisabled = true;
+                                                } else {
+                                                    Ext.getCmp('cmboField2').setDisabled = false;
+                                                }
+                                            }
+                                            }
+                                        }
+                                    }]
+                                },
+                                    {   xtype: 'container',
+                                        layout: 'form',
+                                        columnWidth: '.2',
+                                        labelWidth: 50,
+                                        items: [{
+                                            xtype: 'combo',
+                                            fieldLabel: 'Field 1',
+                                            anchor: '95%' ,
+                                            value: 'total',
+                                            store: this.FieldStore,
+                                            loadingText: 'Loading....',
+                                            mode: 'remote',
+                                            anchor: '95%',
+                                            name: 'Field1',
+                                            forceSelection: true,
+                                            submitValue: true,
+                                            displayField: 'Name',
+                                            valueField: 'Name',
+                                            triggerAction: 'all',
+                                            lastQuery: '',
+                                            id: 'cmboField1'
+                                        }]
+                                    },{
+                                        xtype: 'container',
+                                        layout: 'form',
+                                        labelWidth: 50,
+                                        columnWidth: '.2',
+                                        items: [{
+                                            xtype: 'combo',
+                                            fieldLabel: 'Field 2',
+                                            anchor: '95%',
+                                            value: 'successful',
+                                            store: this.FieldStore,
+                                            loadingText: 'Loading....',
+                                            mode: 'remote',
+                                            anchor: '95%',
+                                            name: 'Field2',
+                                            forceSelection: true,
+                                            submitValue: true,
+                                            displayField: 'Name',
+                                            valueField: 'Name',
+                                            triggerAction: 'all',
+                                            lastQuery: '',
+                                            id: 'cmboField2'
+                                        }]
+                                    },{
+                                        xtype: 'button',
+                                        text: 'Redraw',
+                                        handler: function(){
+                                            var SID = Ext.getCmp('winMeta').SID;
+                                            var Chart = Ext.getCmp('chartType').value;
+                                            var field1  = Ext.getCmp('cmboField1').value;
+                                            var field2 = Ext.getCmp('cmboField2').value;
+                                            var unit = Ext.getCmp('unit').value;
+                                            var charts = Ext.getCmp('charts');
 
-                                                            Ext.getCmp('stats').remove(charts);
+                                            Ext.getCmp('stats').remove(charts);
 
-                                                            var newChart = new GeoPortal.Charts.MetaChart({SID: SID, unit: unit, type: Chart, field1: field1, field2: field2});
+                                            var newChart = new GeoPortal.Charts.MetaChart({SID: SID, unit: unit, type: Chart, field1: field1, field2: field2});
 
-                                                           Ext.getCmp('stats').add(newChart);
-                                                        
-                                                        Ext.getCmp('stats').doLayout();
-                                                        
-                                                        
-                                                        }
-                                                     }]
-                                           }]}, this.chartPanel]
+                                            Ext.getCmp('stats').add(newChart);
+
+                                            Ext.getCmp('stats').doLayout();
+
+
+                                        }
+                                    }]
+                            }]}, this.chartPanel]
                     }
                 ]
             }
@@ -802,7 +820,7 @@
                     xtype: 'buttongroup',
                     columns: 2,
                     scale: 'small',
-                     items: [
+                    items: [
                         {
                             xtype: 'button',
                             text: 'Save Metadata',
@@ -825,70 +843,70 @@
                         }
                     ]
                 },{
-                xtype: 'button',
-                text: 'Show Response Table',
-                icon: 'images/silk/table_edit.png',
-                id: 'btnShowResponseTable',
-                handler: function(){
+                    xtype: 'button',
+                    text: 'Show Response Table',
+                    icon: 'images/silk/table_edit.png',
+                    id: 'btnShowResponseTable',
+                    handler: function(){
 
-               var units = Ext.getCmp('winMeta').UnitStore;
-               var win =  Ext.getCmp('winMeta');
-               var SID = win.SID;
-               units.load({params: {surveyID:SID}});
-                   var search = new Ext.form.ComboBox({
-                                 xtype: 'combo',
-                                 fieldLabel: 'Unit',
-                                 value: 'Police Region',
-                                 anchor: '95%',
-                                 store: units,
-                                 name: 'Unit',
-                                 mode: 'remote' ,
-                                 displayField: 'Name',
-                                 valueField: 'Name' ,
-                                 triggerAction: 'all',
-                                 lastQuery: '',
-                                 id: 'cmboUnitResponse',
-                                 forceSelection: true
-                                 });
+                        var units = Ext.getCmp('winMeta').UnitStore;
+                        var win =  Ext.getCmp('winMeta');
+                        var SID = win.SID;
+                        units.load({params: {surveyID:SID}});
+                        var search = new Ext.form.ComboBox({
+                            xtype: 'combo',
+                            fieldLabel: 'Unit',
+                            value: 'Police Region',
+                            anchor: '95%',
+                            store: units,
+                            name: 'Unit',
+                            mode: 'remote' ,
+                            displayField: 'Name',
+                            valueField: 'Name' ,
+                            triggerAction: 'all',
+                            lastQuery: '',
+                            id: 'cmboUnitResponse',
+                            forceSelection: true
+                        });
 
-                 var form = new Ext.form.FormPanel({ id: 'unitForm', items: [search], frame: true, autoDestroy: true });
+                        var form = new Ext.form.FormPanel({ id: 'unitForm', items: [search], frame: true, autoDestroy: true });
 
-                var unitWin = new Ext.Window({
-                                width: 400,
+                        var unitWin = new Ext.Window({
+                            width: 400,
 //                                animateTarget: Ext.getCmp('btnFindPlacename').el,
-                                bodyStyle: 'Padding: 5px',
-                                autoDestroy: true,
-                                id: 'placeWin',
-                                layout: 'form',
-                                title: 'Show Response Table',
-                                items: [form],  
-                                buttons: [{
-                                    xtype: 'button',
-                                    text: 'Get Response Table',
-                                    id: 'btnNameSearch',
-                                    disabled: false,
-                                    handler: function () {
+                            bodyStyle: 'Padding: 5px',
+                            autoDestroy: true,
+                            id: 'placeWin',
+                            layout: 'form',
+                            title: 'Show Response Table',
+                            items: [form],
+                            buttons: [{
+                                xtype: 'button',
+                                text: 'Get Response Table',
+                                id: 'btnNameSearch',
+                                disabled: false,
+                                handler: function () {
                                     var unit =  Ext.getCmp('cmboUnitResponse').getValue();
-                var rWin = new GeoPortal.Windows.Responses({SID: Ext.getCmp('winMeta').SID, unit: unit});
-                                 rWin.show();
+                                    var rWin = new GeoPortal.Windows.Responses({SID: Ext.getCmp('winMeta').SID, unit: unit});
+                                    rWin.show();
 
-                                 unitWin.close();
-                                 }
-                                 }]
-                                 });
-                                 unitWin.show();
-                }
-            },{
-                                 xtype: 'button',
-                                 text: 'View All Survey Questions',
-                                 icon: 'images/silk/table_go.png',
-                                 handler: function(){
-                                 var qWin = new GeoPortal.Windows.Questions({SID: Ext.getCmp('winMeta').SID});
-                                 qWin.show();
-
-                                 }
-
+                                    unitWin.close();
                                 }
+                            }]
+                        });
+                        unitWin.show();
+                    }
+                },{
+                    xtype: 'button',
+                    text: 'View All Survey Questions',
+                    icon: 'images/silk/table_go.png',
+                    handler: function(){
+                        var qWin = new GeoPortal.Windows.Questions({SID: Ext.getCmp('winMeta').SID});
+                        qWin.show();
+
+                    }
+
+                }
             ]
         };
         GeoPortal.Windows.MetaData.superclass.initComponent.call(this);

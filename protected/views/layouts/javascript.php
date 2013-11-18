@@ -112,6 +112,8 @@ $javascriptFiles = array(
     "Components/Forms/DataEntry/GeoPortal.Forms.DataEntry.ResponseTable.js",
     "Components/Forms/DataEntry/SurveyMainEntry.js",
 
+    "Components/Grids/ResponseGrid.js",
+
     "Components/Forms/GeoPortal.Forms.ProjectManagement.js"
 
 );

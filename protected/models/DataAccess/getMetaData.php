@@ -157,7 +157,7 @@ class getMetaData {
 
     Public Function getDublinCore($SID) {
 
-        $selectStr = "Select * from dc_info where identifier=(select identifier from survey where surveyid=:SID);";
+        $selectStr = "Select * from dc_info where lower(identifier)=(select lower(identifier) from survey where lower(surveyid)=lower(:SID));";
         $values = array(":SID" => $SID);
         $resultRows = DataAdapter::DefaultPDOExecuteAndRead($selectStr, $values, "Survey_Data");
 
