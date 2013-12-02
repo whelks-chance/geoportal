@@ -80,7 +80,18 @@ Geoportal.Windows.WelcomeWin = Ext.extend(Ext.Window, {
                         id: 'tabAbout',
                         autoScroll: 'true',
                         autoLoad: 'protected/Content/html/about.htm'
-                    }
+                    },
+                    {
+                        xtype: 'panel',
+                        title: 'Version History',
+
+                        layout: 'fit',
+                        id: 'tabVersions',
+//                        autoScroll: 'true',
+                        autoLoad: 'protected/Content/html/version_history.html'
+
+
+                    },
                 ]
             }
         ];
